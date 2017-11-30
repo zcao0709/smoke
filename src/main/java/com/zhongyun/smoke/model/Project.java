@@ -25,8 +25,12 @@ public class Project {
     @Column(name = "room_count")
     private int roomCount;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "projects")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
     private List<User> users;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "project_id")
+    private List<Gateway> gateways;
 
     @Override
     public String toString() {
@@ -43,6 +47,18 @@ public class Project {
     }
 
     public Project() {
+    }
+
+    public void setGateways(List<Gateway> gateways) {
+        this.gateways = gateways;
+    }
+
+    public List<Gateway> getGateways() {
+        return gateways;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public long getId() {

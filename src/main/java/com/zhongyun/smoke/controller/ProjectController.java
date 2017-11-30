@@ -36,7 +36,9 @@ public class ProjectController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Resp<Project> find(@PathVariable long id) {
-        return new Resp(service.find(id));
+        Project p = service.find(id);
+        p.beforeReturn();
+        return new Resp(p);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -44,6 +46,10 @@ public class ProjectController {
             @RequestParam(value = "name", required = true) String name,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "10") int limit) {
-        return new Resp(service.find(name, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime")));
+        Page<Project> ps = service.find(name, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
+        for (Project p : ps) {
+            p.beforeReturn();
+        }
+        return new Resp(ps);
     }
 }
