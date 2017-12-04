@@ -13,23 +13,15 @@ public class OpTask {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private long eid;
+    private long eui;
     @Column(name = "post_user")
     private long postUser;
-
-    @OneToOne
-    @JoinColumn(name = "id")
-    private User poster;
 
     @Column(name = "post_time")
     private Timestamp postTime;
 
     @Column(name = "op_user")
     private long opUser;
-
-    @OneToOne
-    @JoinColumn(name = "id")
-    private User op;
 
     @Column(name = "op_time")
     private Timestamp opTime;
@@ -41,7 +33,48 @@ public class OpTask {
     private Timestamp mtime;
     private Timestamp ctime;
 
+    @Transient
+    private Sensor sensor;
+    @Transient
+    private User op;
+    @Transient
+    private User poster;
+
     public OpTask() {
+    }
+
+    public OpTask beforeReturn() {
+        if (op != null) {
+            op.setProjects(null);
+        }
+        if (poster != null) {
+            poster.setProjects(null);
+        }
+        return this;
+    }
+
+    public void setSensor(Sensor sensor) {
+        this.sensor = sensor;
+    }
+
+    public void setOp(User op) {
+        this.op = op;
+    }
+
+    public void setPoster(User poster) {
+        this.poster = poster;
+    }
+
+    public Sensor getSensor() {
+        return sensor;
+    }
+
+    public User getOp() {
+        return op;
+    }
+
+    public User getPoster() {
+        return poster;
     }
 
     public long getId() {
@@ -52,8 +85,8 @@ public class OpTask {
         this.id = id;
     }
 
-    public long getEid() {
-        return eid;
+    public long getEui() {
+        return eui;
     }
 
     public long getPostUser() {
@@ -92,8 +125,8 @@ public class OpTask {
         return ctime;
     }
 
-    public void setEid(long eid) {
-        this.eid = eid;
+    public void setEui(long eui) {
+        this.eui = eui;
     }
 
     public void setPostUser(long postUser) {

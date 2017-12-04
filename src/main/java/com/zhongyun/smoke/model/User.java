@@ -34,13 +34,14 @@ public class User {
         return name + "/" + Arrays.toString(projects.toArray(new Project[0]));
     }
 
-    public void beforeReturn() {
+    public User beforeReturn() {
         if (projects == null) {
-            return;
+            return this;
         }
         for (Project p : projects) {
             p.setUsers(null);
         }
+        return this;
     }
 
     public User() {

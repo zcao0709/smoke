@@ -1,8 +1,8 @@
 package com.zhongyun.smoke.controller;
 
+import com.zhongyun.smoke.model.OpTask;
 import com.zhongyun.smoke.model.Resp;
-import com.zhongyun.smoke.model.Project;
-import com.zhongyun.smoke.service.ProjectService;
+import com.zhongyun.smoke.service.OpTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,17 +10,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Created by caozhennan on 2017/11/26.
+ * Created by caozhennan on 2017/12/1.
  */
 @RestController
-@RequestMapping("/api/project/v1")
-public class ProjectController {
+@RequestMapping("/api/op/v1")
+public class OpTaskController {
     @Autowired
-    private ProjectService service;
+    private OpTaskService service;
 
     @RequestMapping(method = RequestMethod.POST)
-    public Resp<Project> post(@RequestBody Project project) {
-        return new Resp(service.add(project));
+    public Resp<OpTask> post(@RequestBody OpTask opTask) {
+        return new Resp(service.add(opTask));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -30,22 +30,21 @@ public class ProjectController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public Resp<Project> update(@RequestBody Project project) {
-        return new Resp(service.update(project));
+    public Resp<OpTask> update(@RequestBody OpTask opTask) {
+        return new Resp(service.update(opTask));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Resp<Project> find(@PathVariable long id) {
+    public Resp<OpTask> find(@PathVariable long id) {
         return new Resp(service.find(id).beforeReturn());
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Resp<Page<Project>> find(
-            @RequestParam(value = "name", required = true) String name,
+    public Resp<Page<OpTask>> findAll(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "10") int limit) {
-        Page<Project> ps = service.find(name, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
-        ps.getContent().forEach(v -> v.beforeReturn());
-        return new Resp(ps);
+        Page<OpTask> ots = service.findAll(new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
+        ots.getContent().forEach(v -> v.beforeReturn());
+        return new Resp(ots);
     }
 }

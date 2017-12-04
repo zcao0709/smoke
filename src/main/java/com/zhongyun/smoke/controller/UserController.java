@@ -42,10 +42,7 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Resp<User> find(@PathVariable long id) {
-        User u = service.find(id);
-        u.beforeReturn();
-        logger.info(u.toString());
-        return new Resp(u);
+        return new Resp(service.find(id).beforeReturn());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -54,9 +51,7 @@ public class UserController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "limit", defaultValue = "10") int limit) {
         Page<User> users = service.find(name, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
-        for (User u : users.getContent()) {
-            u.beforeReturn();
-        }
+        users.getContent().forEach(v -> v.beforeReturn());
         return new Resp(users);
     }
 }
