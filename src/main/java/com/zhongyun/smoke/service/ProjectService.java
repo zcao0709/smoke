@@ -38,6 +38,6 @@ public class ProjectService {
     }
 
     public Page<Project> find(String partName, Pageable pageable) {
-        return repository.findByNameLike(Util.quoteWithLike(partName), pageable);
+        return repository.findByNameLike(Util.like(partName), pageable);
     }
 }

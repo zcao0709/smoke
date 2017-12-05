@@ -28,8 +28,9 @@ public class Project {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
     private List<User> users;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "project_id")
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "project_id")
+    @Transient
     private List<Gateway> gateways;
 
     @Override

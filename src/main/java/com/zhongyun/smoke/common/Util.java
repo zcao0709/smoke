@@ -55,7 +55,10 @@ public class Util {
         return new String(Base64.decodeBase64(base64String));
     }
 
-    public static String quoteWithLike(String str) {
+    public static String like(String str) {
+        if (str == null || str.length() == 0) {
+            return "%";
+        }
         return "%" + str + "%";
     }
 }

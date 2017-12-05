@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,13 +48,20 @@ public class UserController {
         return new Resp(service.find(id).beforeReturn());
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Resp<Page<User>> find(
-            @RequestParam(value = "name", required = true) String name,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "limit", defaultValue = "10") int limit) {
-        Page<User> users = service.find(name, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
-        users.getContent().forEach(v -> v.beforeReturn());
-        return new Resp(users);
+    @RequestMapping(value = "/like", method = RequestMethod.GET)
+    public ResponseEntity<Resp<List<User>>> find(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "phone1", required = false) String phone1,
+            @RequestParam(value = "phone2", required = false) String phone2,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "_page", defaultValue = "1") int page,
+            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
+        Page<User> pages = service.find(name, phone1, phone2, type, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
+        List<User> users = pages .getContent();
+        users.forEach(v -> v.beforeReturn());
+
+        HttpHeaders hs = new HttpHeaders();
+        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
+        return new ResponseEntity<Resp<List<User>>>(new Resp(users), hs, HttpStatus.OK);
     }
 }

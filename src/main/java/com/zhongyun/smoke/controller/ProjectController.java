@@ -42,8 +42,8 @@ public class ProjectController {
     @RequestMapping(method = RequestMethod.GET)
     public Resp<Page<Project>> find(
             @RequestParam(value = "name", required = true) String name,
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "limit", defaultValue = "10") int limit) {
+            @RequestParam(value = "_page", defaultValue = "1") int page,
+            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
         Page<Project> ps = service.find(name, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         ps.getContent().forEach(v -> v.beforeReturn());
         return new Resp(ps);

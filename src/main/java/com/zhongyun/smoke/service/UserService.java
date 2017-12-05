@@ -1,6 +1,6 @@
 package com.zhongyun.smoke.service;
 
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.dao.mysql.UserRepository;
 import com.zhongyun.smoke.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 /**
  * Created by caozhennan on 2017/11/26.
@@ -45,7 +44,7 @@ public class UserService {
         return repository.findOne(id);
     }
 
-    public Page<User> find(String partName, Pageable pageable) {
-        return repository.findByNameLike(Util.quoteWithLike(partName), pageable);
+    public Page<User> find(String name, String phone1, String phone2, String type, Pageable pageable) {
+        return repository.findByNameLikeAndPhone1LikeAndPhone2LikeAndTypeLike(like(name), like(phone1), like(phone2), like(type), pageable);
     }
 }

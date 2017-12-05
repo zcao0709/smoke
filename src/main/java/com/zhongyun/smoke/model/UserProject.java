@@ -21,13 +21,6 @@ public class UserProject {
 
     private Timestamp mtime;
     private Timestamp ctime;
-//    @OneToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "userId")
-//    private User user;
-
-//    @OneToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "projectId")
-//    private Project project;
 
     public UserProject() {
     }

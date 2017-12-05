@@ -35,11 +35,18 @@ public class User {
     }
 
     public User beforeReturn() {
+        pass = "";
         if (projects == null) {
             return this;
         }
         for (Project p : projects) {
             p.setUsers(null);
+//            if (p.getUsers() == null) {
+//                continue;
+//            }
+//            for (User u : p.getUsers()) {
+//                u.setProjects(null);
+//            }
         }
         return this;
     }
