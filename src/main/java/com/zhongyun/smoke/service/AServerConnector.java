@@ -35,7 +35,7 @@ public class AServerConnector extends Thread {
     @PostConstruct
     private void init() {
         logger.info("start AServerConnector");
-//        start();
+        start();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class AServerConnector extends Thread {
                     } else {
                         Payload p = Payload.parse(f.payload());
                         if (p != null && p.needSave()) {
-                            mongo.save(f.payload(), p.collection());
+                            mongo.save(p, p.collection());
                         }
                     }
                 }

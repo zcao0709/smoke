@@ -17,7 +17,7 @@ public class UpApp implements Payload {
     public void postRecv() {
         app.set_type(0);
         app.set_ctime(System.currentTimeMillis());
-        app.getUserdata().setPayload(Util.fromBase64(app.getUserdata().getPayload()));
+        app.getUserdata().setPayload(Payload.decode(app.getUserdata().getPayload()));
     }
 
     public void setApp(App app) {

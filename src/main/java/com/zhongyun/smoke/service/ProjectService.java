@@ -1,6 +1,6 @@
 package com.zhongyun.smoke.service;
 
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.model.Project;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ProjectService {
         return repository.findOne(id);
     }
 
-    public Page<Project> find(String partName, Pageable pageable) {
-        return repository.findByNameLike(Util.like(partName), pageable);
+    public Page<Project> find(String name, String province, String city, String district, String address, Pageable pageable) {
+        return repository.findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLike(like(name), like(province), like(city), like(district), like(address), pageable);
     }
 }

@@ -2,6 +2,7 @@ package com.zhongyun.smoke.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zhongyun.smoke.model.payload.ImmeApp;
 import org.apache.tomcat.util.codec.binary.Base64;
 
 import java.io.IOException;
@@ -47,12 +48,12 @@ public class Util {
         }
     }
 
-    public static String tobase64 (String rawMessage) {
+    public static String toBase64 (String rawMessage) {
         return new String(Base64.encodeBase64(rawMessage.getBytes()));
     }
 
-    public static String fromBase64 (String base64String) {
-        return new String(Base64.decodeBase64(base64String));
+    public static byte[] fromBase64 (String base64String) {
+        return Base64.decodeBase64(base64String);
     }
 
     public static String like(String str) {
@@ -60,5 +61,13 @@ public class Util {
             return "%";
         }
         return "%" + str + "%";
+    }
+
+    public static void main(String[] args) {
+        String j = "{\"immeAPP\":{\"moteeui\":3747286346749607944,\"dir\":\"up\",\"userdata\":{\"seqno\":2,\"port\":2,\"payload\":\"CgAAAQMJ\",\"motetx\":{\"freq\":470.7,\"modu\":\"LORA\",\"datr\":\"SF12BW125\",\"codr\":\"4/5\",\"adr\":false}},\"gwrx\":[{\"eui\":3603162362285654048,\"time\":\"\",\"timefromgateway\":false,\"chan\":2,\"rfch\":0,\"rssi\":-99,\"lsnr\":-20.299999}]}}";
+//        String j = "{\"app\":{\"moteeui\":3747286346749607944,\"dir\":\"up\",\"userdata\":{\"seqno\":2,\"port\":2,\"payload\":\"CgAAAQMJ\",\"motetx\":{\"freq\":470.7,\"modu\":\"LORA\",\"datr\":\"SF12BW125\",\"codr\":\"4/5\",\"adr\":false}},\"gwrx\":[{\"eui\":3603162362285654048,\"time\":\"\",\"timefromgateway\":false,\"chan\":2,\"rfch\":0,\"rssi\":-99,\"lsnr\":-20.299999}]}}";
+        ImmeApp ia = Util.json2Object(j, ImmeApp.class);
+        ia.postRecv();
+        System.out.println(ia.getImmeAPP().getUserdata().getPayload());
     }
 }

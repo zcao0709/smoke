@@ -7,7 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.PortUnreachableException;
+import java.util.List;
 
 /**
  * Created by caozhennan on 2017/11/26.
@@ -39,13 +45,20 @@ public class ProjectController {
         return new Resp(service.find(id).beforeReturn());
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public Resp<Page<Project>> find(
-            @RequestParam(value = "name", required = true) String name,
+    @RequestMapping(value = "/like", method = RequestMethod.GET)
+    public ResponseEntity<Resp<List<Project>>> find(
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "province", required = false) String province,
+            @RequestParam(value = "city", required = false) String city,
+            @RequestParam(value = "district", required = false) String district,
+            @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
-        Page<Project> ps = service.find(name, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
-        ps.getContent().forEach(v -> v.beforeReturn());
-        return new Resp(ps);
+        Page<Project> pages = service.find(name, province, city, district, address, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
+        List<Project> ps = pages.getContent();
+
+        HttpHeaders hs = new HttpHeaders();
+        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
+        return new ResponseEntity<Resp<List<Project>>>(new Resp(ps), hs, HttpStatus.OK);
     }
 }

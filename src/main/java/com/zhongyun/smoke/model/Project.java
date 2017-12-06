@@ -20,6 +20,7 @@ public class Project {
     private Timestamp ctime;
     private String province;
     private String city;
+    private String district;
     private String address;
     private String area;
     @Column(name = "room_count")
@@ -49,6 +50,14 @@ public class Project {
     }
 
     public Project() {
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getDistrict() {
+        return district;
     }
 
     public void setGateways(List<Gateway> gateways) {
