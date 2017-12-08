@@ -27,11 +27,14 @@ public class Sensor {
     private String guarantee = "在保";
     private String status = Util.SENSOR_NORMAL;
 
-    private String lati = "0.0";
-    private String longi = "0.0";
+    private String lati = "0";
+    private String longi = "0";
 
     @Column(name = "project_id")
     private long projectId = 0;
+
+    @Column(name = "gateway_id")
+    private long gatewayId;  // refer to sensor.id
 
     private Timestamp mtime;
     private Timestamp ctime;
@@ -39,15 +42,24 @@ public class Sensor {
     public Sensor() {
     }
 
-    public Sensor(long eui, String type, Timestamp installTime, String status) {
+    public Sensor(long eui, String type, Timestamp installTime, String status, long gatewayId) {
         this.eui = eui;
         this.type = type;
         this.installTime = installTime;
         this.status = status;
+        this.gatewayId = gatewayId;
     }
 
     public long getId() {
         return id;
+    }
+
+    public void setGatewayId(long gatewayId) {
+        this.gatewayId = gatewayId;
+    }
+
+    public long getGatewayId() {
+        return gatewayId;
     }
 
     public long getEui() {

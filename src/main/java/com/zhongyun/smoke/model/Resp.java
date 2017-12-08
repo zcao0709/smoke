@@ -1,10 +1,13 @@
 package com.zhongyun.smoke.model;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 /**
  * Created by caozhennan on 2017/11/26.
  */
 public class Resp<T> {
-    private int code;
+    private HttpStatus code;
     private String msg;
     private T data;
 
@@ -12,12 +15,34 @@ public class Resp<T> {
     }
 
     public Resp(T data) {
-        this.code = 200;
+        this.code = HttpStatus.OK;
         this.msg = "OK";
         this.data = data;
     }
 
-    public int getCode() {
+    public Resp(HttpStatus code, String msg) {
+        this.code = code;
+        this.msg = msg;
+        this.data = null;
+    }
+
+    public static ResponseEntity ok(Object data) {
+        return ResponseEntity.status(HttpStatus.OK).body(data);
+    }
+
+    public static ResponseEntity bad(Object data) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(data);
+    }
+
+    public static ResponseEntity not(Object data) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(data);
+    }
+
+    public static ResponseEntity ser(Object data) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(data);
+    }
+
+    public HttpStatus getCode() {
         return code;
     }
 
@@ -29,7 +54,7 @@ public class Resp<T> {
         return data;
     }
 
-    public void setCode(int code) {
+    public void setCode(HttpStatus code) {
         this.code = code;
     }
 

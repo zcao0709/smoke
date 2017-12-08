@@ -2,11 +2,8 @@ package com.zhongyun.smoke.service;
 
 import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
-import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.Frame;
-import com.zhongyun.smoke.model.OpTask;
 import com.zhongyun.smoke.model.Sensor;
-import com.zhongyun.smoke.model.payload.App;
 import com.zhongyun.smoke.model.payload.Auth;
 import com.zhongyun.smoke.model.payload.Payload;
 import org.slf4j.Logger;
@@ -20,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -43,7 +39,7 @@ public class AServerConnector extends Thread {
 
     private BlockingQueue<Frame> framesToSendout = new LinkedBlockingQueue<>();
 
-    private ConcurrentMap<Long, Long> gwrxTimer = new ConcurrentHashMap<>();
+    private ConcurrentMap<Long, Long> gatewayTs = new ConcurrentHashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger("AServerConnector");
 
@@ -71,7 +67,7 @@ public class AServerConnector extends Thread {
                     return;
                 }
 
-                new GatewayMonitor(sensorService, gwrxTimer).run();
+                new GatewayMonitor(sensorService, gatewayTs).run();
 
                 ScheduledExecutorService hb = Executors.newSingleThreadScheduledExecutor();
                 hb.scheduleAtFixedRate(() -> framesToSendout.offer(Frame.newHB()), 0L, 15L, TimeUnit.MINUTES);
@@ -83,7 +79,7 @@ public class AServerConnector extends Thread {
                     if (f.isHB()) {
                         continue;
                     } else {
-                        Payload.parse(f.payload(), mongo, sensorService, opTaskService, gwrxTimer);
+                        Payload.parse(f.payload(), mongo, sensorService, opTaskService, gatewayTs);
                     }
                 }
             } catch (IOException e) {

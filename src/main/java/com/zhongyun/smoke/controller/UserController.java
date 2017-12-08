@@ -28,28 +28,32 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger("UserController");
 
     @RequestMapping(method = RequestMethod.POST)
-    public Resp<User> post(@RequestBody User user) {
-        return new Resp(service.add(user));
+    public ResponseEntity<User> post(@RequestBody User user) {
+        return Resp.ok(service.add(user));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public Resp<String> delete(@PathVariable long id) {
+    public ResponseEntity<String> delete(@PathVariable long id) {
         service.delete(id);
-        return new Resp("");
+        return Resp.ok(id);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public Resp<User> update(@RequestBody User user) {
-        return new Resp(service.update(user));
+    public ResponseEntity<User> update(@RequestBody User user) {
+        return Resp.ok(service.update(user));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Resp<User> find(@PathVariable long id) {
-        return new Resp(service.find(id).beforeReturn());
+    public ResponseEntity<User> find(@PathVariable long id) {
+        User u = service.find(id);
+        if (u == null) {
+            return Resp.not(id);
+        }
+        return Resp.ok(u.beforeReturn());
     }
 
     @RequestMapping(value = "/like", method = RequestMethod.GET)
-    public ResponseEntity<Resp<List<User>>> find(
+    public ResponseEntity<List<User>> find(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "phone1", required = false) String phone1,
             @RequestParam(value = "phone2", required = false) String phone2,
@@ -57,11 +61,11 @@ public class UserController {
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
         Page<User> pages = service.find(name, phone1, phone2, type, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
-        List<User> users = pages .getContent();
+        List<User> users = pages.getContent();
         users.forEach(v -> v.beforeReturn());
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(new Resp(users), hs, HttpStatus.OK);
+        return new ResponseEntity<>(users, hs, HttpStatus.OK);
     }
 }

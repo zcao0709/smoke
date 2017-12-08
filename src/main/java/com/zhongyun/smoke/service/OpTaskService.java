@@ -56,8 +56,8 @@ public class OpTaskService {
         return ots;
     }
 
-    public Page<OpTask> findByStatus(String status, Pageable pageable) {
-        Page<OpTask> ots = opTaskRepository.findByStatus(status, pageable);
+    public Page<OpTask> findUnsolved(Pageable pageable) {
+        Page<OpTask> ots = opTaskRepository.findByStatus(Util.OPTASK_UNSOLVED, pageable);
         ots.getContent().forEach(v -> complete(v));
 
         return ots;

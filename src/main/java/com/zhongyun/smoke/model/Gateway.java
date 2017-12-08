@@ -7,7 +7,6 @@ import java.util.List;
 /**
  * Created by caozhennan on 2017/11/30.
  */
-/*
 @Entity
 @Table(name = "gateway")
 public class Gateway {
@@ -16,36 +15,13 @@ public class Gateway {
     private long id;
 
     private long eui;
-    private String model;
-    private String type;
-    private String room;
-    private String location;
-
-    @Column(name = "install_time")
-    private Timestamp installTime;
-
-    private String guarantee;
-    private String status;
-
-    @Column(name = "project_id")
-    private long projectId;
+    private String lati;
+    private String longi;
 
     private Timestamp mtime;
     private Timestamp ctime;
 
-    @OneToMany
-    @JoinColumn(name = "gateway_id")
-    private List<Sensor> sensors;
-
     public Gateway() {
-    }
-
-    public void setSensors(List<Sensor> sensors) {
-        this.sensors = sensors;
-    }
-
-    public List<Sensor> getSensors() {
-        return sensors;
     }
 
     public void setId(long id) {
@@ -56,36 +32,12 @@ public class Gateway {
         this.eui = eui;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setLati(String lati) {
+        this.lati = lati;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setRoom(String room) {
-        this.room = room;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setInstallTime(Timestamp installTime) {
-        this.installTime = installTime;
-    }
-
-    public void setGuarantee(String guarantee) {
-        this.guarantee = guarantee;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setProjectId(long projectId) {
-        this.projectId = projectId;
+    public void setLongi(String longi) {
+        this.longi = longi;
     }
 
     public void setMtime(Timestamp mtime) {
@@ -104,36 +56,12 @@ public class Gateway {
         return eui;
     }
 
-    public String getModel() {
-        return model;
+    public String getLati() {
+        return lati;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getRoom() {
-        return room;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public Timestamp getInstallTime() {
-        return installTime;
-    }
-
-    public String getGuarantee() {
-        return guarantee;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public long getProjectId() {
-        return projectId;
+    public String getLongi() {
+        return longi;
     }
 
     public Timestamp getMtime() {
@@ -144,4 +72,3 @@ public class Gateway {
         return ctime;
     }
 }
-*/

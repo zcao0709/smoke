@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.ws.Response;
 import java.net.PortUnreachableException;
 import java.util.List;
 
@@ -25,28 +26,32 @@ public class ProjectController {
     private ProjectService service;
 
     @RequestMapping(method = RequestMethod.POST)
-    public Resp<Project> post(@RequestBody Project project) {
-        return new Resp(service.add(project));
+    public ResponseEntity<Project> post(@RequestBody Project project) {
+        return Resp.ok(service.add(project));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public Resp<String> delete(@PathVariable long id) {
+    public ResponseEntity<String> delete(@PathVariable long id) {
         service.delete(id);
-        return new Resp("");
+        return Resp.ok(id);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public Resp<Project> update(@RequestBody Project project) {
-        return new Resp(service.update(project));
+    public ResponseEntity<Project> update(@RequestBody Project project) {
+        return Resp.ok(service.update(project));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Resp<Project> find(@PathVariable long id) {
-        return new Resp(service.find(id).beforeReturn());
+    public ResponseEntity<Project> find(@PathVariable long id) {
+        Project p = service.find(id);
+        if (p == null) {
+            return Resp.not(id);
+        }
+        return Resp.ok(p.beforeReturn());
     }
 
     @RequestMapping(value = "/like", method = RequestMethod.GET)
-    public ResponseEntity<Resp<List<Project>>> find(
+    public ResponseEntity<List<Project>> find(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "province", required = false) String province,
             @RequestParam(value = "city", required = false) String city,
@@ -56,9 +61,10 @@ public class ProjectController {
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
         Page<Project> pages = service.find(name, province, city, district, address, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         List<Project> ps = pages.getContent();
+        ps.forEach(v -> v.beforeReturn());
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(new Resp(ps), hs, HttpStatus.OK);
+        return new ResponseEntity<>(ps, hs, HttpStatus.OK);
     }
 }

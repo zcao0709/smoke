@@ -14,7 +14,7 @@ public class ImmeApp extends Payload {
     }
 
     @Override
-    public App getApp() {
+    public App parseApp() {
         immeAPP.set_type(1);
         immeAPP.set_ctime(System.currentTimeMillis());
         immeAPP.setPayload(Payload.decode(immeAPP.payload()));

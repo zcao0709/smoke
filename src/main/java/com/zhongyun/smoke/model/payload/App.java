@@ -30,28 +30,30 @@ public class App {
     public App() {
     }
 
-    public void update(SensorService sensorService, OpTaskService opTaskService, ConcurrentMap<Long, Long> gwrxTimer) {
-        long ts = System.currentTimeMillis();
-
-        if (gwrx != null || gwrx.size() > 0) {
-            Gwrx g = gwrx.get(0);
-            Sensor s = sensorService.findByEui(g.eui);
-
-            if (s == null) {
-                s = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL);
-                sensorService.add(s);
-
-                gwrxTimer.put(g.eui, ts);
-            }
+    public void update(SensorService sensorService, OpTaskService opTaskService, ConcurrentMap<Long, Long> gatewayTs) {
+        if (gwrx == null || gwrx.size() == 0) {
+            logger.error("sensor " + moteeui + " has not gateway, will not be saved");
+            return;
         }
-        logger.info("gateways: " + gwrxTimer);
+        long ts = System.currentTimeMillis();
+        Gwrx g = gwrx.get(0);
+        Sensor sg = sensorService.findByEui(g.eui);
+
+        if (sg == null) {
+            sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, -1);
+            sensorService.add(sg);
+
+            gatewayTs.put(g.eui, ts);
+        }
+        logger.info("gateways: " + gatewayTs);
 
         Sensor s = sensorService.findByEui(moteeui);
         if (s == null) {
-            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload());
+            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload(), sg.getId());
             sensorService.add(s);
         } else {
             s.setStatus(payload());
+            s.setGatewayId(sg.getId());
             sensorService.update(s);
 
             if (Util.CriticalSensorStatus.contains(payload())) {

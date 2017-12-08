@@ -16,15 +16,15 @@ public class Project {
     private long id;
 
     private String name;
-    private Timestamp mtime;
-    private Timestamp ctime;
     private String province;
     private String city;
     private String district;
     private String address;
-    private String area;
     @Column(name = "room_count")
     private int roomCount;
+
+    private Timestamp mtime;
+    private Timestamp ctime;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
     private List<User> users;
@@ -83,10 +83,6 @@ public class Project {
         return address;
     }
 
-    public String getArea() {
-        return area;
-    }
-
     public int getRoomCount() {
         return roomCount;
     }
@@ -121,10 +117,6 @@ public class Project {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
     }
 
     public void setRoomCount(int roomCount) {

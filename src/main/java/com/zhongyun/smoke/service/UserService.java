@@ -30,12 +30,6 @@ public class UserService {
     }
 
     public User update(User user) {
-//        User u = repository.findOne(user.getId());
-//        if (u == null) {
-//            return null;
-//        }
-//        repository.delete(user.getId());
-//        user.setProjects(u.getProjects());
         user.setMtime(new Timestamp(System.currentTimeMillis()));
         repository.save(user);
         return user;

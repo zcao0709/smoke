@@ -5,6 +5,7 @@ import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.Sensor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -46,10 +47,16 @@ public class SensorService {
     }
 
     public List<Sensor> findAlarmedByProjectId(long projectId) {
-        return repository.findByProjectIdAndTypeAndStatusIsNot(projectId, Util.SENSOR_GWRX, Util.SENSOR_NORMAL);
+//        return repository.findByProjectIdAndTypeAndStatusIsNot(projectId, Util.SENSOR_GWRX, Util.SENSOR_NORMAL);
+        return repository.findByProjectIdAndTypeAndStatusIsIn(projectId, Util.SENSOR_SMOKE, Util.CriticalSensorStatus);
     }
 
     public List<Sensor> findByType(String type) {
         return repository.findByType(type);
+    }
+
+    @Transactional
+    public int updateLatiAndLongi(long gatewayId) {
+        return repository.updateLatiAndLongiByGatewayId(gatewayId);
     }
 }

@@ -18,21 +18,26 @@ public class Gwrx {
     public Gwrx() {
     }
 
-    public void update(SensorService service, ConcurrentMap<Long, Long> gwrxTimer) {
-        if (!gwrxTimer.containsKey(gw.getEUI())) {
+    public void update(SensorService service, ConcurrentMap<Long, Long> gatewayTs) {
+        if (!gatewayTs.containsKey(gw.getEUI())) {
             return;
         }
         long ts = System.currentTimeMillis();
 
         Sensor s = service.findByEui(gw.getEUI());
         if (s == null) {
-            gwrxTimer.remove(gw.getEUI());
+            gatewayTs.remove(gw.getEUI());
         } else {
-            s.setLati(gw.getStatus().getLati());
-            s.setLongi(gw.getStatus().getLongi());
-            service.update(s);
+            if (!s.getLati().equals(gw.getStatus().getLati()) || !s.getLongi().equals(gw.getStatus().getLongi())) {
+                s.setLati(gw.getStatus().getLati());
+                s.setLongi(gw.getStatus().getLongi());
+                service.update(s);
+                service.updateLatiAndLongi(s.getId());
+            } else {
+                service.update(s);
+            }
 
-            gwrxTimer.put(gw.getEUI(), ts);
+            gatewayTs.put(gw.getEUI(), ts);
         }
     }
 

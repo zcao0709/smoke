@@ -24,28 +24,32 @@ public class OpTaskController {
     private OpTaskService service;
 
     @RequestMapping(method = RequestMethod.POST)
-    public Resp<OpTask> post(@RequestBody OpTask opTask) {
-        return new Resp(service.add(opTask));
+    public ResponseEntity<OpTask> post(@RequestBody OpTask opTask) {
+        return Resp.ok(service.add(opTask));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public Resp<String> delete(@PathVariable long id) {
+    public ResponseEntity<String> delete(@PathVariable long id) {
         service.delete(id);
-        return new Resp("");
+        return Resp.ok(id);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public Resp<OpTask> update(@RequestBody OpTask opTask) {
-        return new Resp(service.update(opTask));
+    public ResponseEntity<OpTask> update(@RequestBody OpTask opTask) {
+        return Resp.ok(service.update(opTask));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Resp<OpTask> find(@PathVariable long id) {
-        return new Resp(service.find(id).beforeReturn());
+    public ResponseEntity<OpTask> find(@PathVariable long id) {
+        OpTask o = service.find(id);
+        if (o == null) {
+            return Resp.not(id);
+        }
+        return Resp.ok(service.find(id).beforeReturn());
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Resp<List<OpTask>>> findAll(
+    public ResponseEntity<List<OpTask>> findAll(
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
         Page<OpTask> pages = service.findAll(new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
@@ -54,19 +58,19 @@ public class OpTaskController {
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(new Resp(ots), hs, HttpStatus.OK);
+        return new ResponseEntity<>(ots, hs, HttpStatus.OK);
     }
 
     @RequestMapping(value = "unsolved", method = RequestMethod.GET)
-    public ResponseEntity<Resp<List<OpTask>>> find(
+    public ResponseEntity<List<OpTask>> find(
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
-        Page<OpTask> pages = service.findByStatus("", new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
+        Page<OpTask> pages = service.findUnsolved(new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
         List<OpTask> ots = pages.getContent();
         ots.forEach(v -> v.beforeReturn());
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(new Resp(ots), hs, HttpStatus.OK);
+        return new ResponseEntity<>(ots, hs, HttpStatus.OK);
     }
 }

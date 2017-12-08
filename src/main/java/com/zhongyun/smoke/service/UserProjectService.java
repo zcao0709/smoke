@@ -5,6 +5,7 @@ import com.zhongyun.smoke.model.UserProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 
 /**
@@ -16,10 +17,13 @@ public class UserProjectService {
     private UserProjectRepository repository;
 
     public UserProject add(UserProject up) {
-        up.setMtime(new Timestamp(System.currentTimeMillis()));
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        up.setMtime(ts);
+        up.setCtime(ts);
         return repository.save(up);
     }
 
+    @Transactional
     public void delete(long userId, long projectId) {
         repository.deleteByUserIdAndProjectId(userId, projectId);
     }

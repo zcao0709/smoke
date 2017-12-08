@@ -13,15 +13,19 @@ public class UpApp extends Payload {
     public UpApp() {
     }
 
+    @Override
+    public App parseApp() {
+        app.set_type(0);
+        app.set_ctime(System.currentTimeMillis());
+        app.setPayload(Payload.decode(app.payload()));
+        return app;
+    }
+
     public void setApp(App app) {
         this.app = app;
     }
 
-    @Override
     public App getApp() {
-        app.set_type(0);
-        app.set_ctime(System.currentTimeMillis());
-        app.setPayload(Payload.decode(app.payload()));
         return app;
     }
 }
