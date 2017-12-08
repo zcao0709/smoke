@@ -1,22 +1,77 @@
 package com.zhongyun.smoke.model.payload;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.zhongyun.smoke.common.Util;
+import com.zhongyun.smoke.model.OpTask;
+import com.zhongyun.smoke.model.Sensor;
+import com.zhongyun.smoke.service.OpTaskService;
+import com.zhongyun.smoke.service.SensorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by caozhennan on 2017/11/25.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class App {
-    private String moteeui;
+    private long moteeui;
     private String dir;
     private UserData userdata;
     private List<Gwrx> gwrx;
-    private int _type; // 0: normal, 1: imme; -1: downlink
+    private int _type; // 0: normal, 1: imme;
     private long _ctime;
 
+    private static final Logger logger = LoggerFactory.getLogger("App");
+
     public App() {
+    }
+
+    public void update(SensorService sensorService, OpTaskService opTaskService, ConcurrentMap<Long, Long> gwrxTimer) {
+        long ts = System.currentTimeMillis();
+
+        if (gwrx != null || gwrx.size() > 0) {
+            Gwrx g = gwrx.get(0);
+            Sensor s = sensorService.findByEui(g.eui);
+
+            if (s == null) {
+                s = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL);
+                sensorService.add(s);
+
+                gwrxTimer.put(g.eui, ts);
+            }
+        }
+        logger.info("gateways: " + gwrxTimer);
+
+        Sensor s = sensorService.findByEui(moteeui);
+        if (s == null) {
+            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload());
+            sensorService.add(s);
+        } else {
+            s.setStatus(payload());
+            sensorService.update(s);
+
+            if (Util.CriticalSensorStatus.contains(payload())) {
+                OpTask ot = new OpTask(moteeui, 1, new Timestamp(ts), payload());
+                opTaskService.add(ot);
+            }
+        }
+        return;
+    }
+
+    public String payload() {
+        if (userdata == null)
+            return null;
+        return userdata.getPayload();
+    }
+
+    public void setPayload(String payload) {
+        if (userdata == null)
+            return;
+        userdata.setPayload(payload);
     }
 
     public void set_type(int _type) {
@@ -35,7 +90,7 @@ public class App {
         return _ctime;
     }
 
-    public void setMoteeui(String moteeui) {
+    public void setMoteeui(long moteeui) {
         this.moteeui = moteeui;
     }
 
@@ -51,7 +106,7 @@ public class App {
         this.gwrx = gwrx;
     }
 
-    public String getMoteeui() {
+    public long getMoteeui() {
         return moteeui;
     }
 
@@ -67,6 +122,7 @@ public class App {
         return gwrx;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class UserData {
         private int seqno;
         private int port;
@@ -109,6 +165,7 @@ public class App {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Motetx {
         private double freq;
         private String modu;
@@ -160,6 +217,7 @@ public class App {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Gwrx {
         private long eui;
         private String time;

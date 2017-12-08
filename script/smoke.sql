@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `smoke`.`user_project` (
   `mtime` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
   `ctime` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `uk_user_project` (`user_id`, `project_id` ASC),
+  UNIQUE INDEX `uk_user_project` (`user_id`, `project_id` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = 'user-project relationship table';
@@ -47,14 +47,7 @@ COMMENT = 'user-project relationship table';
 CREATE TABLE IF NOT EXISTS `smoke`.`gateway` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `eui` BIGINT UNSIGNED NOT NULL,
-  `model` VARCHAR(16) NOT NULL,
-  `type` VARCHAR(16) NOT NULL,
-  `room` VARCHAR(32) NOT NULL,
-  `location` VARCHAR(64) NOT NULL,
-  `install_time` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
-  `guarantee` VARCHAR(16) NOT NULL,
-  `status` VARCHAR(8) NOT NULL,
-  `project_id` INT UNSIGNED NOT NULL,
+  `status` VARCHAR(8) NOT NULL DEFAULT '正常',
   `mtime` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
   `ctime` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
   PRIMARY KEY (`id`),
@@ -71,9 +64,11 @@ CREATE TABLE IF NOT EXISTS `smoke`.`sensor` (
   `room` VARCHAR(32) NOT NULL,
   `location` VARCHAR(64) NOT NULL,
   `install_time` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
-  `guarantee` VARCHAR(16) NOT NULL,
+  `guarantee` VARCHAR(16) NOT NULL DEFAULT '在保',
   `status` VARCHAR(8) NOT NULL DEFAULT '正常',
-  `gateway_id` INT UNSIGNED NOT NULL,
+  `lati` VARCHAR(16) NOT NULL,
+  `longi` VARCHAR(16) NOT NULL,
+  `project_id` INT UNSIGNED NOT NULL,
   `mtime` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
   `ctime` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
   PRIMARY KEY (`id`),

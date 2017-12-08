@@ -1,48 +1,69 @@
 package com.zhongyun.smoke.model.payload;
 
 import com.zhongyun.smoke.common.Util;
+import com.zhongyun.smoke.model.OpTask;
+import com.zhongyun.smoke.service.OpTaskService;
+import com.zhongyun.smoke.service.SensorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by caozhennan on 2017/11/25.
  */
-public interface Payload {
-    Map<Integer, String> status = new HashMap<Integer, String>() {{
-        put(1, "火灾");
-        put(2, "低电压");
-        put(3, "故障");
-        put(7, "静音");
-        put(9, "测试");
-//        put(-1, "心跳");
+public abstract class Payload {
+    private static Map<Integer, String> status = new HashMap<Integer, String>() {{
+        put(1, Util.SENSOR_FIRE);
+        put(2, Util.SENSOR_BATTERY);
+        put(3, Util.SENSOR_FAULT);
+        put(7, Util.SENSOR_MUTE);
+//        put(9, Util.SENSOR_NORMAL);
+        put(9, Util.SENSOR_TEST);
+        put(-1, Util.SENSOR_NORMAL);
     }};
 
-    void postRecv();
+    private static final Logger logger = LoggerFactory.getLogger("Payload");
 
-    default boolean needSave() {
-        return true;
-    }
+    public abstract App getApp();
 
-    default String collection() {
-        return "app";
-    }
+    public static void parse(String payload, MongoTemplate mongo, SensorService sensorService, OpTaskService opTaskService, ConcurrentMap<Long, Long> gwrxTimer) {
+        if (payload.startsWith("{\"gateway\"")) {
+            Gwrx g = Util.json2Object(payload, Gwrx.class);
+            g.update(sensorService, gwrxTimer);
 
-    static Payload parse(String payload) {
-        Payload p;
-        if (payload.startsWith("{\"immeAPP\"")) {
-            p = Util.json2Object(payload, ImmeApp.class);
-        } else if (payload.startsWith("{\"app\"")) {
-            p = Util.json2Object(payload, UpApp.class);
         } else {
-            return null;
+            Payload p;
+            if (payload.startsWith("{\"immeAPP\"")) {
+                p = Util.json2Object(payload, ImmeApp.class);
+            } else if (payload.startsWith("{\"app\"")) {
+                p = Util.json2Object(payload, UpApp.class);
+            } else {
+                return;
+            }
+            if (p == null) {
+                logger.error("invalid app message: " + payload);
+                return;
+            }
+            mongo.save(p.getApp(), Util.MONGO_COLLECTION);
+            p.getApp().update(sensorService, opTaskService, gwrxTimer);
         }
-        p.postRecv();
-        return p;
     }
 
-    static String decode(String raw) {
+    public static String decode(String raw) {
+        if (raw == null) {
+            logger.error("empty app message payload");
+            return Util.SENSOR_UNKNOWN;
+        }
         byte[] bs = Util.fromBase64(raw);
-        return status.get((int) bs[bs.length - 1]);
+        String s = status.get((int) bs[bs.length - 1]);
+        if (s == null) {
+            logger.error("invalid app message payload: " + raw + ", decoded: " + new String(bs));
+            return Util.SENSOR_UNKNOWN;
+        }
+        return s;
     }
 }

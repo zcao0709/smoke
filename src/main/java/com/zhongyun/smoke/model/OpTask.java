@@ -27,8 +27,8 @@ public class OpTask {
     private Timestamp opTime;
 
     private String cause;
-    private String handler;
-    private String status;
+    private String handler = "";
+    private String status = "待处理";
 
     private Timestamp mtime;
     private Timestamp ctime;
@@ -41,6 +41,13 @@ public class OpTask {
     private User poster;
 
     public OpTask() {
+    }
+
+    public OpTask(long eui, long postUser, Timestamp postTime, String cause) {
+        this.eui = eui;
+        this.postUser = postUser;
+        this.postTime = postTime;
+        this.cause = cause;
     }
 
     public OpTask beforeReturn() {

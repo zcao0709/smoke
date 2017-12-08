@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.service;
 
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.dao.mysql.UserRepository;
@@ -26,8 +27,10 @@ public class OpTaskService {
     public SensorRepository sensorRepository;
 
     public OpTask add(OpTask opTask) {
-        opTask.setMtime(new Timestamp(System.currentTimeMillis()));
-        opTask.setCtime(new Timestamp(System.currentTimeMillis()));
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        opTask.setStatus(Util.OPTASK_UNSOLVED);
+        opTask.setMtime(ts);
+        opTask.setCtime(ts);
         return opTaskRepository.save(opTask);
     }
 
@@ -48,6 +51,13 @@ public class OpTaskService {
 
     public Page<OpTask> findAll(Pageable pageable) {
         Page<OpTask> ots = opTaskRepository.findAll(pageable);
+        ots.getContent().forEach(v -> complete(v));
+
+        return ots;
+    }
+
+    public Page<OpTask> findByStatus(String status, Pageable pageable) {
+        Page<OpTask> ots = opTaskRepository.findByStatus(status, pageable);
         ots.getContent().forEach(v -> complete(v));
 
         return ots;

@@ -62,6 +62,6 @@ public class UserController {
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<Resp<List<User>>>(new Resp(users), hs, HttpStatus.OK);
+        return new ResponseEntity<>(new Resp(users), hs, HttpStatus.OK);
     }
 }

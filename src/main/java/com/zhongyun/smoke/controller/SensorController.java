@@ -39,7 +39,14 @@ public class SensorController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Resp<List<Sensor>> find() {
-        return new Resp(service.findAll());
+    public Resp<List<Sensor>> findByProjectId(
+            @RequestParam(value = "project") long projectId) {
+        return new Resp(service.findByProjectId(projectId));
+    }
+
+    @RequestMapping(value = "/alarm", method = RequestMethod.GET)
+    public Resp<List<Sensor>> findAlarmedByProjectId(
+            @RequestParam(value = "project") long projectId) {
+        return new Resp(service.findAlarmedByProjectId(projectId));
     }
 }

@@ -7,7 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by caozhennan on 2017/12/1.
@@ -40,11 +45,28 @@ public class OpTaskController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Resp<Page<OpTask>> findAll(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "limit", defaultValue = "10") int limit) {
-        Page<OpTask> ots = service.findAll(new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
-        ots.getContent().forEach(v -> v.beforeReturn());
-        return new Resp(ots);
+    public ResponseEntity<Resp<List<OpTask>>> findAll(
+            @RequestParam(value = "_page", defaultValue = "1") int page,
+            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
+        Page<OpTask> pages = service.findAll(new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
+        List<OpTask> ots = pages.getContent();
+        ots.forEach(v -> v.beforeReturn());
+
+        HttpHeaders hs = new HttpHeaders();
+        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
+        return new ResponseEntity<>(new Resp(ots), hs, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "unsolved", method = RequestMethod.GET)
+    public ResponseEntity<Resp<List<OpTask>>> find(
+            @RequestParam(value = "_page", defaultValue = "1") int page,
+            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
+        Page<OpTask> pages = service.findByStatus("", new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
+        List<OpTask> ots = pages.getContent();
+        ots.forEach(v -> v.beforeReturn());
+
+        HttpHeaders hs = new HttpHeaders();
+        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
+        return new ResponseEntity<>(new Resp(ots), hs, HttpStatus.OK);
     }
 }

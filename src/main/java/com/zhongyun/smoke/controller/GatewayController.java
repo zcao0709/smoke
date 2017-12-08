@@ -1,8 +1,7 @@
 package com.zhongyun.smoke.controller;
 
-import com.zhongyun.smoke.model.Gateway;
 import com.zhongyun.smoke.model.Resp;
-import com.zhongyun.smoke.service.GatewayService;
+//import com.zhongyun.smoke.service.GatewayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +10,7 @@ import java.util.List;
 /**
  * Created by caozhennan on 2017/11/30.
  */
+/*
 @RestController
 @RequestMapping("/api/gw/v1")
 public class GatewayController {
@@ -43,3 +43,4 @@ public class GatewayController {
         return new Resp(service.findAll());
     }
 }
+*/

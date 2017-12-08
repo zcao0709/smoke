@@ -29,11 +29,6 @@ public class Project {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
     private List<User> users;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "project_id")
-    @Transient
-    private List<Gateway> gateways;
-
     @Override
     public String toString() {
         return name + "/" + Arrays.toString(users.toArray(new User[0]));
@@ -58,14 +53,6 @@ public class Project {
 
     public String getDistrict() {
         return district;
-    }
-
-    public void setGateways(List<Gateway> gateways) {
-        this.gateways = gateways;
-    }
-
-    public List<Gateway> getGateways() {
-        return gateways;
     }
 
     public void setId(long id) {

@@ -7,6 +7,7 @@ import java.util.List;
 /**
  * Created by caozhennan on 2017/11/30.
  */
+/*
 @Entity
 @Table(name = "gateway")
 public class Gateway {
@@ -143,3 +144,4 @@ public class Gateway {
         return ctime;
     }
 }
+*/

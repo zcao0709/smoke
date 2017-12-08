@@ -19,8 +19,9 @@ public class ProjectService {
     public ProjectRepository repository;
 
     public Project add(Project project) {
-        project.setMtime(new Timestamp(System.currentTimeMillis()));
-        project.setCtime(new Timestamp(System.currentTimeMillis()));
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        project.setMtime(ts);
+        project.setCtime(ts);
         return repository.save(project);
     }
 

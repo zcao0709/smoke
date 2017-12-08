@@ -1,7 +1,12 @@
 package com.zhongyun.smoke.service;
 
 import com.zhongyun.smoke.ApplicationConfig;
+import com.zhongyun.smoke.common.Util;
+import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.Frame;
+import com.zhongyun.smoke.model.OpTask;
+import com.zhongyun.smoke.model.Sensor;
+import com.zhongyun.smoke.model.payload.App;
 import com.zhongyun.smoke.model.payload.Auth;
 import com.zhongyun.smoke.model.payload.Payload;
 import org.slf4j.Logger;
@@ -15,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ConcurrentModificationException;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -28,7 +35,15 @@ public class AServerConnector extends Thread {
     @Autowired
     private MongoTemplate mongo;
 
+    @Autowired
+    private SensorService sensorService;
+
+    @Autowired
+    private OpTaskService opTaskService;
+
     private BlockingQueue<Frame> framesToSendout = new LinkedBlockingQueue<>();
+
+    private ConcurrentMap<Long, Long> gwrxTimer = new ConcurrentHashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger("AServerConnector");
 
@@ -53,7 +68,10 @@ public class AServerConnector extends Thread {
                     logger.info(config.getAserverUser() + " accepted");
                 } else {
                     logger.error(config.getAserverUser() + "/" + config.getAserverPwd() + " rejected");
+                    return;
                 }
+
+                new GatewayMonitor(sensorService, gwrxTimer).run();
 
                 ScheduledExecutorService hb = Executors.newSingleThreadScheduledExecutor();
                 hb.scheduleAtFixedRate(() -> framesToSendout.offer(Frame.newHB()), 0L, 15L, TimeUnit.MINUTES);
@@ -65,10 +83,7 @@ public class AServerConnector extends Thread {
                     if (f.isHB()) {
                         continue;
                     } else {
-                        Payload p = Payload.parse(f.payload());
-                        if (p != null && p.needSave()) {
-                            mongo.save(p, p.collection());
-                        }
+                        Payload.parse(f.payload(), mongo, sensorService, opTaskService, gwrxTimer);
                     }
                 }
             } catch (IOException e) {
@@ -99,6 +114,22 @@ public class AServerConnector extends Thread {
                     return;
                 }
             }
+        }
+    }
+
+    private class GatewayMonitor implements Runnable {
+        private SensorService service;
+        private ConcurrentMap<Long, Long> gwrxTimer;
+
+        public GatewayMonitor(SensorService service, ConcurrentMap<Long, Long> gwrxTimer) {
+            this.service = service;
+            this.gwrxTimer = gwrxTimer;
+        }
+
+        @Override
+        public void run() {
+            List<Sensor> sensors = service.findByType(Util.SENSOR_GWRX);
+            sensors.forEach(v -> gwrxTimer.put(v.getEui(), v.getMtime().getTime()));
         }
     }
 }

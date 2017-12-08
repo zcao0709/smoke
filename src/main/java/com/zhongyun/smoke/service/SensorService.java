@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.service;
 
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.Sensor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,9 @@ public class SensorService {
     public SensorRepository repository;
 
     public Sensor add(Sensor sensor) {
-        sensor.setMtime(new Timestamp(System.currentTimeMillis()));
-        sensor.setCtime(new Timestamp(System.currentTimeMillis()));
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        sensor.setMtime(ts);
+        sensor.setCtime(ts);
         return repository.save(sensor);
     }
 
@@ -35,7 +37,19 @@ public class SensorService {
         return repository.findOne(id);
     }
 
-    public List<Sensor> findAll() {
-        return repository.findAll();
+    public Sensor findByEui(long eui) {
+        return repository.findByEui(eui);
+    }
+
+    public List<Sensor> findByProjectId(long projectId) {
+        return repository.findByProjectIdAndType(projectId, Util.SENSOR_SMOKE);
+    }
+
+    public List<Sensor> findAlarmedByProjectId(long projectId) {
+        return repository.findByProjectIdAndTypeAndStatusIsNot(projectId, Util.SENSOR_GWRX, Util.SENSOR_NORMAL);
+    }
+
+    public List<Sensor> findByType(String type) {
+        return repository.findByType(type);
     }
 }

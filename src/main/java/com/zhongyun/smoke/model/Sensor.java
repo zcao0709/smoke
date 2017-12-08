@@ -1,5 +1,7 @@
 package com.zhongyun.smoke.model;
 
+import com.zhongyun.smoke.common.Util;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -14,24 +16,34 @@ public class Sensor {
     private long id;
 
     private long eui;
-    private String model;
+    private String model = "";
     private String type;
-    private String room;
-    private String location;
+    private String room = "";
+    private String location = "";
 
     @Column(name = "install_time")
     private Timestamp installTime;
 
-    private String guarantee;
-    private String status;
+    private String guarantee = "在保";
+    private String status = Util.SENSOR_NORMAL;
 
-    @Column(name = "gateway_id")
-    private long gatewayId;
+    private String lati = "0.0";
+    private String longi = "0.0";
+
+    @Column(name = "project_id")
+    private long projectId = 0;
 
     private Timestamp mtime;
     private Timestamp ctime;
 
     public Sensor() {
+    }
+
+    public Sensor(long eui, String type, Timestamp installTime, String status) {
+        this.eui = eui;
+        this.type = type;
+        this.installTime = installTime;
+        this.status = status;
     }
 
     public long getId() {
@@ -40,6 +52,22 @@ public class Sensor {
 
     public long getEui() {
         return eui;
+    }
+
+    public void setLati(String lati) {
+        this.lati = lati;
+    }
+
+    public void setLongi(String longi) {
+        this.longi = longi;
+    }
+
+    public String getLati() {
+        return lati;
+    }
+
+    public String getLongi() {
+        return longi;
     }
 
     public String getModel() {
@@ -70,8 +98,8 @@ public class Sensor {
         return status;
     }
 
-    public long getGatewayId() {
-        return gatewayId;
+    public long getProjectId() {
+        return projectId;
     }
 
     public Timestamp getMtime() {
@@ -118,8 +146,8 @@ public class Sensor {
         this.status = status;
     }
 
-    public void setGatewayId(long gatewayId) {
-        this.gatewayId = gatewayId;
+    public void setProjectId(long projectId) {
+        this.projectId = projectId;
     }
 
     public void setMtime(Timestamp mtime) {

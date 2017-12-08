@@ -1,7 +1,6 @@
 package com.zhongyun.smoke.service;
 
-import com.zhongyun.smoke.dao.mysql.GatewayRepository;
-import com.zhongyun.smoke.model.Gateway;
+//import com.zhongyun.smoke.dao.mysql.GatewayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +10,7 @@ import java.util.List;
 /**
  * Created by caozhennan on 2017/11/30.
  */
+/*
 @Service
 public class GatewayService {
     @Autowired
@@ -39,3 +39,4 @@ public class GatewayService {
         return repository.findAll();
     }
 }
+*/

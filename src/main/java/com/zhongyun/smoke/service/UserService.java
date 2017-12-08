@@ -19,8 +19,9 @@ public class UserService {
     public UserRepository repository;
 
     public User add(User user) {
-        user.setMtime(new Timestamp(System.currentTimeMillis()));
-        user.setCtime(new Timestamp(System.currentTimeMillis()));
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        user.setMtime(ts);
+        user.setCtime(ts);
         return repository.save(user);
     }
 

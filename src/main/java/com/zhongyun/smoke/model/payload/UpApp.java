@@ -7,24 +7,21 @@ import com.zhongyun.smoke.common.Util;
  * Created by caozhennan on 2017/11/25.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UpApp implements Payload {
+public class UpApp extends Payload {
     private App app;
 
     public UpApp() {
-    }
-
-    @Override
-    public void postRecv() {
-        app.set_type(0);
-        app.set_ctime(System.currentTimeMillis());
-        app.getUserdata().setPayload(Payload.decode(app.getUserdata().getPayload()));
     }
 
     public void setApp(App app) {
         this.app = app;
     }
 
+    @Override
     public App getApp() {
+        app.set_type(0);
+        app.set_ctime(System.currentTimeMillis());
+        app.setPayload(Payload.decode(app.payload()));
         return app;
     }
 }
