@@ -21,14 +21,14 @@ public class Sensor {
     private String room = "";
     private String location = "";
 
+    private String lati = "0";
+    private String longi = "0";
+
     @Column(name = "install_time")
     private Timestamp installTime;
 
     private String guarantee = "在保";
     private String status = Util.SENSOR_NORMAL;
-
-    private String lati = "0";
-    private String longi = "0";
 
     @Column(name = "project_id")
     private long projectId = 0;

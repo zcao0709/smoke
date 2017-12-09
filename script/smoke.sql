@@ -65,6 +65,8 @@ CREATE TABLE IF NOT EXISTS `smoke`.`sensor` (
   `type` VARCHAR(16) NOT NULL,
   `room` VARCHAR(32) NOT NULL,
   `location` VARCHAR(64) NOT NULL,
+  `lati` VARCHAR(16) NOT NULL,
+  `longi` VARCHAR(16) NOT NULL,
   `install_time` TIMESTAMP NOT NULL DEFAULT '2017-11-16 15:45:50',
   `guarantee` VARCHAR(16) NOT NULL DEFAULT '在保',
   `status` VARCHAR(8) NOT NULL DEFAULT '正常',
