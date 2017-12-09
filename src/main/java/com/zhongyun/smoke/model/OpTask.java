@@ -28,7 +28,11 @@ public class OpTask {
 
     private String cause;
     private String handler = "";
+    private String worker = "";
     private String status = "待处理";
+
+    @Column(name = "project_id")
+    private long projectId = 0;
 
     private Timestamp mtime;
     private Timestamp ctime;
@@ -43,11 +47,13 @@ public class OpTask {
     public OpTask() {
     }
 
-    public OpTask(long eui, long postUser, Timestamp postTime, String cause) {
+    public OpTask(long eui, long postUser, Timestamp postTime, String cause, String status, long projectId) {
         this.eui = eui;
         this.postUser = postUser;
         this.postTime = postTime;
         this.cause = cause;
+        this.status = status;
+        this.projectId = projectId;
     }
 
     public OpTask beforeReturn() {
@@ -58,6 +64,22 @@ public class OpTask {
             poster.setProjects(null);
         }
         return this;
+    }
+
+    public void setWorker(String worker) {
+        this.worker = worker;
+    }
+
+    public String getWorker() {
+        return worker;
+    }
+
+    public void setProjectId(long projectId) {
+        this.projectId = projectId;
+    }
+
+    public long getProjectId() {
+        return projectId;
     }
 
     public void setSensor(Sensor sensor) {

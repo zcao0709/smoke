@@ -46,7 +46,7 @@ public class AServerConnector extends Thread {
     @PostConstruct
     private void init() {
         logger.info("start AServerConnector");
-        start();
+//        start();
     }
 
     @Override

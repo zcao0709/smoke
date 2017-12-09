@@ -30,6 +30,15 @@ public class Util {
         add(SENSOR_FAULT);
         add(SENSOR_MUTE);
         add(SENSOR_DISCONN);
+        add(SENSOR_UNKNOWN);
+    }};
+
+    public static final Set<String> OpTaskCause = new HashSet<String>() {{
+        add(SENSOR_FIRE);
+        add(SENSOR_BATTERY);
+        add(SENSOR_FAULT);
+        add(SENSOR_MUTE);
+        add(SENSOR_DISCONN);
         add(SENSOR_TEST);
     }};
 
@@ -37,6 +46,8 @@ public class Util {
     public static final String SENSOR_GWRX = "网关";
 
     public static final String OPTASK_UNSOLVED = "待处理";
+    public static final String OPTASK_COMPLETE = "完成";
+    public static final String OPTASK_OWNGOAL = "误报";
 
     public static final String MONGO_COLLECTION = "app";
 

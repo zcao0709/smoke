@@ -19,6 +19,11 @@ public class GlobalExceptionHandler {
         return Resp.ser("database error: " + ex.getMessage());
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> argumentHandler(HttpServletRequest request, Exception ex) {
+        return Resp.bad(ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> gloablHandler(HttpServletRequest request, Exception ex) {
         return Resp.ser(ex.getMessage());

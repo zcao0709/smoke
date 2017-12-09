@@ -11,12 +11,15 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "sensor")
 public class Sensor {
+    private static final String MODEL_SMOKE = "GS517L";
+    private static final String MODEL_GWRX = "GDOx01";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private long eui;
-    private String model = "";
+    private String model;
     private String type;
     private String room = "";
     private String location = "";
@@ -48,6 +51,11 @@ public class Sensor {
         this.installTime = installTime;
         this.status = status;
         this.gatewayId = gatewayId;
+        if (type.equals(Util.SENSOR_SMOKE)) {
+            this.model = MODEL_SMOKE;
+        } else {
+            this.model = MODEL_GWRX;
+        }
     }
 
     public long getId() {

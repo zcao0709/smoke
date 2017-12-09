@@ -32,16 +32,20 @@ public class App {
 
     public void update(SensorService sensorService, OpTaskService opTaskService, ConcurrentMap<Long, Long> gatewayTs) {
         if (gwrx == null || gwrx.size() == 0) {
-            logger.error("sensor " + moteeui + " has not gateway, will not be saved");
+            logger.error("sensor " + moteeui + " has no gateway, will not be saved");
             return;
+        }
+        String payload = payload();
+        if (payload == null) {
+
         }
         long ts = System.currentTimeMillis();
         Gwrx g = gwrx.get(0);
         Sensor sg = sensorService.findByEui(g.eui);
 
         if (sg == null) {
-            sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, -1);
-            sensorService.add(sg);
+            sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, 0);
+            sg = sensorService.add(sg);
 
             gatewayTs.put(g.eui, ts);
         }
@@ -56,8 +60,8 @@ public class App {
             s.setGatewayId(sg.getId());
             sensorService.update(s);
 
-            if (Util.CriticalSensorStatus.contains(payload())) {
-                OpTask ot = new OpTask(moteeui, 1, new Timestamp(ts), payload());
+            if (Util.OpTaskCause.contains(payload())) {
+                OpTask ot = new OpTask(moteeui, 1, new Timestamp(ts), payload(), Util.OPTASK_UNSOLVED, s.getProjectId());
                 opTaskService.add(ot);
             }
         }

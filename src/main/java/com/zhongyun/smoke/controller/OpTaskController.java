@@ -45,7 +45,7 @@ public class OpTaskController {
         if (o == null) {
             return Resp.not(id);
         }
-        return Resp.ok(service.find(id).beforeReturn());
+        return Resp.ok(o.beforeReturn());
     }
 
     @RequestMapping(method = RequestMethod.GET)

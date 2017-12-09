@@ -1,6 +1,9 @@
 package com.zhongyun.smoke.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +25,10 @@ public class Project {
     private String address;
     @Column(name = "room_count")
     private int roomCount;
+
+    @Transient
+    @JsonProperty("sensor_count")
+    private int sensorCount;
 
     private Timestamp mtime;
     private Timestamp ctime;
@@ -45,6 +52,14 @@ public class Project {
     }
 
     public Project() {
+    }
+
+    public void setSensorCount(int sensorCount) {
+        this.sensorCount = sensorCount;
+    }
+
+    public int getSensorCount() {
+        return sensorCount;
     }
 
     public void setDistrict(String district) {
