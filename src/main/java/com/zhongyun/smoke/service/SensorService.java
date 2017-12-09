@@ -38,6 +38,14 @@ public class SensorService {
         return sensor;
     }
 
+    @Transactional
+    public void updateStatusAndGateway(String status, long gatewayId, long id) {
+        if (id == 0) {
+            return;
+        }
+        repository.updateStatusAndGatewayById(status, gatewayId, id);
+    }
+
     public Sensor find(long id) {
         return repository.findOne(id);
     }

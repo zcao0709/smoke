@@ -39,8 +39,13 @@ public class Util {
         add(SENSOR_FAULT);
         add(SENSOR_MUTE);
         add(SENSOR_DISCONN);
-        add(SENSOR_TEST);
     }};
+
+    static {
+        if (System.getProperty("spring.profiles.active").equals("dev")) {
+            OpTaskCause.add(SENSOR_TEST);
+        }
+    }
 
     public static final String SENSOR_SMOKE = "烟感器";
     public static final String SENSOR_GWRX = "网关";

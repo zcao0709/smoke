@@ -32,6 +32,9 @@ public class UserService {
     }
 
     public void delete(long id) {
+        if (id == 1) {
+            throw new IllegalArgumentException("cannot remove system administrator");
+        }
         repository.delete(id);
     }
 

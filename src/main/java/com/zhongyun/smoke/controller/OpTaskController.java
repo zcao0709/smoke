@@ -52,7 +52,9 @@ public class OpTaskController {
     public ResponseEntity<List<OpTask>> findAll(
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
-        Page<OpTask> pages = service.findAll(new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
+        Sort.Order o1 = new Sort.Order(Sort.Direction.ASC, "status");
+        Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
+        Page<OpTask> pages = service.findAll(new PageRequest(page - 1, limit, new Sort(o1, o2)));
         List<OpTask> ots = pages.getContent();
         ots.forEach(v -> v.beforeReturn());
 
@@ -65,7 +67,9 @@ public class OpTaskController {
     public ResponseEntity<List<OpTask>> find(
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
-        Page<OpTask> pages = service.findUnsolved(new PageRequest(page - 1, limit, Sort.Direction.DESC, "status", "mtime"));
+        Sort.Order o1 = new Sort.Order(Sort.Direction.ASC, "status");
+        Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
+        Page<OpTask> pages = service.findUnsolved(new PageRequest(page - 1, limit, new Sort(o1, o2)));
         List<OpTask> ots = pages.getContent();
         ots.forEach(v -> v.beforeReturn());
 

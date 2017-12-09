@@ -36,9 +36,7 @@ public class App {
             return;
         }
         String payload = payload();
-        if (payload == null) {
 
-        }
         long ts = System.currentTimeMillis();
         Gwrx g = gwrx.get(0);
         Sensor sg = sensorService.findByEui(g.eui);
@@ -53,15 +51,13 @@ public class App {
 
         Sensor s = sensorService.findByEui(moteeui);
         if (s == null) {
-            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload(), sg.getId());
+            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload, sg.getId());
             sensorService.add(s);
         } else {
-            s.setStatus(payload());
-            s.setGatewayId(sg.getId());
-            sensorService.update(s);
+            sensorService.updateStatusAndGateway(payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), s.getId());
 
-            if (Util.OpTaskCause.contains(payload())) {
-                OpTask ot = new OpTask(moteeui, 1, new Timestamp(ts), payload(), Util.OPTASK_UNSOLVED, s.getProjectId());
+            if (Util.OpTaskCause.contains(payload)) {
+                OpTask ot = new OpTask(moteeui, 1, new Timestamp(ts), payload, Util.OPTASK_UNSOLVED, s.getProjectId());
                 opTaskService.add(ot);
             }
         }

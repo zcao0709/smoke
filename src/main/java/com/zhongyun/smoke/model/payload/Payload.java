@@ -16,15 +16,21 @@ import java.util.concurrent.ConcurrentMap;
  * Created by caozhennan on 2017/11/25.
  */
 public abstract class Payload {
+
     public static Map<Integer, String> status = new HashMap<Integer, String>() {{
         put(1, Util.SENSOR_FIRE);
         put(2, Util.SENSOR_BATTERY);
         put(3, Util.SENSOR_FAULT);
         put(7, Util.SENSOR_MUTE);
-//        put(9, Util.SENSOR_NORMAL);
-        put(9, Util.SENSOR_TEST);
+        put(9, Util.SENSOR_NORMAL);
         put(-1, Util.SENSOR_NORMAL);
     }};
+
+    static {
+        if (System.getProperty("spring.profiles.active").equals("dev")) {
+            status.put(9, Util.SENSOR_TEST);
+        }
+    }
 
     private static final Logger logger = LoggerFactory.getLogger("Payload");
 

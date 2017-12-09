@@ -23,4 +23,8 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     @Modifying
     @Query(value = "UPDATE sensor SET model = ?1, room = ?2, location = ?3, guarantee = ?4, project_id = ?5, mtime = NOW() WHERE id = ?6", nativeQuery = true)
     void updateById(String model, String room, String location, String guarantee, long projectId, long id);
+
+    @Modifying
+    @Query(value = "UPDATE sensor SET status = ?1, gateway_id = ?2 mtime = NOW() WHERE id = ?3", nativeQuery = true)
+    void updateStatusAndGatewayById(String status, long gatewayId, long id);
 }
