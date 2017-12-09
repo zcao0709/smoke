@@ -50,7 +50,7 @@ public class ProjectController {
         return Resp.ok(p.beforeReturn());
     }
 
-    @RequestMapping(value = "/like", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Project>> find(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "province", required = false) String province,

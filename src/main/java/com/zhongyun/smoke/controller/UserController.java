@@ -52,7 +52,7 @@ public class UserController {
         return Resp.ok(u.beforeReturn());
     }
 
-    @RequestMapping(value = "/like", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<User>> find(
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "phone1", required = false) String phone1,
