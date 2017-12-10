@@ -28,14 +28,6 @@ public class SensorController {
 
     private static final Logger logger = LoggerFactory.getLogger("SensorController");
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<SensorEx> post(@RequestBody Sensor sensor) {
-
-        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
-
-        return Resp.ok(SensorEx.valueOf(service.add(sensor)));
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> delete(@PathVariable long id) {
 
@@ -46,11 +38,11 @@ public class SensorController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<SensorEx> update(@RequestBody Sensor sensor) {
+    public ResponseEntity<SensorEx> update(@RequestBody SensorEx sensor) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(SensorEx.valueOf(service.update(sensor)));
+        return Resp.ok(SensorEx.valueOf(service.update(sensor.toSensor())));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

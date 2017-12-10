@@ -61,6 +61,16 @@ public class Sensor {
         }
     }
 
+    public Sensor(long id, String model, String room, String location, String guarantee, String status, long projectId) {
+        this.id = id;
+        this.model = model;
+        this.room = room;
+        this.location = location;
+        this.guarantee = guarantee;
+        this.status = status;
+        this.projectId = projectId;
+    }
+
     public void setOpCount(long opCount) {
         this.opCount = opCount;
     }

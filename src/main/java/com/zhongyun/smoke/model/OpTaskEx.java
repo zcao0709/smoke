@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  * Created by caozhennan on 2017/12/10.
  */
 public class OpTaskEx {
-    private String id;
+    private long id;
 
     private String eui;
 
@@ -37,7 +37,7 @@ public class OpTaskEx {
         if (o.getProject() != null) {
             projectName = o.getProject().getName();
         }
-        return new OpTaskEx(String.valueOf(o.getId()), String.format("%X", o.getEui()), o.getPostTime(), o.getOpTime(), o.getCause(), o.getHandler(),
+        return new OpTaskEx(o.getId(), String.format("%X", o.getEui()), o.getPostTime(), o.getOpTime(), o.getCause(), o.getHandler(),
                             o.getWorker(), o.getStatus(), o.getMtime(), o.getCtime(), o.getSensor(), o.getOp(), o.getPoster(), o.isExpired(),
                             projectName);
     }
@@ -49,7 +49,7 @@ public class OpTaskEx {
         return ops.stream().map(v -> OpTaskEx.valueOf(v)).collect(Collectors.toList());
     }
 
-    public OpTaskEx(String id, String eui, Timestamp postTime, Timestamp opTime, String cause, String handler, String worker, String status,
+    public OpTaskEx(long id, String eui, Timestamp postTime, Timestamp opTime, String cause, String handler, String worker, String status,
                     Timestamp mtime, Timestamp ctime, Sensor sensor, User op, User poster, boolean expired, String projectName) {
         this.id = id;
         this.eui = eui;
@@ -68,6 +68,10 @@ public class OpTaskEx {
         this.projectName = projectName;
     }
 
+    public OpTask toOpTask() {
+        return new OpTask(id, op.getId(), handler, worker, status);
+    }
+
     public void setSensor(SensorEx sensor) {
         this.sensor = sensor;
     }
@@ -76,7 +80,7 @@ public class OpTaskEx {
         return sensor;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -132,7 +136,7 @@ public class OpTaskEx {
         this.projectName = projectName;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 

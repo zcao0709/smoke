@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  * Created by caozhennan on 2017/12/10.
  */
 public class SensorEx {
-    private String id;
+    private long id;
 
     private String eui;
     private String model;
@@ -24,7 +24,7 @@ public class SensorEx {
     private String guarantee;
     private String status;
 
-    private String projectId;
+    private long projectId;
 
     private Timestamp mtime;
     private Timestamp ctime;
@@ -35,8 +35,8 @@ public class SensorEx {
         if (s == null) {
             return null;
         }
-        return new SensorEx(String.valueOf(s.getId()), String.format("%X", s.getEui()), s.getModel(), s.getType(), s.getRoom(), s.getLocation(), s.getLati(),
-                            s.getLongi(), s.getInstallTime(), s.getGuarantee(), s.getStatus(), String.valueOf(s.getProjectId()), s.getMtime(), s.getCtime(),
+        return new SensorEx(s.getId(), String.format("%X", s.getEui()), s.getModel(), s.getType(), s.getRoom(), s.getLocation(), s.getLati(),
+                            s.getLongi(), s.getInstallTime(), s.getGuarantee(), s.getStatus(), s.getProjectId(), s.getMtime(), s.getCtime(),
                             s.getOpCount());
     }
 
@@ -47,8 +47,8 @@ public class SensorEx {
         return sensors.stream().map(v -> SensorEx.valueOf(v)).collect(Collectors.toList());
     }
 
-    public SensorEx(String id, String eui, String model, String type, String room, String location, String lati, String longi,
-                    Timestamp installTime, String guarantee, String status, String projectId, Timestamp mtime, Timestamp ctime, long opCount) {
+    public SensorEx(long id, String eui, String model, String type, String room, String location, String lati, String longi,
+                    Timestamp installTime, String guarantee, String status, long projectId, Timestamp mtime, Timestamp ctime, long opCount) {
         this.id = id;
         this.eui = eui;
         this.model = model;
@@ -66,7 +66,11 @@ public class SensorEx {
         this.opCount = opCount;
     }
 
-    public void setId(String id) {
+    public Sensor toSensor() {
+        return new Sensor(id, model, room, location, guarantee, status, projectId);
+    }
+
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -110,7 +114,7 @@ public class SensorEx {
         this.status = status;
     }
 
-    public void setProjectId(String projectId) {
+    public void setProjectId(long projectId) {
         this.projectId = projectId;
     }
 
@@ -126,7 +130,7 @@ public class SensorEx {
         this.opCount = opCount;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
@@ -170,7 +174,7 @@ public class SensorEx {
         return status;
     }
 
-    public String getProjectId() {
+    public long getProjectId() {
         return projectId;
     }
 

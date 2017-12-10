@@ -76,6 +76,14 @@ public class OpTask {
         this.ctime = ctime;
     }
 
+    public OpTask(long id, long opUser, String handler, String worker, String status) {
+        this.id = id;
+        this.opUser = opUser;
+        this.handler = handler;
+        this.worker = worker;
+        this.status = status;
+    }
+
     public OpTask beforeReturn() {
         if (op != null) {
             op.setProjects(null);

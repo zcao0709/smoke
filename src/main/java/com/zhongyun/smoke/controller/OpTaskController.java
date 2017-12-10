@@ -32,14 +32,6 @@ public class OpTaskController {
 
     private static final Logger logger = LoggerFactory.getLogger("OpTaskController");
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<OpTaskEx> post(@RequestBody OpTask opTask) {
-
-        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
-
-        return Resp.ok(OpTaskEx.valueOf(service.add(opTask)));
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> delete(@PathVariable long id) {
 
@@ -50,11 +42,11 @@ public class OpTaskController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<OpTaskEx> update(@RequestBody OpTask opTask) {
+    public ResponseEntity<OpTaskEx> update(@RequestBody OpTaskEx opTask) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(OpTaskEx.valueOf(service.update(opTask)));
+        return Resp.ok(OpTaskEx.valueOf(service.update(opTask.toOpTask())));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
