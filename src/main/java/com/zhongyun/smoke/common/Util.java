@@ -18,6 +18,7 @@ public class Util {
     public static final String SENSOR_NORMAL = "正常";
     public static final String SENSOR_UNKNOWN = "未知";
     public static final String SENSOR_FIRE = "火警";
+    public static final String SENSOR_FIRED = "已报警";
     public static final String SENSOR_BATTERY = "低电压";
     public static final String SENSOR_FAULT = "故障";
     public static final String SENSOR_MUTE = "静音";
@@ -26,6 +27,7 @@ public class Util {
 
     public static final Set<String> CriticalSensorStatus = new HashSet<String>() {{
         add(SENSOR_FIRE);
+        add(SENSOR_FIRED);
         add(SENSOR_BATTERY);
         add(SENSOR_FAULT);
         add(SENSOR_MUTE);
