@@ -35,7 +35,7 @@ public class SensorEx {
         if (s == null) {
             return null;
         }
-        return new SensorEx(String.valueOf(s.getId()), String.valueOf(s.getEui()), s.getModel(), s.getType(), s.getRoom(), s.getLocation(), s.getLati(),
+        return new SensorEx(String.valueOf(s.getId()), String.format("%X", s.getEui()), s.getModel(), s.getType(), s.getRoom(), s.getLocation(), s.getLati(),
                             s.getLongi(), s.getInstallTime(), s.getGuarantee(), s.getStatus(), String.valueOf(s.getProjectId()), s.getMtime(), s.getCtime(),
                             s.getOpCount());
     }

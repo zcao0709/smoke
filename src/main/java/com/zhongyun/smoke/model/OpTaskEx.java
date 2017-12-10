@@ -37,7 +37,7 @@ public class OpTaskEx {
         if (o.getProject() != null) {
             projectName = o.getProject().getName();
         }
-        return new OpTaskEx(String.valueOf(o.getId()), String.valueOf(o.getEui()), o.getPostTime(), o.getOpTime(), o.getCause(), o.getHandler(),
+        return new OpTaskEx(String.valueOf(o.getId()), String.format("%X", o.getEui()), o.getPostTime(), o.getOpTime(), o.getCause(), o.getHandler(),
                             o.getWorker(), o.getStatus(), o.getMtime(), o.getCtime(), o.getSensor(), o.getOp(), o.getPoster(), o.isExpired(),
                             projectName);
     }
