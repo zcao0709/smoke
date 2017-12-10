@@ -51,7 +51,7 @@ public class App {
 
         Sensor s = sensorService.findBaseByEui(moteeui);
         if (s == null) {
-            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload, sg.getId());
+            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId());
             sensorService.add(s);
         } else {
             sensorService.updateStatusAndGateway(payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), s.getId());
