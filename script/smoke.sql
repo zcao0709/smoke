@@ -1,8 +1,8 @@
-CREATE SCHEMA IF NOT EXISTS `smoke` DEFAULT CHARACTER SET utf8mb4;
+CREATE SCHEMA IF NOT EXISTS `smoke_test` DEFAULT CHARACTER SET utf8mb4;
 
-use smoke;
+use smoke_test;
 
-CREATE TABLE IF NOT EXISTS `smoke`.`user` (
+CREATE TABLE IF NOT EXISTS `smoke_test`.`user` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(16) NOT NULL,
   `pass` VARCHAR(64) NOT NULL,
@@ -16,7 +16,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = 'user table';
 
-CREATE TABLE IF NOT EXISTS `smoke`.`project` (
+CREATE TABLE IF NOT EXISTS `smoke_test`.`project` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(64) NOT NULL,
   `province` VARCHAR(8) NOT NULL,
@@ -32,7 +32,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = 'project table';
 
-CREATE TABLE IF NOT EXISTS `smoke`.`user_project` (
+CREATE TABLE IF NOT EXISTS `smoke_test`.`user_project` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
   `project_id` INT UNSIGNED NOT NULL,
@@ -44,7 +44,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = 'user-project relationship table';
 
-CREATE TABLE IF NOT EXISTS `smoke`.`gateway` (
+CREATE TABLE IF NOT EXISTS `smoke_test`.`gateway` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `eui` BIGINT UNSIGNED NOT NULL,
   `lati` VARCHAR(16) NOT NULL,
@@ -58,7 +58,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = 'gateway table';
 
-CREATE TABLE IF NOT EXISTS `smoke`.`sensor` (
+CREATE TABLE IF NOT EXISTS `smoke_test`.`sensor` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `eui` BIGINT UNSIGNED NOT NULL,
   `model` VARCHAR(16) NOT NULL,
@@ -80,7 +80,7 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COMMENT = 'sensor table';
 
-CREATE TABLE IF NOT EXISTS `smoke`.`op_task` (
+CREATE TABLE IF NOT EXISTS `smoke_test`.`op_task` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `eui` BIGINT UNSIGNED NOT NULL,
   `post_user` INT UNSIGNED NOT NULL,

@@ -48,14 +48,14 @@ public class OpTaskController {
         return Resp.ok(o.beforeReturn());
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "eui/{eui}", method = RequestMethod.GET)
     public ResponseEntity<List<OpTask>> findByEui(
-            @RequestParam(value = "eui") long eui,
+            @PathVariable long eui,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
         Sort.Order o1 = new Sort.Order(Sort.Direction.ASC, "status");
         Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
-        Page<OpTask> pages = service.findAll(new PageRequest(page - 1, limit, new Sort(o1, o2)));
+        Page<OpTask> pages = service.findRawByEui(eui, new PageRequest(page - 1, limit, new Sort(o1, o2)));
         List<OpTask> ots = pages.getContent();
         ots.forEach(v -> v.beforeReturn());
 
