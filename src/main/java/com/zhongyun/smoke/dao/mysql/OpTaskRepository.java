@@ -14,6 +14,7 @@ import java.util.Set;
  */
 public interface OpTaskRepository extends JpaRepository<OpTask, Long>, OpTaskOther {
     Page<OpTask> findByCauseIn(Set<String> cause, Pageable pageable);
+    Page<Long> findIdByCauseIn(Set<String> carse, Pageable pageable);
     Page<OpTask> findByCauseInAndStatus(Set<String> cause, String status, Pageable pageable);
 
     @Modifying

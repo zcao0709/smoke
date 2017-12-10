@@ -17,11 +17,13 @@ public class ReportRepository {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     public Map<String, String> findByProjectId(long projectId, long start, long end) {
-        String sql = "SELECT status, COUNT(ID) as count FROM op_task where project_id = :pid AND ctime >= :start AND ctime <= :end GROUP BY status";
+        String sql =
+                "SELECT status, COUNT(ID) as count FROM op_task where project_id = :pid AND " +
+                        "UNIX_TIMESTAMP(ctime) >= :start AND UNIX_TIMESTAMP(ctime) <= :end GROUP BY status";
         Map<String, Long> params = new HashMap<>();
         params.put("pid", projectId);
-        params.put("start", start);
-        params.put("end", end);
+        params.put("start", start/1000);
+        params.put("end", end/1000);
         List<KV> entries = jdbcTemplate.query(sql, params, (rs, row) -> new KV(rs.getString("status"), rs.getString("count")));
         Map<String, String> ret = new HashMap<>();
         entries.forEach(v -> ret.put(v.key, v.val));

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.stream.Collectors;
 
 /**
  * Created by caozhennan on 2017/11/30.
@@ -55,9 +56,6 @@ public class OpTaskService {
 
     public OpTask find(long id) {
         OpTask ot = opTaskRepository.findById(id);
-        if (ot != null) {
-            complete(ot);
-        }
         return ot;
     }
 
