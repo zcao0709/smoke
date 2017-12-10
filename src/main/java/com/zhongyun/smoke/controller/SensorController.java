@@ -2,6 +2,7 @@ package com.zhongyun.smoke.controller;
 
 import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.model.Resp;
+import com.zhongyun.smoke.model.SensorEx;
 import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by caozhennan on 2017/11/30.
@@ -27,11 +29,11 @@ public class SensorController {
     private static final Logger logger = LoggerFactory.getLogger("SensorController");
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Sensor> post(@RequestBody Sensor sensor) {
+    public ResponseEntity<SensorEx> post(@RequestBody Sensor sensor) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(service.add(sensor));
+        return Resp.ok(SensorEx.valueOf(service.add(sensor)));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -44,15 +46,15 @@ public class SensorController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<Sensor> update(@RequestBody Sensor sensor) {
+    public ResponseEntity<SensorEx> update(@RequestBody Sensor sensor) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(service.update(sensor));
+        return Resp.ok(SensorEx.valueOf(service.update(sensor)));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Sensor> find(@PathVariable long id) {
+    public ResponseEntity<SensorEx> find(@PathVariable long id) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
@@ -60,24 +62,24 @@ public class SensorController {
         if (s == null) {
             return Resp.not(id);
         }
-        return Resp.ok(service.find(id));
+        return Resp.ok(SensorEx.valueOf(service.find(id)));
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Sensor>> findByProjectId(
+    public ResponseEntity<List<SensorEx>> findByProjectId(
             @RequestParam(value = "project") long projectId) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(service.findByProjectId(projectId));
+        return Resp.ok(SensorEx.valueOf(service.findByProjectId(projectId)));
     }
 
     @RequestMapping(value = "/alarm", method = RequestMethod.GET)
-    public ResponseEntity<List<Sensor>> findAlarmedByProjectId(
+    public ResponseEntity<List<SensorEx>> findAlarmedByProjectId(
             @RequestParam(value = "project") long projectId) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(service.findAlarmedByProjectId(projectId));
+        return Resp.ok(SensorEx.valueOf(service.findAlarmedByProjectId(projectId)));
     }
 }

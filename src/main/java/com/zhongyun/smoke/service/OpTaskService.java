@@ -61,7 +61,7 @@ public class OpTaskService {
         return ot;
     }
 
-    public Page<OpTask> findRawByEui(long eui, Pageable pageable) {
+    public Page<OpTask> findBaseByEui(long eui, Pageable pageable) {
         return opTaskRepository.findByEui(eui, pageable);
     }
 

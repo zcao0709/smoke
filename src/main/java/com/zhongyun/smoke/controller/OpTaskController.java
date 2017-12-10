@@ -1,6 +1,7 @@
 package com.zhongyun.smoke.controller;
 
 import com.zhongyun.smoke.model.OpTask;
+import com.zhongyun.smoke.model.OpTaskEx;
 import com.zhongyun.smoke.model.Resp;
 import com.zhongyun.smoke.service.OpTaskService;
 import org.slf4j.Logger;
@@ -32,11 +33,11 @@ public class OpTaskController {
     private static final Logger logger = LoggerFactory.getLogger("OpTaskController");
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<OpTask> post(@RequestBody OpTask opTask) {
+    public ResponseEntity<OpTaskEx> post(@RequestBody OpTask opTask) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(service.add(opTask));
+        return Resp.ok(OpTaskEx.valueOf(service.add(opTask)));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -49,15 +50,15 @@ public class OpTaskController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<OpTask> update(@RequestBody OpTask opTask) {
+    public ResponseEntity<OpTaskEx> update(@RequestBody OpTask opTask) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(service.update(opTask));
+        return Resp.ok(OpTaskEx.valueOf(service.update(opTask)));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<OpTask> find(@PathVariable long id) {
+    public ResponseEntity<OpTaskEx> find(@PathVariable long id) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
@@ -65,12 +66,12 @@ public class OpTaskController {
         if (o == null) {
             return Resp.not(id);
         }
-        return Resp.ok(o.beforeReturn());
+        return Resp.ok(OpTaskEx.valueOf(o.beforeReturn()));
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<OpTask>> findByEui(
-            @RequestParam(value = "eui") long eui,
+    public ResponseEntity<List<OpTaskEx>> findAll(
+            @RequestParam(value = "eui", defaultValue = "0") long eui,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 
@@ -78,35 +79,41 @@ public class OpTaskController {
 
         Sort.Order o1 = new Sort.Order(Sort.Direction.ASC, "status");
         Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
-        Page<OpTask> pages = service.findRawByEui(eui, new PageRequest(page - 1, limit, new Sort(o1, o2)));
+
+        Page<OpTask> pages;
+        if (eui != 0) {
+            pages = service.findBaseByEui(eui, new PageRequest(page - 1, limit, new Sort(o1, o2)));
+        } else {
+            pages = service.findAll(new PageRequest(page - 1, limit, new Sort(o1, o2)));
+        }
         List<OpTask> ots = pages.getContent();
         ots.forEach(v -> v.beforeReturn());
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(ots, hs, HttpStatus.OK);
+        return new ResponseEntity<>(OpTaskEx.valueOf(ots), hs, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<OpTask>> findAll(
-            @RequestParam(value = "_page", defaultValue = "1") int page,
-            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
-
-        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
-
-        Sort.Order o1 = new Sort.Order(Sort.Direction.ASC, "status");
-        Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
-        Page<OpTask> pages = service.findAll(new PageRequest(page - 1, limit, new Sort(o1, o2)));
-        List<OpTask> ots = pages.getContent();
-        ots.forEach(v -> v.beforeReturn());
-
-        HttpHeaders hs = new HttpHeaders();
-        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(ots, hs, HttpStatus.OK);
-    }
+//    @RequestMapping(method = RequestMethod.GET)
+//    public ResponseEntity<List<OpTaskEx>> findAll(
+//            @RequestParam(value = "_page", defaultValue = "1") int page,
+//            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
+//
+//        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+//
+//        Sort.Order o1 = new Sort.Order(Sort.Direction.ASC, "status");
+//        Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
+//        Page<OpTask> pages = service.findAll(new PageRequest(page - 1, limit, new Sort(o1, o2)));
+//        List<OpTask> ots = pages.getContent();
+//        ots.forEach(v -> v.beforeReturn());
+//
+//        HttpHeaders hs = new HttpHeaders();
+//        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
+//        return new ResponseEntity<>(OpTaskEx.valueOf(ots), hs, HttpStatus.OK);
+//    }
 
     @RequestMapping(value = "unsolved", method = RequestMethod.GET)
-    public ResponseEntity<List<OpTask>> find(
+    public ResponseEntity<List<OpTaskEx>> find(
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 
@@ -120,6 +127,6 @@ public class OpTaskController {
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(ots, hs, HttpStatus.OK);
+        return new ResponseEntity<>(OpTaskEx.valueOf(ots), hs, HttpStatus.OK);
     }
 }
