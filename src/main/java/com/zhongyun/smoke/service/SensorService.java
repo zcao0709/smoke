@@ -51,7 +51,12 @@ public class SensorService {
     }
 
     @Transactional
-    public int updateLatiAndLongi(long gatewayId) {
+    public int updateLatiAndLongiById(String lati, String longi, long id) {
+        return sensorRepository.updateLatiAndLongiById(lati, longi, id);
+    }
+
+    @Transactional
+    public int updateLatiAndLongiByGatewayId(long gatewayId) {
         return sensorRepository.updateLatiAndLongiByGatewayId(gatewayId);
     }
 
@@ -63,7 +68,7 @@ public class SensorService {
         return s;
     }
 
-    public Sensor findByEui(long eui) {
+    public Sensor findBaseByEui(long eui) {
         return sensorRepository.findByEui(eui);
     }
 
@@ -73,17 +78,13 @@ public class SensorService {
         return sensors;
     }
 
-    public long countByProjectId(long projectId) {
-        return sensorRepository.countByProjectIdAndType(projectId, Util.SENSOR_SMOKE);
-    }
-
     public List<Sensor> findAlarmedByProjectId(long projectId) {
         List<Sensor> sensors = sensorRepository.findByProjectIdAndTypeAndStatusIsIn(projectId, Util.SENSOR_SMOKE, Util.CriticalSensorStatus);
         sensors.forEach(v -> complete(v));
         return sensors;
     }
 
-    public List<Sensor> findByType(String type) {
+    public List<Sensor> findBaseByType(String type) {
         return sensorRepository.findByType(type);
     }
 

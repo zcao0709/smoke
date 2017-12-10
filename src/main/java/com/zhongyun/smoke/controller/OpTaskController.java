@@ -68,9 +68,9 @@ public class OpTaskController {
         return Resp.ok(o.beforeReturn());
     }
 
-    @RequestMapping(value = "eui/{eui}", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<OpTask>> findByEui(
-            @PathVariable long eui,
+            @RequestParam(value = "eui") long eui,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 

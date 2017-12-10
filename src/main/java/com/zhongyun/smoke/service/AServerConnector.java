@@ -124,7 +124,7 @@ public class AServerConnector extends Thread {
 
         @Override
         public void run() {
-            List<Sensor> sensors = service.findByType(Util.SENSOR_GWRX);
+            List<Sensor> sensors = service.findBaseByType(Util.SENSOR_GWRX);
             sensors.forEach(v -> gwrxTimer.put(v.getEui(), v.getMtime().getTime()));
         }
     }

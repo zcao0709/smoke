@@ -24,15 +24,13 @@ public class Gwrx {
         }
         long ts = System.currentTimeMillis();
 
-        Sensor s = service.findByEui(gw.getEUI());
+        Sensor s = service.findBaseByEui(gw.getEUI());
         if (s == null) {
             gatewayTs.remove(gw.getEUI());
         } else {
             if (!s.getLati().equals(gw.getStatus().getLati()) || !s.getLongi().equals(gw.getStatus().getLongi())) {
-                s.setLati(gw.getStatus().getLati());
-                s.setLongi(gw.getStatus().getLongi());
-                service.update(s);
-                service.updateLatiAndLongi(s.getId());
+                service.updateLatiAndLongiById(gw.getStatus().getLati(), gw.getStatus().getLongi(), s.getId());
+                service.updateLatiAndLongiByGatewayId(s.getId());
             } else {
                 service.update(s);
             }

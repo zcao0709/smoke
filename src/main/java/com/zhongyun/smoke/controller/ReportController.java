@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -28,12 +25,15 @@ public class ReportController {
 
     private static final Logger logger = LoggerFactory.getLogger("ReportController");
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Map<String, String>> findByProjectId(@PathVariable long id) {
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Map<String, String>> findByProjectId(
+            @RequestParam(value = "project") long id,
+            @RequestParam(value = "start") long start,
+            @RequestParam(value = "end") long end) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        Map<String, String> ret = service.findByProjectId(id);
+        Map<String, String> ret = service.findByProjectId(id, start, end);
         if (ret == null || ret.size() == 0) {
             return Resp.not(id);
         }

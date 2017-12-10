@@ -1,7 +1,6 @@
 package com.zhongyun.smoke.dao.mysql;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +14,14 @@ import java.util.Map;
 @Component
 public class ReportRepository {
     @Autowired
-//    private JdbcTemplate jdbcTemplate;
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    public Map<String, String> findByProjectId(long projectId) {
-        String sql = "SELECT status, COUNT(ID) as count FROM op_task where project_id = :pid GROUP BY status";
+    public Map<String, String> findByProjectId(long projectId, long start, long end) {
+        String sql = "SELECT status, COUNT(ID) as count FROM op_task where project_id = :pid AND ctime >= :start AND ctime <= :end GROUP BY status";
         Map<String, Long> params = new HashMap<>();
         params.put("pid", projectId);
+        params.put("start", start);
+        params.put("end", end);
         List<KV> entries = jdbcTemplate.query(sql, params, (rs, row) -> new KV(rs.getString("status"), rs.getString("count")));
         Map<String, String> ret = new HashMap<>();
         entries.forEach(v -> ret.put(v.key, v.val));

@@ -1,7 +1,10 @@
 package com.zhongyun.smoke.service;
 
 import static com.zhongyun.smoke.common.Util.*;
+
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
+import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,7 +24,7 @@ public class ProjectService {
     public ProjectRepository repository;
 
     @Autowired
-    public SensorService sensorService;
+    public SensorRepository sensorRepository;
 
     public Project add(Project project) {
         validate(project);
@@ -49,7 +52,7 @@ public class ProjectService {
     public Project find(long id) {
         Project p = repository.findOne(id);
         if (p != null) {
-            p.setSensorCount(sensorService.countByProjectId(id));
+            complete(p);
         }
         return p;
     }
@@ -57,7 +60,7 @@ public class ProjectService {
     public Page<Project> find(String name, String province, String city, String district, String address, Pageable pageable) {
         Page<Project> pages = repository.findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLike(like(name), like(province), like(city),
                                                                                                                like(district), like(address), pageable);
-        pages.getContent().forEach(v -> v.setSensorCount(sensorService.countByProjectId(v.getId())));
+        pages.getContent().forEach(v -> complete(v));
         return pages;
     }
 
@@ -66,5 +69,9 @@ public class ProjectService {
             || StringUtils.isEmpty(project.getDistrict()) || StringUtils.isEmpty(project.getAddress()) || project.getRoomCount() <= 0) {
             throw new IllegalArgumentException("not enough project info");
         }
+    }
+
+    private void complete(Project project) {
+        project.setSensorCount(sensorRepository.countByProjectIdAndType(project.getId(), Util.SENSOR_SMOKE));
     }
 }

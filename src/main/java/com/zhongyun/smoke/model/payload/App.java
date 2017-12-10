@@ -39,7 +39,7 @@ public class App {
 
         long ts = System.currentTimeMillis();
         Gwrx g = gwrx.get(0);
-        Sensor sg = sensorService.findByEui(g.eui);
+        Sensor sg = sensorService.findBaseByEui(g.eui);
 
         if (sg == null) {
             sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, 0);
@@ -49,7 +49,7 @@ public class App {
         }
         logger.info("gateways: " + gatewayTs);
 
-        Sensor s = sensorService.findByEui(moteeui);
+        Sensor s = sensorService.findBaseByEui(moteeui);
         if (s == null) {
             s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload, sg.getId());
             sensorService.add(s);
