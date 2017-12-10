@@ -62,6 +62,7 @@ public class OpTask {
 
     public OpTask(long id, long eui, long postUser, Timestamp postTime, long opUser, Timestamp opTime, String cause, String handler, String worker,
                   String status, long projectId, Timestamp mtime, Timestamp ctime) {
+        this.id = id;
         this.eui = eui;
         this.postUser = postUser;
         this.postTime = postTime;

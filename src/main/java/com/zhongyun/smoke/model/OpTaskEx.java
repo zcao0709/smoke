@@ -1,7 +1,6 @@
 package com.zhongyun.smoke.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.zhongyun.smoke.common.Util;
 
 import java.sql.Timestamp;
 import java.util.List;
