@@ -42,6 +42,9 @@ public class Sensor {
     private Timestamp mtime;
     private Timestamp ctime;
 
+    @Transient
+    private long opCount;
+
     public Sensor() {
     }
 
@@ -56,6 +59,14 @@ public class Sensor {
         } else {
             this.model = MODEL_GWRX;
         }
+    }
+
+    public void setOpCount(long opCount) {
+        this.opCount = opCount;
+    }
+
+    public long getOpCount() {
+        return opCount;
     }
 
     public long getId() {

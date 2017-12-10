@@ -18,7 +18,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
 //    List<Sensor> findByProjectIdAndTypeAndStatusIsNot(long projectId, String type, String status);
     List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> statuses);
     List<Sensor> findByType(String type);
-    int countByProjectIdAndType(long projectId, String type);
+    long countByProjectIdAndType(long projectId, String type);
 
     @Modifying
     @Query(value = "UPDATE sensor SET model = ?1, room = ?2, location = ?3, guarantee = ?4, project_id = ?5, mtime = NOW() WHERE id = ?6", nativeQuery = true)

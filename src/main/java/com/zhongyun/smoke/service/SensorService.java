@@ -1,6 +1,7 @@
 package com.zhongyun.smoke.service;
 
 import com.zhongyun.smoke.common.Util;
+import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.Sensor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +17,20 @@ import java.util.List;
 @Service
 public class SensorService {
     @Autowired
-    public SensorRepository repository;
+    public SensorRepository sensorRepository;
+
+    @Autowired
+    public OpTaskRepository opTaskRepository;
 
     public Sensor add(Sensor sensor) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         sensor.setMtime(ts);
         sensor.setCtime(ts);
-        return repository.save(sensor);
+        return sensorRepository.save(sensor);
     }
 
     public void delete(long id) {
-        repository.delete(id);
+        sensorRepository.delete(id);
     }
 
     @Transactional
@@ -34,7 +38,7 @@ public class SensorService {
         if (sensor.getId() == 0) {
             throw new IllegalArgumentException("no sensor id");
         }
-        repository.updateById(sensor.getModel(), sensor.getRoom(), sensor.getLocation(), sensor.getGuarantee(), sensor.getProjectId(), sensor.getId());
+        sensorRepository.updateById(sensor.getModel(), sensor.getRoom(), sensor.getLocation(), sensor.getGuarantee(), sensor.getProjectId(), sensor.getId());
         return sensor;
     }
 
@@ -43,36 +47,47 @@ public class SensorService {
         if (id == 0) {
             return;
         }
-        repository.updateStatusAndGatewayById(status, gatewayId, id);
-    }
-
-    public Sensor find(long id) {
-        return repository.findOne(id);
-    }
-
-    public Sensor findByEui(long eui) {
-        return repository.findByEui(eui);
-    }
-
-    public List<Sensor> findByProjectId(long projectId) {
-        return repository.findByProjectIdAndType(projectId, Util.SENSOR_SMOKE);
-    }
-
-    public int countByProjectId(long projectId) {
-        return repository.countByProjectIdAndType(projectId, Util.SENSOR_SMOKE);
-    }
-
-    public List<Sensor> findAlarmedByProjectId(long projectId) {
-//        return repository.findByProjectIdAndTypeAndStatusIsNot(projectId, Util.SENSOR_GWRX, Util.SENSOR_NORMAL);
-        return repository.findByProjectIdAndTypeAndStatusIsIn(projectId, Util.SENSOR_SMOKE, Util.CriticalSensorStatus);
-    }
-
-    public List<Sensor> findByType(String type) {
-        return repository.findByType(type);
+        sensorRepository.updateStatusAndGatewayById(status, gatewayId, id);
     }
 
     @Transactional
     public int updateLatiAndLongi(long gatewayId) {
-        return repository.updateLatiAndLongiByGatewayId(gatewayId);
+        return sensorRepository.updateLatiAndLongiByGatewayId(gatewayId);
+    }
+
+    public Sensor find(long id) {
+        Sensor s = sensorRepository.findOne(id);
+        if (s != null) {
+            complete(s);
+        }
+        return s;
+    }
+
+    public Sensor findByEui(long eui) {
+        return sensorRepository.findByEui(eui);
+    }
+
+    public List<Sensor> findByProjectId(long projectId) {
+        List<Sensor> sensors = sensorRepository.findByProjectIdAndType(projectId, Util.SENSOR_SMOKE);
+        sensors.forEach(v -> complete(v));
+        return sensors;
+    }
+
+    public long countByProjectId(long projectId) {
+        return sensorRepository.countByProjectIdAndType(projectId, Util.SENSOR_SMOKE);
+    }
+
+    public List<Sensor> findAlarmedByProjectId(long projectId) {
+        List<Sensor> sensors = sensorRepository.findByProjectIdAndTypeAndStatusIsIn(projectId, Util.SENSOR_SMOKE, Util.CriticalSensorStatus);
+        sensors.forEach(v -> complete(v));
+        return sensors;
+    }
+
+    public List<Sensor> findByType(String type) {
+        return sensorRepository.findByType(type);
+    }
+
+    private void complete(Sensor sensor) {
+        sensor.setOpCount(opTaskRepository.countByEui(sensor.getEui()));
     }
 }

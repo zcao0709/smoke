@@ -53,6 +53,7 @@ public class Util {
     public static final String OPTASK_UNSOLVED = "待处理";
     public static final String OPTASK_COMPLETE = "完成";
     public static final String OPTASK_OWNGOAL = "误报";
+    public static final long OPTASK_EXPIRED = 2 * 24 * 3600 * 1000; // 2 days
 
     public static final String MONGO_COLLECTION = "app";
 

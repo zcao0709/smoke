@@ -19,4 +19,7 @@ public interface OpTaskRepository extends JpaRepository<OpTask, Long> {
     @Modifying
     @Query(value = "UPDATE op_task SET op_user = ?1, op_time = NOW(), handler = ?2, worker = ?3, status = ?4, mtime = NOW() WHERE id = ?5", nativeQuery = true)
     void updateById(long opUser, String handler, String worker, String status, long id);
+
+    long countByEui(long eui);
+    Page<OpTask> findByEui(long eui, Pageable pageable);
 }

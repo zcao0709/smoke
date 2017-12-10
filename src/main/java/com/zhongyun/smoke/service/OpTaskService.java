@@ -2,9 +2,11 @@ package com.zhongyun.smoke.service;
 
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
+import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.dao.mysql.UserRepository;
 import com.zhongyun.smoke.model.OpTask;
+import com.zhongyun.smoke.model.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,9 @@ public class OpTaskService {
 
     @Autowired
     public SensorRepository sensorRepository;
+
+    @Autowired
+    public ProjectService projectService;
 
     public OpTask add(OpTask opTask) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
@@ -56,6 +61,10 @@ public class OpTaskService {
         return ot;
     }
 
+    public Page<OpTask> findRawByEui(long eui, Pageable pageable) {
+        return opTaskRepository.findByEui(eui, pageable);
+    }
+
     public Page<OpTask> findAll(Pageable pageable) {
         Page<OpTask> ots = opTaskRepository.findByCauseIn(Util.OpTaskCause, pageable);
         ots.getContent().forEach(v -> complete(v));
@@ -74,5 +83,12 @@ public class OpTaskService {
         ot.setPoster(userRepository.findOne(ot.getPostUser()));
         ot.setOp(userRepository.findOne(ot.getOpUser()));
         ot.setSensor(sensorRepository.findByEui(ot.getEui()));
+        Project p = projectService.find(ot.getProjectId());
+        if (p == null) {
+            ot.setProjectName("");
+        } else {
+            ot.setProjectName(p.getName());
+        }
+        ot.setExpired(System.currentTimeMillis() > Util.OPTASK_EXPIRED + ot.getCtime().getTime());
     }
 }

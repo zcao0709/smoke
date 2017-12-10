@@ -27,8 +27,7 @@ public class Project {
     private int roomCount;
 
     @Transient
-    @JsonProperty("sensor_count")
-    private int sensorCount;
+    private long sensorCount;
 
     private Timestamp mtime;
     private Timestamp ctime;
@@ -54,11 +53,11 @@ public class Project {
     public Project() {
     }
 
-    public void setSensorCount(int sensorCount) {
+    public void setSensorCount(long sensorCount) {
         this.sensorCount = sensorCount;
     }
 
-    public int getSensorCount() {
+    public long getSensorCount() {
         return sensorCount;
     }
 

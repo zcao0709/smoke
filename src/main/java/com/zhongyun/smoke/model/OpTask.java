@@ -43,6 +43,10 @@ public class OpTask {
     private User op;
     @Transient
     private User poster;
+    @Transient
+    private boolean expired;
+    @Transient
+    private String projectName;
 
     public OpTask() {
     }
@@ -64,6 +68,22 @@ public class OpTask {
             poster.setProjects(null);
         }
         return this;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
+
+    public boolean isExpired() {
+        return expired;
     }
 
     public void setWorker(String worker) {
