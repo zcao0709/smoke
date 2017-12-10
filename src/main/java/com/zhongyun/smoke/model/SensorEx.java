@@ -1,5 +1,7 @@
 package com.zhongyun.smoke.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,6 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Created by caozhennan on 2017/12/10.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SensorEx {
     private long id;
 
@@ -64,6 +67,9 @@ public class SensorEx {
         this.mtime = mtime;
         this.ctime = ctime;
         this.opCount = opCount;
+    }
+
+    public SensorEx() {
     }
 
     public Sensor toSensor() {

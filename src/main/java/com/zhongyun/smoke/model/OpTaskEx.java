@@ -1,5 +1,8 @@
 package com.zhongyun.smoke.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.zhongyun.smoke.common.Util;
+
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,6 +10,7 @@ import java.util.stream.Collectors;
 /**
  * Created by caozhennan on 2017/12/10.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OpTaskEx {
     private long id;
 
@@ -16,9 +20,9 @@ public class OpTaskEx {
     private Timestamp opTime;
 
     private String cause;
-    private String handler = "";
-    private String worker = "";
-    private String status = "待处理";
+    private String handler;
+    private String worker;
+    private String status;
 
     private Timestamp mtime;
     private Timestamp ctime;
@@ -70,6 +74,9 @@ public class OpTaskEx {
 
     public OpTask toOpTask() {
         return new OpTask(id, op.getId(), handler, worker, status);
+    }
+
+    public OpTaskEx() {
     }
 
     public void setSensor(SensorEx sensor) {
