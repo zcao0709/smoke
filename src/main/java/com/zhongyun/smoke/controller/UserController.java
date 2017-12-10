@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -25,26 +26,41 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @Autowired
+    private HttpServletRequest request;
+
     private static final Logger logger = LoggerFactory.getLogger("UserController");
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<User> post(@RequestBody User user) {
+
+        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+
         return Resp.ok(service.add(user));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> delete(@PathVariable long id) {
+
+        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+
         service.delete(id);
         return Resp.ok(id);
     }
 
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<User> update(@RequestBody User user) {
+
+        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+
         return Resp.ok(service.update(user));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<User> find(@PathVariable long id) {
+
+        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+
         User u = service.find(id);
         if (u == null) {
             return Resp.not(id);
@@ -60,6 +76,9 @@ public class UserController {
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
+
+        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+
         Page<User> pages = service.find(name, phone1, phone2, type, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         List<User> users = pages.getContent();
         users.forEach(v -> v.beforeReturn());
