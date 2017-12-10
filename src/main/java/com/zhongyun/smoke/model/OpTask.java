@@ -46,7 +46,7 @@ public class OpTask {
     @Transient
     private boolean expired;
     @Transient
-    private String projectName;
+    private Project project;
 
     public OpTask() {
     }
@@ -60,6 +60,22 @@ public class OpTask {
         this.projectId = projectId;
     }
 
+    public OpTask(long id, long eui, long postUser, Timestamp postTime, long opUser, Timestamp opTime, String cause, String handler, String worker,
+                  String status, long projectId, Timestamp mtime, Timestamp ctime) {
+        this.eui = eui;
+        this.postUser = postUser;
+        this.postTime = postTime;
+        this.opUser = opUser;
+        this.opTime = opTime;
+        this.cause = cause;
+        this.handler = handler;
+        this.worker = worker;
+        this.status = status;
+        this.projectId = projectId;
+        this.mtime = mtime;
+        this.ctime = ctime;
+    }
+
     public OpTask beforeReturn() {
         if (op != null) {
             op.setProjects(null);
@@ -70,13 +86,20 @@ public class OpTask {
         return this;
     }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
-    public String getProjectName() {
-        return projectName;
+    public Project getProject() {
+        return project;
     }
+//    public void setProjectName(String projectName) {
+//        this.projectName = projectName;
+//    }
+
+//    public String getProjectName() {
+//        return projectName;
+//    }
 
     public void setExpired(boolean expired) {
         this.expired = expired;

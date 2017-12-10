@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Created by caozhennan on 2017/11/30.
  */
-public interface OpTaskRepository extends JpaRepository<OpTask, Long> {
+public interface OpTaskRepository extends JpaRepository<OpTask, Long>, OpTaskOther {
     Page<OpTask> findByCauseIn(Set<String> cause, Pageable pageable);
     Page<OpTask> findByCauseInAndStatus(Set<String> cause, String status, Pageable pageable);
 

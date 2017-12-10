@@ -54,6 +54,17 @@ public class User {
     public User() {
     }
 
+    public User(long id, String name, String phone1, String phone2, String type, Timestamp mtime, Timestamp ctime) {
+        this.id = id;
+        this.name = name;
+        this.pass = pass;
+        this.phone1 = phone1;
+        this.phone2 = phone2;
+        this.type = type;
+        this.mtime = mtime;
+        this.ctime = ctime;
+    }
+
     public Timestamp getMtime() {
         return mtime;
     }

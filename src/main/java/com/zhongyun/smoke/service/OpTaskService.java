@@ -54,7 +54,7 @@ public class OpTaskService {
     }
 
     public OpTask find(long id) {
-        OpTask ot = opTaskRepository.findOne(id);
+        OpTask ot = opTaskRepository.findById(id);
         if (ot != null) {
             complete(ot);
         }
@@ -85,9 +85,9 @@ public class OpTaskService {
         ot.setSensor(sensorRepository.findByEui(ot.getEui()));
         Project p = projectRepository.findOne(ot.getProjectId());
         if (p == null) {
-            ot.setProjectName("");
+            ot.setProject(null);
         } else {
-            ot.setProjectName(p.getName());
+            ot.setProject(p);
         }
         ot.setExpired(System.currentTimeMillis() > Util.OPTASK_EXPIRED + ot.getCtime().getTime());
     }

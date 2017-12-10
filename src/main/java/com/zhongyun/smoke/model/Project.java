@@ -53,6 +53,20 @@ public class Project {
     public Project() {
     }
 
+    public Project(long id, String name, String province, String city, String district, String address, int roomCount, Timestamp mtime, Timestamp ctime) {
+        this.id = id;
+        this.name = name;
+        this.province = province;
+        this.city = city;
+        this.district = district;
+        this.address = address;
+        this.roomCount = roomCount;
+        this.sensorCount = sensorCount;
+        this.mtime = mtime;
+        this.ctime = ctime;
+        this.users = users;
+    }
+
     public void setSensorCount(long sensorCount) {
         this.sensorCount = sensorCount;
     }

@@ -34,9 +34,6 @@ public class ReportController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
         Map<String, String> ret = service.findByProjectId(id, start, end);
-        if (ret == null || ret.size() == 0) {
-            return Resp.not(id);
-        }
         return Resp.ok(ret);
     }
 }
