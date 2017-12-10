@@ -134,7 +134,8 @@ public class Frame {
         for (int i = 0; i < size; i++) {
             sb.append(String.format("%02x ", content[i]));
         }
-        return payload() + ":" + sb.toString() + size + "/" + getPayloadLen();
+//        return payload() + ":" + sb.toString() + size + "/" + getPayloadLen();
+        return payload();
     }
 
     public static void sendAuth(OutputStream out, String user, String pwd) throws IOException {
