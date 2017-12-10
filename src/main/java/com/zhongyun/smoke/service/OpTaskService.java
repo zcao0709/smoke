@@ -30,7 +30,7 @@ public class OpTaskService {
     public SensorRepository sensorRepository;
 
     @Autowired
-    public ProjectService projectService;
+    public ProjectRepository projectRepository;
 
     public OpTask add(OpTask opTask) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
@@ -83,7 +83,7 @@ public class OpTaskService {
         ot.setPoster(userRepository.findOne(ot.getPostUser()));
         ot.setOp(userRepository.findOne(ot.getOpUser()));
         ot.setSensor(sensorRepository.findByEui(ot.getEui()));
-        Project p = projectService.find(ot.getProjectId());
+        Project p = projectRepository.findOne(ot.getProjectId());
         if (p == null) {
             ot.setProjectName("");
         } else {
