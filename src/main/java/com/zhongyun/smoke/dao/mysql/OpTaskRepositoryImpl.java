@@ -35,7 +35,7 @@ public class OpTaskRepositoryImpl implements OpTaskOther {
             User u1 = new User(rs.getLong("u1id"), rs.getString("u1name"), rs.getString("u1p1"), rs.getString("u1p2"), rs.getString("u1type"),
                                rs.getTimestamp("u1mtime"), rs.getTimestamp("u1ctime"));
             User u2 = new User(rs.getLong("u2id"), rs.getString("u2name"), rs.getString("u2p2"), rs.getString("u2p2"), rs.getString("u2type"),
-                               rs.getTimestamp("u1mtime"), rs.getTimestamp("u1ctime"));
+                               rs.getTimestamp("u2mtime"), rs.getTimestamp("u2ctime"));
             Project p = new Project(rs.getLong("pid"), rs.getString("pname"), rs.getString("province"), rs.getString("city"), rs.getString("district"),
                                     rs.getString("address"), rs.getInt("room_count"), rs.getTimestamp("pmtime"), rs.getTimestamp("pctime"));
 
