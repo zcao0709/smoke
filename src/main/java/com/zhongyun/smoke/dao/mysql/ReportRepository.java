@@ -18,7 +18,7 @@ public class ReportRepository {
 
     public Map<String, String> findByProjectId(long projectId, long start, long end) {
         String sql =
-                "SELECT status, COUNT(ID) as count FROM op_task where project_id = :pid AND " +
+                "SELECT CONCAT(cause, '/', status), COUNT(ID) as count FROM op_task where project_id = :pid AND " +
                         "UNIX_TIMESTAMP(ctime) >= :start AND UNIX_TIMESTAMP(ctime) <= :end GROUP BY status";
         Map<String, Long> params = new HashMap<>();
         params.put("pid", projectId);
