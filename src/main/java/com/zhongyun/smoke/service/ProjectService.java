@@ -45,7 +45,7 @@ public class ProjectService {
         }
         validate(project);
         repository.updateById(project.getName(), project.getProvince(), project.getCity(), project.getDistrict(), project.getAddress(),
-                              project.getRoomCount(), project.getId());
+                              project.getRoomCount(), project.getPhone(), project.getId());
         return project;
     }
 
@@ -57,9 +57,10 @@ public class ProjectService {
         return p;
     }
 
-    public Page<Project> find(String name, String province, String city, String district, String address, Pageable pageable) {
-        Page<Project> pages = repository.findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLike(like(name), like(province), like(city),
-                                                                                                               like(district), like(address), pageable);
+    public Page<Project> find(String name, String province, String city, String district, String address, String phone, Pageable pageable) {
+        Page<Project> pages
+                = repository.findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLikeAndPhoneLike(like(name), like(province), like(city),
+                                                                                                               like(district), like(address), like(phone), pageable);
         pages.getContent().forEach(v -> complete(v));
         return pages;
     }

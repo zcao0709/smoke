@@ -39,6 +39,7 @@ public class Sensor {
     @Column(name = "gateway_id")
     private long gatewayId;  // refer to sensor.id
 
+    private String phone;
     private Timestamp mtime;
     private Timestamp ctime;
 
@@ -61,7 +62,7 @@ public class Sensor {
         }
     }
 
-    public Sensor(long id, String model, String room, String location, String guarantee, String status, long projectId) {
+    public Sensor(long id, String model, String room, String location, String guarantee, String status, long projectId, String phone) {
         this.id = id;
         this.model = model;
         this.room = room;
@@ -69,6 +70,15 @@ public class Sensor {
         this.guarantee = guarantee;
         this.status = status;
         this.projectId = projectId;
+        this.phone = phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     public void setOpCount(long opCount) {

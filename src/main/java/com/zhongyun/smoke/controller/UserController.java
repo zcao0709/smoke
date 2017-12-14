@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.controller;
 
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Resp;
 import com.zhongyun.smoke.model.User;
 import com.zhongyun.smoke.service.UserService;
@@ -71,15 +72,14 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<User>> find(
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "phone1", required = false) String phone1,
-            @RequestParam(value = "phone2", required = false) String phone2,
+            @RequestParam(value = "fullname", required = false) String fullname,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        Page<User> pages = service.find(name, phone1, phone2, type, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
+        Page<User> pages = service.find(name, fullname, type, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         List<User> users = pages.getContent();
         users.forEach(v -> v.beforeReturn());
 

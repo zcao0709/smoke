@@ -29,6 +29,7 @@ public class Project {
     @Transient
     private long sensorCount;
 
+    private String phone;
     private Timestamp mtime;
     private Timestamp ctime;
 
@@ -53,7 +54,7 @@ public class Project {
     public Project() {
     }
 
-    public Project(long id, String name, String province, String city, String district, String address, int roomCount, Timestamp mtime, Timestamp ctime) {
+    public Project(long id, String name, String province, String city, String district, String address, int roomCount, String phone, Timestamp mtime, Timestamp ctime) {
         this.id = id;
         this.name = name;
         this.province = province;
@@ -61,10 +62,17 @@ public class Project {
         this.district = district;
         this.address = address;
         this.roomCount = roomCount;
-        this.sensorCount = sensorCount;
+        this.phone = phone;
         this.mtime = mtime;
         this.ctime = ctime;
-        this.users = users;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     public void setSensorCount(long sensorCount) {

@@ -16,6 +16,7 @@ public class User {
     private long id;
 
     private String name;
+    private String fullname;
     private String pass;
     private String phone1;
     private String phone2;
@@ -54,15 +55,21 @@ public class User {
     public User() {
     }
 
-    public User(long id, String name, String phone1, String phone2, String type, Timestamp mtime, Timestamp ctime) {
+    public User(long id, String name, String fullname, String type, Timestamp mtime, Timestamp ctime) {
         this.id = id;
         this.name = name;
-        this.pass = pass;
-        this.phone1 = phone1;
-        this.phone2 = phone2;
+        this.name = fullname;
         this.type = type;
         this.mtime = mtime;
         this.ctime = ctime;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
+
+    public String getFullname() {
+        return fullname;
     }
 
     public Timestamp getMtime() {

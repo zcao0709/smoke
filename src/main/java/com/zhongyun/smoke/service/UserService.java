@@ -1,6 +1,8 @@
 package com.zhongyun.smoke.service;
 
 import static com.zhongyun.smoke.common.Util.*;
+
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.UserRepository;
 import com.zhongyun.smoke.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ public class UserService {
         if (StringUtils.isEmpty(user.getPass())) {
             throw new IllegalArgumentException("no user password");
         }
+        user.setPass(Util.ENCODER.encode(user.getPass()));
         validate(user);
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         user.setMtime(ts);
@@ -44,7 +47,12 @@ public class UserService {
             throw new IllegalArgumentException("no user id");
         }
         validate(user);
-        repository.updateById(user.getName(), user.getPhone1(), user.getPhone2(), user.getType(), user.getId());
+        if (user.getPass().length() == 0) {
+            repository.updateById(user.getName(), user.getFullname(), user.getType(), user.getId());
+        } else {
+            user.setPass(Util.ENCODER.encode(user.getPass()));
+            repository.updateByIdWithPass(user.getName(), user.getPass(), user.getFullname(), user.getType(), user.getId());
+        }
         return user;
     }
 
@@ -52,16 +60,13 @@ public class UserService {
         return repository.findOne(id);
     }
 
-    public Page<User> find(String name, String phone1, String phone2, String type, Pageable pageable) {
-        return repository.findByNameLikeAndPhone1LikeAndPhone2LikeAndTypeLike(like(name), like(phone1), like(phone2), like(type), pageable);
+    public Page<User> find(String name, String fullname, String type, Pageable pageable) {
+        return repository.findByNameLikeAndFullnameLikeAndTypeLike(like(name), like(fullname), like(type), pageable);
     }
 
     private void validate(User user) {
-        if (StringUtils.isEmpty(user.getPhone1())) {
-            user.setPhone1(user.getPhone2());
-            user.setPhone2("");
-        }
-        if (StringUtils.isEmpty(user.getName()) || StringUtils.isEmpty(user.getPhone1()) || StringUtils.isEmpty(user.getType())) {
+
+        if (StringUtils.isEmpty(user.getName()) || StringUtils.isEmpty(user.getFullname()) || StringUtils.isEmpty(user.getType())) {
             throw new IllegalArgumentException("not enough user info");
         }
     }

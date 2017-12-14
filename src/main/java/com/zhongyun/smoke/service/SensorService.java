@@ -39,7 +39,7 @@ public class SensorService {
             throw new IllegalArgumentException("no sensor id");
         }
         sensorRepository.updateById(sensor.getModel(), sensor.getRoom(), sensor.getLocation(), sensor.getGuarantee(), sensor.getStatus(),
-                                    sensor.getProjectId(), sensor.getId());
+                                    sensor.getProjectId(), sensor.getPhone(), sensor.getId());
         return sensor;
     }
 

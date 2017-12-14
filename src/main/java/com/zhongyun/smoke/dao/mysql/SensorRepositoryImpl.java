@@ -12,7 +12,7 @@ public class SensorRepositoryImpl implements SensorOther {
 
     @Override
     public int updateLatiAndLongiByGatewayId(long gatewayId) {
-        String update = "UPDATE sensor s1 INNER JOIN sensor s2 ON s1.gateway_id = s2.id SET s1.lati = s2.lati, s1.longi = s2.longi, mtime = NOW() WHERE s2.id = ?1";
+        String update = "UPDATE sensor s1 INNER JOIN sensor s2 ON s1.gateway_id = s2.id SET s1.lati = s2.lati, s1.longi = s2.longi, s1.mtime = NOW() WHERE s2.id = ?1";
         return em.createNativeQuery(update).setParameter(1, gatewayId).executeUpdate();
     }
 }

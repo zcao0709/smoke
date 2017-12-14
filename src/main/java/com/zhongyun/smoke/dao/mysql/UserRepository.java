@@ -12,9 +12,13 @@ import org.springframework.data.jpa.repository.Query;
  * Created by caozhennan on 2017/11/26.
  */
 public interface UserRepository extends JpaRepository<User, Long> {
-    Page<User> findByNameLikeAndPhone1LikeAndPhone2LikeAndTypeLike(String name, String phone1, String phone2, String type, Pageable pageable);
+    Page<User> findByNameLikeAndFullnameLikeAndTypeLike(String name, String fullname, String type, Pageable pageable);
 
     @Modifying
-    @Query(value = "UPDATE user SET name = ?1, phone1 = ?2, phone2 = ?3, type = ?4, mtime = NOW() WHERE id = ?5", nativeQuery = true)
-    void updateById(String name, String phone1, String phone2, String type, long id);
+    @Query(value = "UPDATE user SET name = ?1, fullname = ?2, type = ?3, mtime = NOW() WHERE id = ?4", nativeQuery = true)
+    void updateById(String name, String fullname, String type, long id);
+
+    @Modifying
+    @Query(value = "UPDATE user SET name = ?1, pass = ?2, fullname = ?3, type = ?4, mtime = NOW() WHERE id = ?5", nativeQuery = true)
+    void updateByIdWithPass(String name, String pass, String fullname, String type, long id);
 }

@@ -77,12 +77,13 @@ public class ProjectController {
             @RequestParam(value = "city", required = false) String city,
             @RequestParam(value = "district", required = false) String district,
             @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        Page<Project> pages = service.find(name, province, city, district, address, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
+        Page<Project> pages = service.find(name, province, city, district, address, phone, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         List<Project> ps = pages.getContent();
         ps.forEach(v -> v.beforeReturn());
 

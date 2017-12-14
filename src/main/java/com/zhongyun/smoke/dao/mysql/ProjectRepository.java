@@ -11,9 +11,11 @@ import org.springframework.data.jpa.repository.Query;
  * Created by caozhennan on 2017/11/26.
  */
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-    Page<Project> findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLike(String name, String province, String city, String district, String address, Pageable pageable);
+    Page<Project> findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLikeAndPhoneLike(String name, String province, String city, String district,
+                                                                                                    String address, String phone, Pageable pageable);
 
     @Modifying
-    @Query(value = "UPDATE project SET name = ?1, province = ?2, city = ?3, district = ?4, address = ?5, room_count = ?6, mtime = NOW() WHERE id = ?7", nativeQuery = true)
-    void updateById(String name, String province, String city, String district, String address, int roomCount, long id);
+    @Query(value = "UPDATE project SET name = ?1, province = ?2, city = ?3, district = ?4, address = ?5, room_count = ?6, " +
+            "phone = ?7, mtime = NOW() WHERE id = ?8", nativeQuery = true)
+    void updateById(String name, String province, String city, String district, String address, int roomCount, String phone, long id);
 }

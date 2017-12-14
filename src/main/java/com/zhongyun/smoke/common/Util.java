@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhongyun.smoke.model.payload.ImmeApp;
 import com.zhongyun.smoke.model.payload.Payload;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -14,6 +16,12 @@ import java.util.Set;
  * Created by caozhennan on 2017/11/16.
  */
 public class Util {
+
+    public static final String USER_ADMIN = "管理员";
+    public static final String USER_OP = "运维";
+    public static final String USER_USER = "用户";
+
+    public static final PasswordEncoder ENCODER = new StandardPasswordEncoder("zhy_sm");
 
     public static final String SENSOR_NORMAL = "正常";
     public static final String SENSOR_UNKNOWN = "未知";

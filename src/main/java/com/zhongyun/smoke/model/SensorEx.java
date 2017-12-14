@@ -29,6 +29,7 @@ public class SensorEx {
 
     private long projectId;
 
+    private String phone;
     private Timestamp mtime;
     private Timestamp ctime;
 
@@ -39,8 +40,8 @@ public class SensorEx {
             return null;
         }
         return new SensorEx(s.getId(), String.format("%X", s.getEui()), s.getModel(), s.getType(), s.getRoom(), s.getLocation(), s.getLati(),
-                            s.getLongi(), s.getInstallTime(), s.getGuarantee(), s.getStatus(), s.getProjectId(), s.getMtime(), s.getCtime(),
-                            s.getOpCount());
+                            s.getLongi(), s.getInstallTime(), s.getGuarantee(), s.getStatus(), s.getProjectId(), s.getPhone(), s.getMtime(),
+                            s.getCtime(), s.getOpCount());
     }
 
     public static List<SensorEx> valueOf(List<Sensor> sensors) {
@@ -50,8 +51,8 @@ public class SensorEx {
         return sensors.stream().map(v -> SensorEx.valueOf(v)).collect(Collectors.toList());
     }
 
-    public SensorEx(long id, String eui, String model, String type, String room, String location, String lati, String longi,
-                    Timestamp installTime, String guarantee, String status, long projectId, Timestamp mtime, Timestamp ctime, long opCount) {
+    public SensorEx(long id, String eui, String model, String type, String room, String location, String lati, String longi, Timestamp installTime,
+                    String guarantee, String status, long projectId, String phone, Timestamp mtime, Timestamp ctime, long opCount) {
         this.id = id;
         this.eui = eui;
         this.model = model;
@@ -64,6 +65,7 @@ public class SensorEx {
         this.guarantee = guarantee;
         this.status = status;
         this.projectId = projectId;
+        this.phone = phone;
         this.mtime = mtime;
         this.ctime = ctime;
         this.opCount = opCount;
@@ -73,7 +75,15 @@ public class SensorEx {
     }
 
     public Sensor toSensor() {
-        return new Sensor(id, model, room, location, guarantee, status, projectId);
+        return new Sensor(id, model, room, location, guarantee, status, projectId, phone);
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 
     public void setId(long id) {
