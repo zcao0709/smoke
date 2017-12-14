@@ -21,7 +21,6 @@ public class Sensor {
     private long eui;
     private String model;
     private String type;
-    private String room = "";
     private String location = "";
 
     private String lati = "0";
@@ -62,10 +61,9 @@ public class Sensor {
         }
     }
 
-    public Sensor(long id, String model, String room, String location, String guarantee, String status, long projectId, String phone) {
+    public Sensor(long id, String model, String location, String guarantee, String status, long projectId, String phone) {
         this.id = id;
         this.model = model;
-        this.room = room;
         this.location = location;
         this.guarantee = guarantee;
         this.status = status;
@@ -129,10 +127,6 @@ public class Sensor {
         return type;
     }
 
-    public String getRoom() {
-        return room;
-    }
-
     public String getLocation() {
         return location;
     }
@@ -175,10 +169,6 @@ public class Sensor {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public void setRoom(String room) {
-        this.room = room;
     }
 
     public void setLocation(String location) {

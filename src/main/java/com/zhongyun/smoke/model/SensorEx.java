@@ -16,7 +16,6 @@ public class SensorEx {
     private String eui;
     private String model;
     private String type;
-    private String room;
     private String location;
 
     private String lati;
@@ -39,7 +38,7 @@ public class SensorEx {
         if (s == null) {
             return null;
         }
-        return new SensorEx(s.getId(), String.format("%X", s.getEui()), s.getModel(), s.getType(), s.getRoom(), s.getLocation(), s.getLati(),
+        return new SensorEx(s.getId(), String.format("%X", s.getEui()), s.getModel(), s.getType(), s.getLocation(), s.getLati(),
                             s.getLongi(), s.getInstallTime(), s.getGuarantee(), s.getStatus(), s.getProjectId(), s.getPhone(), s.getMtime(),
                             s.getCtime(), s.getOpCount());
     }
@@ -51,13 +50,12 @@ public class SensorEx {
         return sensors.stream().map(v -> SensorEx.valueOf(v)).collect(Collectors.toList());
     }
 
-    public SensorEx(long id, String eui, String model, String type, String room, String location, String lati, String longi, Timestamp installTime,
+    public SensorEx(long id, String eui, String model, String type, String location, String lati, String longi, Timestamp installTime,
                     String guarantee, String status, long projectId, String phone, Timestamp mtime, Timestamp ctime, long opCount) {
         this.id = id;
         this.eui = eui;
         this.model = model;
         this.type = type;
-        this.room = room;
         this.location = location;
         this.lati = lati;
         this.longi = longi;
@@ -75,7 +73,7 @@ public class SensorEx {
     }
 
     public Sensor toSensor() {
-        return new Sensor(id, model, room, location, guarantee, status, projectId, phone);
+        return new Sensor(id, model, location, guarantee, status, projectId, phone);
     }
 
     public void setPhone(String phone) {
@@ -100,10 +98,6 @@ public class SensorEx {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public void setRoom(String room) {
-        this.room = room;
     }
 
     public void setLocation(String location) {
@@ -160,10 +154,6 @@ public class SensorEx {
 
     public String getType() {
         return type;
-    }
-
-    public String getRoom() {
-        return room;
     }
 
     public String getLocation() {

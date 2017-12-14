@@ -1,6 +1,5 @@
 package com.zhongyun.smoke.dao.mysql;
 
-import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Sensor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,15 +14,14 @@ import java.util.Set;
 public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOther {
     Sensor findByEui(long eui);
     List<Sensor> findByProjectIdAndType(long projectId, String type);
-//    List<Sensor> findByProjectIdAndTypeAndStatusIsNot(long projectId, String type, String status);
     List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> statuses);
     List<Sensor> findByType(String type);
     long countByProjectIdAndType(long projectId, String type);
 
     @Modifying
-    @Query(value = "UPDATE sensor SET model = ?1, room = ?2, location = ?3, guarantee = ?4, status = ?5, project_id = ?6, phone = ?7, mtime = NOW() " +
-            "WHERE id = ?8", nativeQuery = true)
-    void updateById(String model, String room, String location, String guarantee, String status, long projectId, String phone, long id);
+    @Query(value = "UPDATE sensor SET model = ?1, location = ?2, guarantee = ?3, status = ?4, project_id = ?5, phone = ?6, mtime = NOW() " +
+            "WHERE id = ?7", nativeQuery = true)
+    void updateById(String model, String location, String guarantee, String status, long projectId, String phone, long id);
 
     @Modifying
     @Query(value = "UPDATE sensor SET status = ?1, gateway_id = ?2, mtime = NOW() WHERE id = ?3", nativeQuery = true)
