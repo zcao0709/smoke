@@ -36,24 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .formLogin()
-//                .loginPage("/login")
-//                .and()
-//                .logout()
-//                .logoutSuccessUrl("/")
-//                .and()
-//                .rememberMe()
-//                .tokenRepository(new InMemoryTokenRepositoryImpl())
-//                .tokenValiditySeconds(2419200)
-//                .key("spittrKey")
-//                .and()
-//                .httpBasic()
-//                .realmName("")
-//                .and()
-//                .authorizeRequests()
-//                .regexMatchers(".*/user.*").authenticated();
-        http.formLogin()
+        http.formLogin().loginPage("/login").successForwardUrl("/html/index").failureForwardUrl("/login")
                 .and()
 //                .httpBasic()
 //                .and()

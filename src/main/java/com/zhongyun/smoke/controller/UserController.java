@@ -40,6 +40,12 @@ public class UserController {
         return Resp.ok(service.add(user));
     }
 
+//    @RequestMapping(method = RequestMethod.POST)
+//    public String post() {
+//        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+//        return "login success";
+//    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<String> delete(@PathVariable long id) {
 
