@@ -36,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+//        http.formLogin().loginPage("/login.html").successForwardUrl("/api/user/v1").failureForwardUrl("/login.html")
         http.formLogin().loginPage("/login.html").successForwardUrl("/html/index.html").failureForwardUrl("/login.html")
                     .loginProcessingUrl("/login")
                 .and()
@@ -60,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                     .regexMatchers("/api/report/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP, Util.USER_USER)
                 .and()
-                .logout().logoutSuccessUrl("/")
+                .logout().logoutSuccessUrl("/login.html")
 //                .and()
 //                .requiresChannel()
 //                    .regexMatchers(".*").requiresSecure()

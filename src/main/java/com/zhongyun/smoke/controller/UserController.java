@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +62,19 @@ public class UserController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
         return Resp.ok(service.update(user));
+    }
+
+    @RequestMapping(value = "logined", method = RequestMethod.GET)
+    public ResponseEntity<User> find() {
+
+        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        User u = service.find(name);
+        if (u == null) {
+            return Resp.ser("no user " + name);
+        }
+        return Resp.ok(u.beforeReturn());
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
