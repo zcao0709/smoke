@@ -16,10 +16,8 @@ public class User {
     private long id;
 
     private String name;
-    private String fullname;
+    private String fullname = "";
     private String pass;
-    private String phone1;
-    private String phone2;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_project", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -96,14 +94,6 @@ public class User {
         return pass;
     }
 
-    public String getPhone1() {
-        return phone1;
-    }
-
-    public String getPhone2() {
-        return phone2;
-    }
-
     public List<Project> getProjects() {
         return projects;
     }
@@ -122,14 +112,6 @@ public class User {
 
     public void setPass(String pass) {
         this.pass = pass;
-    }
-
-    public void setPhone1(String phone1) {
-        this.phone1 = phone1;
-    }
-
-    public void setPhone2(String phone2) {
-        this.phone2 = phone2;
     }
 
     public void setProjects(List<Project> projects) {

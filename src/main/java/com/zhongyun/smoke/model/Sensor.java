@@ -38,7 +38,7 @@ public class Sensor {
     @Column(name = "gateway_id")
     private long gatewayId;  // refer to sensor.id
 
-    private String phone;
+    private String phone = "";
     private Timestamp mtime;
     private Timestamp ctime;
 

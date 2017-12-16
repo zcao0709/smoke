@@ -53,9 +53,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
 //                .authorizeRequests()
 //                .regexMatchers(".*/user.*").authenticated();
-        http//.formLogin().and()
-                .httpBasic()
+        http.formLogin()
                 .and()
+//                .httpBasic()
+//                .and()
                 .authorizeRequests()
                     .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
                     .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
@@ -80,9 +81,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .requiresChannel()
 //                    .regexMatchers(".*").requiresSecure()
                 .and()
-                    .rememberMe()
+                .rememberMe()
                     .tokenRepository(new InMemoryTokenRepositoryImpl())
                     .tokenValiditySeconds(2419200)
-                    .key("zhongyun");
+                    .key("zhongyun")
+                .and()
+                .csrf()
+                    .disable();
     }
 }

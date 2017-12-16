@@ -29,7 +29,7 @@ public class Project {
     @Transient
     private long sensorCount;
 
-    private String phone;
+    private String phone = "";
     private Timestamp mtime;
     private Timestamp ctime;
 
