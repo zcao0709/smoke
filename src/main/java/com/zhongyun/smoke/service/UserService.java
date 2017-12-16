@@ -60,6 +60,10 @@ public class UserService {
         return repository.findOne(id);
     }
 
+    public User find(String name) {
+        return repository.findByName(name);
+    }
+
     public Page<User> find(String name, String fullname, String type, Pageable pageable) {
         return repository.findByNameLikeAndFullnameLikeAndTypeLike(like(name), like(fullname), like(type), pageable);
     }

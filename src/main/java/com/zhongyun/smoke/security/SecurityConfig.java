@@ -36,7 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin().loginPage("/login").successForwardUrl("/html/index").failureForwardUrl("/login")
+        http.formLogin().loginPage("/login.html").successForwardUrl("/html/index.html").failureForwardUrl("/login.html")
+                    .loginProcessingUrl("/login")
                 .and()
 //                .httpBasic()
 //                .and()

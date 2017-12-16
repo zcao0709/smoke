@@ -75,6 +75,15 @@ public class UserController {
         return Resp.ok(u.beforeReturn());
     }
 
+//    @RequestMapping(method = RequestMethod.GET)
+//    public ResponseEntity<User> find(
+//            @RequestParam(value = "name") String name) {
+//
+//        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+//
+//        return Resp.ok(service.find(name));
+//    }
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<User>> find(
             @RequestParam(value = "name", required = false) String name,

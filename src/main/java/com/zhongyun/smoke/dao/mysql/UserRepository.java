@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.Query;
  * Created by caozhennan on 2017/11/26.
  */
 public interface UserRepository extends JpaRepository<User, Long> {
+    User findByName(String name);
+
     Page<User> findByNameLikeAndFullnameLikeAndTypeLike(String name, String fullname, String type, Pageable pageable);
 
     @Modifying
