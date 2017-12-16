@@ -64,7 +64,7 @@ public class UserController {
         return Resp.ok(service.update(user));
     }
 
-    @RequestMapping(value = "logined", method = RequestMethod.GET)
+    @RequestMapping(value = "/logined", method = RequestMethod.GET)
     public ResponseEntity<User> find() {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
