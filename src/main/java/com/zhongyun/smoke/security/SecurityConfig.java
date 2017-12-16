@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.formLogin().loginPage("/login.html").successForwardUrl("http://localhost:8191/api/user/v1").failureForwardUrl("/login.html?error=用户名或密码错误")
-        http.formLogin().loginPage("/login.html").successForwardUrl("/html/index.html").failureForwardUrl("/login.html?error=用户名或密码错误")
+        http.formLogin().loginPage("/login.html").defaultSuccessUrl("/html/index.html").failureUrl("/login.html?error=用户名或密码错误")
                     .loginProcessingUrl("/login")
                 .and()
 //                .httpBasic()
