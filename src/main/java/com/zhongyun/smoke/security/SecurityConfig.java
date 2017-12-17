@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.formLogin().loginPage("/login.html").successForwardUrl("http://localhost:8191/api/user/v1").failureForwardUrl("/login.html?error=用户名或密码错误")
-        http.formLogin().loginPage("/login.html").defaultSuccessUrl("/redirect").failureUrl("/login.html?error=用户名或密码错误")
+        http.formLogin().loginPage("/login.html").defaultSuccessUrl("/api/redirect").failureUrl("/login.html?error=用户名或密码错误")
                     .loginProcessingUrl("/login").permitAll()
                 .and()
 //                .httpBasic()
@@ -45,7 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                     .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
                     .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
-                    .regexMatchers(HttpMethod.GET, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
+//                    .regexMatchers(HttpMethod.GET, "/api/user/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_USER, Util.USER_OP)
+                    .regexMatchers(HttpMethod.GET, "/api/user/.*").authenticated()
                     .regexMatchers(HttpMethod.PUT, "/api/user/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_USER)
 
                     .regexMatchers(HttpMethod.POST, "/api/project/.*").hasAuthority(Util.USER_ADMIN)
