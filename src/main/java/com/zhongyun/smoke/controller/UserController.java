@@ -70,6 +70,8 @@ public class UserController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        logger.info("username in cookie: " + name);
+
         User u = service.find(name);
         if (u == null) {
             return Resp.ser("no user " + name);
