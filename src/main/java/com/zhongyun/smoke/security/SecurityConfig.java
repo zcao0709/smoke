@@ -43,6 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .httpBasic()
 //                .and()
                 .authorizeRequests()
+                    .regexMatchers(HttpMethod.POST, "/login").permitAll()
+
                     .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
                     .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
                     .regexMatchers(HttpMethod.GET, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
