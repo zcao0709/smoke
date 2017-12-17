@@ -64,11 +64,6 @@ public class UserController {
         return Resp.ok(service.update(user));
     }
 
-    @RequestMapping(value = "redirect", method = RequestMethod.GET)
-    public String redirect() {
-        return "redirect:/html/index.html";
-    }
-
     @RequestMapping(value = "/logined", method = RequestMethod.GET)
     public ResponseEntity<User> find() {
 
