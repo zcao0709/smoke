@@ -20,7 +20,7 @@ public class RedirectController {
 
     private static final Logger logger = LoggerFactory.getLogger("RedirectController");
 
-    @RequestMapping(value = "/redirect", method = RequestMethod.GET)
+    @RequestMapping(value = "/redirect", method = RequestMethod.POST)
     public String redirect() {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
