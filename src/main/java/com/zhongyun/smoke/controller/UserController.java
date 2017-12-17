@@ -76,6 +76,7 @@ public class UserController {
         if (u == null) {
             return Resp.ser("no user " + name);
         }
+        logger.info("user: " + u.getName() + ", " + u.getFullname());
         return Resp.ok(u.beforeReturn());
     }
 
