@@ -35,13 +35,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.formLogin().loginPage("/login.html").successForwardUrl("http://localhost:8191/api/user/v1").failureForwardUrl("/login.html?error=用户名或密码错误")
-        http.formLogin().loginPage("/login.html").defaultSuccessUrl("/html/index.html").failureUrl("/login.html?error=用户名或密码错误")
-                    .loginProcessingUrl("/login")
+        http.formLogin().loginPage("/login.html").defaultSuccessUrl("/api/user/v1/redirect").failureUrl("/login.html?error=用户名或密码错误")
+                    .loginProcessingUrl("/login").permitAll()
                 .and()
 //                .httpBasic()
 //                .and()
                 .authorizeRequests()
-                    .regexMatchers(HttpMethod.POST, "/html/.*").authenticated()
+                    .regexMatchers("/html/index.*").authenticated()
 
                     .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
                     .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
