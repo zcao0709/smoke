@@ -46,6 +46,34 @@ public class ApplicationConfig {
     @Value("${mysql.pass}")
     private String mysqlPass;
 
+    @Value("${login.page}")
+    private String loginPage;
+
+    @Value("${login.process}")
+    private String loginProcess;
+
+    @Value("${login.success}")
+    private String loginSuccess;
+
+    @Value("${login.failure}")
+    private String loginFailure;
+
+    public String getLoginPage() {
+        return loginPage;
+    }
+
+    public String getLoginProcess() {
+        return loginProcess;
+    }
+
+    public String getLoginSuccess() {
+        return loginSuccess;
+    }
+
+    public String getLoginFailure() {
+        return loginFailure;
+    }
+
     public String getAserverIp() {
         return aserverIp;
     }

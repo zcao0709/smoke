@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.security;
 
+import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private ApplicationConfig config;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication().dataSource(dataSource)
@@ -34,15 +38,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.formLogin().loginPage("/login.html").successForwardUrl("http://localhost:8191/api/user/v1").failureForwardUrl("/login.html?error=用户名或密码错误")
-        http.formLogin().loginPage("/login.html").successForwardUrl("/api/redirect").failureUrl("/login.html?error=用户名或密码错误")
-                    .loginProcessingUrl("/login").permitAll()
+        http.formLogin().loginPage(config.getLoginPage()).loginProcessingUrl(config.getLoginProcess())
+                    .defaultSuccessUrl(config.getLoginSuccess()).failureUrl(config.getLoginFailure()).permitAll()
                 .and()
 //                .httpBasic()
 //                .and()
                 .authorizeRequests()
-                    .regexMatchers("/html/index.*").authenticated()
-
                     .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
                     .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
 //                    .regexMatchers(HttpMethod.GET, "/api/user/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_USER, Util.USER_OP)
