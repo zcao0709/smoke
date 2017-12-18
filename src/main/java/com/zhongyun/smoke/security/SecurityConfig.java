@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .rememberMe()
                     .tokenRepository(new InMemoryTokenRepositoryImpl())
-                    .tokenValiditySeconds(2419200)
+                    .tokenValiditySeconds(3600 * 24)
                     .key("zhongyun")
                 .and()
                 .csrf()
