@@ -58,6 +58,9 @@ public class ApplicationConfig {
     @Value("${login.failure}")
     private String loginFailure;
 
+    @Value("${logout.process}")
+    private String logoutProcess;
+
     public String getLoginPage() {
         return loginPage;
     }
@@ -72,6 +75,10 @@ public class ApplicationConfig {
 
     public String getLoginFailure() {
         return loginFailure;
+    }
+
+    public String getLogoutProcess() {
+        return logoutProcess;
     }
 
     public String getAserverIp() {
