@@ -70,7 +70,7 @@ public class UserService {
 
     private void validate(User user) {
 
-        if (StringUtils.isEmpty(user.getName()) || StringUtils.isEmpty(user.getFullname()) || StringUtils.isEmpty(user.getType())) {
+        if (StringUtils.isEmpty(user.getName()) || StringUtils.isEmpty(user.getType())) {
             throw new IllegalArgumentException("not enough user info");
         }
     }

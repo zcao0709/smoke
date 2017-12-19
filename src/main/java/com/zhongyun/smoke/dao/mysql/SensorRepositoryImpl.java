@@ -1,7 +1,10 @@
 package com.zhongyun.smoke.dao.mysql;
 
+import com.zhongyun.smoke.model.Sensor;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  * Created by caozhennan on 2017/12/8.
