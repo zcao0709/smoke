@@ -22,6 +22,7 @@ public class Sensor {
     @JsonProperty("eui10")
     private long eui;
 
+    @Transient
     @JsonProperty("eui")
     private String eui16;
 
