@@ -1,6 +1,6 @@
 package com.zhongyun.smoke.service;
 
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.Sensor;
@@ -77,7 +77,7 @@ public class SensorService {
     }
 
     public List<Sensor> findByProjectId(long projectId) {
-        List<Sensor> sensors = sensorRepository.findByProjectIdAndType(projectId, Util.SENSOR_SMOKE);
+        List<Sensor> sensors = sensorRepository.findByProjectIdAndType(projectId, SENSOR_SMOKE);
         sensors.forEach(v -> complete(v));
         return sensors;
     }
@@ -86,15 +86,15 @@ public class SensorService {
                                  String status, String phone, String ctimeStart, String ctimeEnd, Pageable pageable) {
         if (projectId < 0) {
             return sensorRepository.findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
-                    (eui, model, type, location, guarantee, status, phone, ctimeStart, ctimeEnd, pageable);
+                    (like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), ctimeStart, ctimeEnd, pageable);
         } else {
             return sensorRepository.findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
-                    (projectId, eui, model, type, location, guarantee, status, phone, ctimeStart, ctimeEnd, pageable);
+                    (projectId, like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), ctimeStart, ctimeEnd, pageable);
         }
     }
 
     public List<Sensor> findAlarmedByProjectId(long projectId) {
-        List<Sensor> sensors = sensorRepository.findByProjectIdAndTypeAndStatusIsIn(projectId, Util.SENSOR_SMOKE, Util.CriticalSensorStatus);
+        List<Sensor> sensors = sensorRepository.findByProjectIdAndTypeAndStatusIsIn(projectId, SENSOR_SMOKE, CriticalSensorStatus);
         sensors.forEach(v -> complete(v));
         return sensors;
     }
