@@ -61,7 +61,7 @@ public class UserService {
         return user;
     }
 
-    public User find(long id) {
+    public User findOne(long id) {
         return repository.findOne(id);
     }
 
@@ -69,7 +69,7 @@ public class UserService {
         return repository.findByName(name);
     }
 
-    public Page<User> find(String name, String fullname, String type, Pageable pageable) {
+    public Page<User> findLike(String name, String fullname, String type, Pageable pageable) {
         return repository.findByNameLikeAndFullnameLikeAndTypeLike(like(name), like(fullname), like(type), pageable);
     }
 

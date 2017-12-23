@@ -5,6 +5,8 @@ import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.Sensor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ public class SensorService {
 
     public Sensor add(Sensor sensor) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
+        sensor.setEui16(String.format("%X", sensor.getEui()));
         sensor.setMtime(ts);
         sensor.setCtime(ts);
         return sensorRepository.save(sensor);
@@ -77,6 +80,17 @@ public class SensorService {
         List<Sensor> sensors = sensorRepository.findByProjectIdAndType(projectId, Util.SENSOR_SMOKE);
         sensors.forEach(v -> complete(v));
         return sensors;
+    }
+
+    public Page<Sensor> findLike(long projectId, String eui, String model, String type, String location, String guarantee,
+                                 String status, String phone, String ctimeStart, String ctimeEnd, Pageable pageable) {
+        if (projectId < 0) {
+            return sensorRepository.findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
+                    (eui, model, type, location, guarantee, status, phone, ctimeStart, ctimeEnd, pageable);
+        } else {
+            return sensorRepository.findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
+                    (projectId, eui, model, type, location, guarantee, status, phone, ctimeStart, ctimeEnd, pageable);
+        }
     }
 
     public List<Sensor> findAlarmedByProjectId(long projectId) {

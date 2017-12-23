@@ -22,7 +22,6 @@ public class Sensor {
     @JsonProperty("eui10")
     private long eui;
 
-    @Transient
     @JsonProperty("eui")
     private String eui16;
 
@@ -79,7 +78,7 @@ public class Sensor {
     }
 
     public Sensor beforeReturn() {
-        setEui16(String.format("%X", getEui()));
+//        setEui16(String.format("%X", getEui()));
         return this;
     }
 

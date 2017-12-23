@@ -1,6 +1,8 @@
 package com.zhongyun.smoke.dao.mysql;
 
 import com.zhongyun.smoke.model.Sensor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +19,12 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> statuses);
     List<Sensor> findByType(String type);
     long countByProjectIdAndType(long projectId, String type);
+    Page<Sensor> findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
+            String eui, String model, String type, String location, String gurantee, String status, String phone,
+            String installTimeStart, String installTimeEnd, Pageable pageable);
+    Page<Sensor> findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
+            long projectId, String eui, String model, String type, String location, String gurantee, String status, String phone,
+            String installTimeStart, String installTimeEnd, Pageable pageable);
 
     @Modifying
     @Query(value = "UPDATE sensor SET project_id = 0 WHERE project_id = ?1", nativeQuery = true)

@@ -7,6 +7,11 @@ import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +52,7 @@ public class SensorController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Sensor> find(@PathVariable long id) {
+    public ResponseEntity<Sensor> findOne(@PathVariable long id) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
@@ -55,20 +60,37 @@ public class SensorController {
         if (s == null) {
             return Resp.not(id);
         }
-//        return Resp.ok(Sensor.valueOf(service.find(id)));
+//        return Resp.ok(Sensor.valueOf(service.findOne(id)));
         return Resp.ok(service.find(id).beforeReturn());
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Sensor>> findByProjectId(
-            @RequestParam(value = "project") long projectId) {
+    public ResponseEntity<List<Sensor>> findLike(
+            @RequestParam(value = "project", defaultValue = "-1") long projectId,
+            @RequestParam(value = "eui", required = false) String eui,
+            @RequestParam(value = "model", required = false) String model,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "location", required = false) String location,
+            @RequestParam(value = "ctime_start", required = false) String ctimeStart,
+            @RequestParam(value = "ctime_end", required = false) String ctimeEnd,
+            @RequestParam(value = "guarantee", required = false) String guarantee,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "_page", defaultValue = "1") int page,
+            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
 //        return Resp.ok(Sensor.valueOf(service.findByProjectId(projectId)));
-        List<Sensor> sensors = service.findByProjectId(projectId);
+        Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, ctimeStart, ctimeEnd,
+                                              new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
+        List<Sensor> sensors = pages.getContent();
         sensors.forEach(v -> v.beforeReturn());
-        return Resp.ok(sensors);
+
+        HttpHeaders hs = new HttpHeaders();
+        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
+
+        return new ResponseEntity<>(sensors, hs, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/alarm", method = RequestMethod.GET)

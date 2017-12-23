@@ -48,6 +48,7 @@ COMMENT = 'user-project relationship table';
 CREATE TABLE IF NOT EXISTS `smoke_test`.`sensor` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `eui` BIGINT UNSIGNED NOT NULL,
+  `eui16` VARCHAR(16) NOT NULL,
   `model` VARCHAR(16) NOT NULL,
   `type` VARCHAR(16) NOT NULL,
   `location` VARCHAR(64) NOT NULL,

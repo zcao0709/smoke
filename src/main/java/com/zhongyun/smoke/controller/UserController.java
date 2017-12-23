@@ -1,6 +1,5 @@
 package com.zhongyun.smoke.controller;
 
-import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Resp;
 import com.zhongyun.smoke.model.User;
 import com.zhongyun.smoke.service.UserService;
@@ -85,7 +84,7 @@ public class UserController {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        User u = service.find(id);
+        User u = service.findOne(id);
         if (u == null) {
             return Resp.not(id);
         }
@@ -93,12 +92,12 @@ public class UserController {
     }
 
 //    @RequestMapping(method = RequestMethod.GET)
-//    public ResponseEntity<User> find(
+//    public ResponseEntity<User> findOne(
 //            @RequestParam(value = "name") String name) {
 //
 //        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 //
-//        return Resp.ok(service.find(name));
+//        return Resp.ok(service.findOne(name));
 //    }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -111,7 +110,7 @@ public class UserController {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        Page<User> pages = service.find(name, fullname, type, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
+        Page<User> pages = service.findLike(name, fullname, type, new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         List<User> users = pages.getContent();
         users.forEach(v -> v.beforeReturn());
 
