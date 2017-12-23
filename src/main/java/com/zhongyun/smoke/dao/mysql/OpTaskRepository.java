@@ -23,4 +23,5 @@ public interface OpTaskRepository extends JpaRepository<OpTask, Long>, OpTaskOth
 
     long countByEui(long eui);
     Page<OpTask> findByEui(long eui, Pageable pageable);
+    Page<OpTask> findByProjectId(long projectId, Pageable pageable);
 }

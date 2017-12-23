@@ -75,8 +75,8 @@ public class SensorController {
             @RequestParam(value = "model", required = false) String model,
             @RequestParam(value = "type", defaultValue = SENSOR_SMOKE) String type,
             @RequestParam(value = "location", required = false) String location,
-            @RequestParam(value = "ctime_start", defaultValue = "2017-1-1 00:00:00") String ctimeStart,
-            @RequestParam(value = "ctime_end", defaultValue = "3017-12-31 23:59:59") String ctimeEnd,
+            @RequestParam(value = "ctime_start", defaultValue = "0") long ctimeStart,
+            @RequestParam(value = "ctime_end", defaultValue = "0") long ctimeEnd,
             @RequestParam(value = "guarantee", required = false) String guarantee,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "phone", required = false) String phone,
@@ -86,10 +86,13 @@ public class SensorController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
 //        return Resp.ok(Sensor.valueOf(service.findByProjectId(projectId)));
-        DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date start = f.parse(ctimeStart);
-        Date end = f.parse(ctimeEnd);
-        Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, start, end,
+        if (ctimeStart == 0) {
+            ctimeStart = DEF_START_TS;
+        }
+        if (ctimeEnd == 0) {
+            ctimeEnd = DEF_END_TS;
+        }
+        Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, ctimeStart, ctimeEnd,
                                               new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         List<Sensor> sensors = pages.getContent();
         sensors.forEach(v -> v.beforeReturn());

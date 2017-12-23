@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,6 +17,9 @@ import java.util.Set;
  * Created by caozhennan on 2017/11/16.
  */
 public class Util {
+
+    public static final long DEF_START_TS = 1510818350000L; // in ms
+    public static final long DEF_END_TS = 33067727150000L; // in ms
 
     public static final String USER_ADMIN = "管理员";
     public static final String USER_OP = "运维";

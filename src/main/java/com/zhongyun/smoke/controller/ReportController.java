@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.controller;
 
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Resp;
 import com.zhongyun.smoke.service.ReportService;
 import org.slf4j.Logger;
@@ -26,14 +27,20 @@ public class ReportController {
     private static final Logger logger = LoggerFactory.getLogger("ReportController");
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Map<String, String>> findByProjectId(
-            @RequestParam(value = "project") long id,
-            @RequestParam(value = "start") long start,
-            @RequestParam(value = "end") long end) {
+    public ResponseEntity<Map<String, Map<String, String>>> findByProjectId(
+            @RequestParam(value = "project", defaultValue = "-1") long id,
+            @RequestParam(value = "start", defaultValue = "0") long start,
+            @RequestParam(value = "end", defaultValue = "0") long end) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        Map<String, String> ret = service.findByProjectId(id, start, end);
+        if (start == 0) {
+            start = Util.DEF_START_TS;
+        }
+        if (end == 0) {
+            end = Util.DEF_END_TS;
+        }
+        Map<String, Map<String, String>> ret = service.findByProjectId(id, start, end);
         return Resp.ok(ret);
     }
 }

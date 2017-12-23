@@ -14,7 +14,7 @@ public class ReportService {
     @Autowired
     private ReportRepository reportRepository;
 
-    public Map<String, String> findByProjectId(long projectId, long start, long end) {
+    public Map<String, Map<String, String>> findByProjectId(long projectId, long start, long end) {
         return reportRepository.findByProjectId(projectId, start, end);
     }
 }

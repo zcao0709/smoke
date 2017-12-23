@@ -66,6 +66,7 @@ public class OpTaskController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<OpTask>> findAll(
             @RequestParam(value = "eui", defaultValue = "0") long eui,
+            @RequestParam(value = "project", defaultValue = "-1") long projectId,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 
@@ -77,6 +78,8 @@ public class OpTaskController {
         Page<OpTask> pages;
         if (eui != 0) {
             pages = service.findBaseByEui(eui, new PageRequest(page - 1, limit, new Sort(o1, o2)));
+        } else if (projectId != -1) {
+            pages = service.findBaseByProjectId(projectId, new PageRequest(page - 1, limit, new Sort(o1, o2)));
         } else {
             pages = service.findAll(new PageRequest(page - 1, limit, new Sort(o1, o2)));
         }
@@ -88,24 +91,6 @@ public class OpTaskController {
 //        return new ResponseEntity<>(OpTask.valueOf(ots), hs, HttpStatus.OK);
         return new ResponseEntity<>(ots, hs, HttpStatus.OK);
     }
-
-//    @RequestMapping(method = RequestMethod.GET)
-//    public ResponseEntity<List<OpTask>> findAll(
-//            @RequestParam(value = "_page", defaultValue = "1") int page,
-//            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
-//
-//        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
-//
-//        Sort.Order o1 = new Sort.Order(Sort.Direction.ASC, "status");
-//        Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
-//        Page<OpTask> pages = service.findAll(new PageRequest(page - 1, limit, new Sort(o1, o2)));
-//        List<OpTask> ots = pages.getContent();
-//        ots.forEach(v -> v.beforeReturn());
-//
-//        HttpHeaders hs = new HttpHeaders();
-//        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-//        return new ResponseEntity<>(OpTask.valueOf(ots), hs, HttpStatus.OK);
-//    }
 
     @RequestMapping(value = "unsolved", method = RequestMethod.GET)
     public ResponseEntity<List<OpTask>> find(

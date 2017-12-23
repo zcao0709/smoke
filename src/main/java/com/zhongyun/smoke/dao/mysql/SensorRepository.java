@@ -20,12 +20,12 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> statuses);
     List<Sensor> findByType(String type);
     long countByProjectIdAndType(long projectId, String type);
-    Page<Sensor> findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
+    Page<Sensor> findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeGreaterThanEqualAndInstallTimeLessThanEqual(
             String eui, String model, String type, String location, String gurantee, String status, String phone,
-            Date installTimeStart, Date installTimeEnd, Pageable pageable);
-    Page<Sensor> findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
+            long installTimeStart, long installTimeEnd, Pageable pageable);
+    Page<Sensor> findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeGreaterThanEqualAndInstallTimeLessThanEqual(
             long projectId, String eui, String model, String type, String location, String gurantee, String status, String phone,
-            Date installTimeStart, Date installTimeEnd, Pageable pageable);
+            long installTimeStart, long installTimeEnd, Pageable pageable);
 
     @Modifying
     @Query(value = "UPDATE sensor SET project_id = 0 WHERE project_id = ?1", nativeQuery = true)

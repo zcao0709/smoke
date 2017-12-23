@@ -63,6 +63,10 @@ public class OpTaskService {
         return opTaskRepository.findByEui(eui, pageable);
     }
 
+    public Page<OpTask> findBaseByProjectId(long projectId, Pageable pageable) {
+        return opTaskRepository.findByProjectId(projectId, pageable);
+    }
+
     public Page<OpTask> findAll(Pageable pageable) {
         Page<OpTask> ots = opTaskRepository.findByCauseIn(Util.OpTaskCause, pageable);
         ots.getContent().forEach(v -> complete(v));
