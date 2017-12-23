@@ -2,8 +2,8 @@ package com.zhongyun.smoke.controller;
 
 import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.model.Resp;
-import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.service.SensorService;
+import static com.zhongyun.smoke.common.Util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,7 @@ public class SensorController {
             @RequestParam(value = "project", defaultValue = "-1") long projectId,
             @RequestParam(value = "eui", required = false) String eui,
             @RequestParam(value = "model", required = false) String model,
-            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "type", defaultValue = SENSOR_SMOKE) String type,
             @RequestParam(value = "location", required = false) String location,
             @RequestParam(value = "ctime_start", defaultValue = "2017-1-1 00:00:00") String ctimeStart,
             @RequestParam(value = "ctime_end", defaultValue = "3017-12-31 23:59:59") String ctimeEnd,
