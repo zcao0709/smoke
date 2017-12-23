@@ -86,12 +86,12 @@ public class SensorService {
     }
 
     public Page<Sensor> findLike(long projectId, String eui, String model, String type, String location, String guarantee,
-                                 String status, String phone, long start, long end, Pageable pageable) {
+                                 String status, String phone, Date start, Date end, Pageable pageable) {
         if (projectId < 0) {
-            return sensorRepository.findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeGreaterThanEqualAndInstallTimeLessThanEqual
+            return sensorRepository.findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
                     (like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, pageable);
         } else {
-            return sensorRepository.findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeGreaterThanEqualAndInstallTimeLessThanEqual
+            return sensorRepository.findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
                     (projectId, like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, pageable);
         }
     }

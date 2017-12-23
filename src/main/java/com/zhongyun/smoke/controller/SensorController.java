@@ -92,7 +92,9 @@ public class SensorController {
         if (ctimeEnd == 0) {
             ctimeEnd = DEF_END_TS;
         }
-        Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, ctimeStart, ctimeEnd,
+        Date start = new Date(ctimeStart);
+        Date end = new Date(ctimeEnd);
+        Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, start, end,
                                               new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         List<Sensor> sensors = pages.getContent();
         sensors.forEach(v -> v.beforeReturn());
