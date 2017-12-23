@@ -76,7 +76,7 @@ public class SensorController {
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "location", required = false) String location,
             @RequestParam(value = "ctime_start", defaultValue = "2017-1-1 00:00:00") String ctimeStart,
-            @RequestParam(value = "ctime_end", defaultValue = "3017-12-12 00:00:00") String ctimeEnd,
+            @RequestParam(value = "ctime_end", defaultValue = "3017-12-31 23:59:59") String ctimeEnd,
             @RequestParam(value = "guarantee", required = false) String guarantee,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "phone", required = false) String phone,
