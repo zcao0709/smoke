@@ -15,6 +15,10 @@ public class ReportService {
     private ReportRepository reportRepository;
 
     public Map<String, Map<String, String>> findByProjectId(long projectId, long start, long end) {
-        return reportRepository.findByProjectId(projectId, start, end);
+        if (projectId >= 0) {
+            return reportRepository.findByProjectId(projectId, start, end);
+        } else {
+            return reportRepository.findInAllProject(start, end);
+        }
     }
 }
