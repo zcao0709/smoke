@@ -21,7 +21,7 @@ public class ReportRepository {
         String sql =
                 "SELECT n, s, COUNT(s) AS c FROM " +
                         "(SELECT project.name AS n, CONCAT(cause, '/', status) AS s FROM op_task INNER JOIN project ON project_id = project.id " +
-                        "WHERE UNIX_TIMESTAMP(ctime) >= :start AND UNIX_TIMESTAMP(ctime) <= :end) AS t " +
+                        "WHERE UNIX_TIMESTAMP(op_task.ctime) >= :start AND UNIX_TIMESTAMP(op_task.ctime) <= :end) AS t " +
                         "GROUP BY n, s";
         Map<String, Long> args = new HashMap<>();
         args.put("start", start/1000);
@@ -34,7 +34,7 @@ public class ReportRepository {
         String sql =
                 "SELECT n, s, COUNT(s) AS c FROM " +
                         "(SELECT project.name AS n, CONCAT(cause, '/', status) AS s FROM op_task INNER JOIN project ON project_id = project.id " +
-                        "WHERE project_id = :pid AND UNIX_TIMESTAMP(ctime) >= :start AND UNIX_TIMESTAMP(ctime) <= :end) AS t " +
+                        "WHERE project_id = :pid AND UNIX_TIMESTAMP(op_task.ctime) >= :start AND UNIX_TIMESTAMP(op_task.ctime) <= :end) AS t " +
                         "GROUP BY n, s";
         Map<String, Long> args = new HashMap<>();
         args.put("pid", projectId);
