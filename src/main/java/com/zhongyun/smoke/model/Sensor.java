@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zhongyun.smoke.common.Util;
 
 import javax.persistence.*;
@@ -18,7 +19,12 @@ public class Sensor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @JsonProperty("eui10")
     private long eui;
+
+    @JsonProperty("eui")
+    private String eui16;
+
     private String model;
     private String type;
     private String location = "";

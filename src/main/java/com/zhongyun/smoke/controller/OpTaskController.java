@@ -1,7 +1,7 @@
 package com.zhongyun.smoke.controller;
 
 import com.zhongyun.smoke.model.OpTask;
-import com.zhongyun.smoke.model.OpTaskEx;
+import com.zhongyun.smoke.model.OpTask;
 import com.zhongyun.smoke.model.Resp;
 import com.zhongyun.smoke.service.OpTaskService;
 import org.slf4j.Logger;
@@ -42,15 +42,16 @@ public class OpTaskController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<OpTaskEx> update(@RequestBody OpTaskEx opTask) {
+    public ResponseEntity<OpTask> update(@RequestBody OpTask opTask) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(OpTaskEx.valueOf(service.update(opTask.toOpTask())));
+        return Resp.ok(service.update(opTask));
+//        return Resp.ok(OpTask.valueOf(service.update(opTask.toOpTask())));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<OpTaskEx> find(@PathVariable long id) {
+    public ResponseEntity<OpTask> find(@PathVariable long id) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
@@ -58,11 +59,12 @@ public class OpTaskController {
         if (o == null) {
             return Resp.not(id);
         }
-        return Resp.ok(OpTaskEx.valueOf(o.beforeReturn()));
+//        return Resp.ok(OpTask.valueOf(o.beforeReturn()));
+        return Resp.ok(o.beforeReturn());
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<OpTaskEx>> findAll(
+    public ResponseEntity<List<OpTask>> findAll(
             @RequestParam(value = "eui", defaultValue = "0") long eui,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
@@ -83,11 +85,12 @@ public class OpTaskController {
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(OpTaskEx.valueOf(ots), hs, HttpStatus.OK);
+//        return new ResponseEntity<>(OpTask.valueOf(ots), hs, HttpStatus.OK);
+        return new ResponseEntity<>(ots, hs, HttpStatus.OK);
     }
 
 //    @RequestMapping(method = RequestMethod.GET)
-//    public ResponseEntity<List<OpTaskEx>> findAll(
+//    public ResponseEntity<List<OpTask>> findAll(
 //            @RequestParam(value = "_page", defaultValue = "1") int page,
 //            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 //
@@ -101,11 +104,11 @@ public class OpTaskController {
 //
 //        HttpHeaders hs = new HttpHeaders();
 //        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-//        return new ResponseEntity<>(OpTaskEx.valueOf(ots), hs, HttpStatus.OK);
+//        return new ResponseEntity<>(OpTask.valueOf(ots), hs, HttpStatus.OK);
 //    }
 
     @RequestMapping(value = "unsolved", method = RequestMethod.GET)
-    public ResponseEntity<List<OpTaskEx>> find(
+    public ResponseEntity<List<OpTask>> find(
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
 
@@ -119,6 +122,7 @@ public class OpTaskController {
 
         HttpHeaders hs = new HttpHeaders();
         hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-        return new ResponseEntity<>(OpTaskEx.valueOf(ots), hs, HttpStatus.OK);
+//        return new ResponseEntity<>(OpTask.valueOf(ots), hs, HttpStatus.OK);
+        return new ResponseEntity<>(ots, hs, HttpStatus.OK);
     }
 }

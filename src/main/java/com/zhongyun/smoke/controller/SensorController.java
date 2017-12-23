@@ -2,7 +2,7 @@ package com.zhongyun.smoke.controller;
 
 import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.model.Resp;
-import com.zhongyun.smoke.model.SensorEx;
+import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,15 +38,16 @@ public class SensorController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<SensorEx> update(@RequestBody SensorEx sensor) {
+    public ResponseEntity<Sensor> update(@RequestBody Sensor sensor) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(SensorEx.valueOf(service.update(sensor.toSensor())));
+//        return Resp.ok(Sensor.valueOf(service.update(sensor.toSensor())));
+        return Resp.ok(service.update(sensor));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<SensorEx> find(@PathVariable long id) {
+    public ResponseEntity<Sensor> find(@PathVariable long id) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
@@ -54,24 +55,27 @@ public class SensorController {
         if (s == null) {
             return Resp.not(id);
         }
-        return Resp.ok(SensorEx.valueOf(service.find(id)));
+//        return Resp.ok(Sensor.valueOf(service.find(id)));
+        return Resp.ok(service.find(id));
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<SensorEx>> findByProjectId(
+    public ResponseEntity<List<Sensor>> findByProjectId(
             @RequestParam(value = "project") long projectId) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(SensorEx.valueOf(service.findByProjectId(projectId)));
+//        return Resp.ok(Sensor.valueOf(service.findByProjectId(projectId)));
+        return Resp.ok(service.findByProjectId(projectId));
     }
 
     @RequestMapping(value = "/alarm", method = RequestMethod.GET)
-    public ResponseEntity<List<SensorEx>> findAlarmedByProjectId(
+    public ResponseEntity<List<Sensor>> findAlarmedByProjectId(
             @RequestParam(value = "project") long projectId) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-        return Resp.ok(SensorEx.valueOf(service.findAlarmedByProjectId(projectId)));
+//        return Resp.ok(Sensor.valueOf(service.findAlarmedByProjectId(projectId)));
+        return Resp.ok(service.findAlarmedByProjectId(projectId));
     }
 }

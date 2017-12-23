@@ -19,6 +19,10 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     long countByProjectIdAndType(long projectId, String type);
 
     @Modifying
+    @Query(value = "UPDATE sensor SET project_id = 0 WHERE project_id = ?1", nativeQuery = true)
+    void clearProjectId(long projectId);
+
+    @Modifying
     @Query(value = "UPDATE sensor SET model = ?1, location = ?2, guarantee = ?3, status = ?4, project_id = ?5, phone = ?6, mtime = NOW() " +
             "WHERE id = ?7", nativeQuery = true)
     void updateById(String model, String location, String guarantee, String status, long projectId, String phone, long id);

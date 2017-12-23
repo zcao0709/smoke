@@ -5,6 +5,7 @@ import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
+import com.zhongyun.smoke.dao.mysql.UserProjectRepository;
 import com.zhongyun.smoke.model.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,9 @@ public class ProjectService {
     @Autowired
     public SensorRepository sensorRepository;
 
+    @Autowired
+    public UserProjectRepository upRepository;
+
     public Project add(Project project) {
         validate(project);
         Timestamp ts = new Timestamp(System.currentTimeMillis());
@@ -34,8 +38,11 @@ public class ProjectService {
         return repository.save(project);
     }
 
+    @Transactional
     public void delete(long id) {
         repository.delete(id);
+        sensorRepository.clearProjectId(id);
+        upRepository.deleteByProjectId(id);
     }
 
     @Transactional

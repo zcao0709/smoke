@@ -3,6 +3,7 @@ package com.zhongyun.smoke.service;
 import static com.zhongyun.smoke.common.Util.*;
 
 import com.zhongyun.smoke.common.Util;
+import com.zhongyun.smoke.dao.mysql.UserProjectRepository;
 import com.zhongyun.smoke.dao.mysql.UserRepository;
 import com.zhongyun.smoke.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class UserService {
     @Autowired
     public UserRepository repository;
 
+    @Autowired
+    public UserProjectRepository upRepository;
+
     public User add(User user) {
         if (StringUtils.isEmpty(user.getPass())) {
             throw new IllegalArgumentException("no user password");
@@ -39,6 +43,7 @@ public class UserService {
             throw new IllegalArgumentException("cannot remove system administrator");
         }
         repository.delete(id);
+        upRepository.deleteByUserId(id);
     }
 
     @Transactional
