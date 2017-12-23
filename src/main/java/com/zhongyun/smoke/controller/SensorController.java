@@ -56,7 +56,7 @@ public class SensorController {
             return Resp.not(id);
         }
 //        return Resp.ok(Sensor.valueOf(service.find(id)));
-        return Resp.ok(service.find(id));
+        return Resp.ok(service.find(id).beforeReturn());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -66,7 +66,9 @@ public class SensorController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
 //        return Resp.ok(Sensor.valueOf(service.findByProjectId(projectId)));
-        return Resp.ok(service.findByProjectId(projectId));
+        List<Sensor> sensors = service.findByProjectId(projectId);
+        sensors.forEach(v -> v.beforeReturn());
+        return Resp.ok(sensors);
     }
 
     @RequestMapping(value = "/alarm", method = RequestMethod.GET)
@@ -76,6 +78,8 @@ public class SensorController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
 //        return Resp.ok(Sensor.valueOf(service.findAlarmedByProjectId(projectId)));
-        return Resp.ok(service.findAlarmedByProjectId(projectId));
+        List<Sensor> sensors = service.findAlarmedByProjectId(projectId);
+        sensors.forEach(v -> v.beforeReturn());
+        return Resp.ok(sensors);
     }
 }

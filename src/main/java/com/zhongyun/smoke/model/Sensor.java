@@ -78,6 +78,19 @@ public class Sensor {
         this.phone = phone;
     }
 
+    public Sensor beforeReturn() {
+        setEui16(String.format("%X", getEui()));
+        return this;
+    }
+
+    public void setEui16(String eui16) {
+        this.eui16 = eui16;
+    }
+
+    public String getEui16() {
+        return eui16;
+    }
+
     public void setPhone(String phone) {
         this.phone = phone;
     }
