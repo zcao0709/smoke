@@ -86,7 +86,7 @@ public class SensorController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
 //        return Resp.ok(Sensor.valueOf(service.findByProjectId(projectId)));
-        DateFormat f = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date start = f.parse(ctimeStart);
         Date end = f.parse(ctimeEnd);
         Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, start, end,
