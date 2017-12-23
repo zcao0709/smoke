@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -83,13 +86,13 @@ public class SensorService {
     }
 
     public Page<Sensor> findLike(long projectId, String eui, String model, String type, String location, String guarantee,
-                                 String status, String phone, String ctimeStart, String ctimeEnd, Pageable pageable) {
+                                 String status, String phone, Date start, Date end, Pageable pageable) {
         if (projectId < 0) {
             return sensorRepository.findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
-                    (like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), ctimeStart, ctimeEnd, pageable);
+                    (like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, pageable);
         } else {
             return sensorRepository.findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
-                    (projectId, like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), ctimeStart, ctimeEnd, pageable);
+                    (projectId, like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, pageable);
         }
     }
 

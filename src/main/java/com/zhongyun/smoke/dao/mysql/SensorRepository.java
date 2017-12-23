@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -21,10 +22,10 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     long countByProjectIdAndType(long projectId, String type);
     Page<Sensor> findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
             String eui, String model, String type, String location, String gurantee, String status, String phone,
-            String installTimeStart, String installTimeEnd, Pageable pageable);
+            Date installTimeStart, Date installTimeEnd, Pageable pageable);
     Page<Sensor> findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
             long projectId, String eui, String model, String type, String location, String gurantee, String status, String phone,
-            String installTimeStart, String installTimeEnd, Pageable pageable);
+            Date installTimeStart, Date installTimeEnd, Pageable pageable);
 
     @Modifying
     @Query(value = "UPDATE sensor SET project_id = 0 WHERE project_id = ?1", nativeQuery = true)

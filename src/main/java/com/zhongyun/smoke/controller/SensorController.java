@@ -16,6 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,18 +75,21 @@ public class SensorController {
             @RequestParam(value = "model", required = false) String model,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "location", required = false) String location,
-            @RequestParam(value = "ctime_start", required = false) String ctimeStart,
-            @RequestParam(value = "ctime_end", required = false) String ctimeEnd,
+            @RequestParam(value = "ctime_start", defaultValue = "2017-1-1 00:00:00") String ctimeStart,
+            @RequestParam(value = "ctime_end", defaultValue = "3017-12-12 00:00:00") String ctimeEnd,
             @RequestParam(value = "guarantee", required = false) String guarantee,
             @RequestParam(value = "status", required = false) String status,
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "_page", defaultValue = "1") int page,
-            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
+            @RequestParam(value = "_limit", defaultValue = "10") int limit) throws ParseException {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
 //        return Resp.ok(Sensor.valueOf(service.findByProjectId(projectId)));
-        Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, ctimeStart, ctimeEnd,
+        DateFormat f = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date start = f.parse(ctimeStart);
+        Date end = f.parse(ctimeEnd);
+        Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, start, end,
                                               new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
         List<Sensor> sensors = pages.getContent();
         sensors.forEach(v -> v.beforeReturn());
