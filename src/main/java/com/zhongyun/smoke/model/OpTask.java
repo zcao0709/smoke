@@ -94,6 +94,9 @@ public class OpTask {
         if (poster != null) {
             poster.setProjects(null);
         }
+        if (project != null) {
+            project.setUsers(null);
+        }
         return this;
     }
 

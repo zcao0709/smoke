@@ -81,7 +81,7 @@ public class OpTaskService {
     }
 
     private void complete(OpTask ot) {
-        ot.setPoster(userRepository.findOne(ot.getPostUser()));
+//        ot.setPoster(userRepository.findOne(ot.getPostUser()));
         ot.setOp(userRepository.findOne(ot.getOpUser()));
         ot.setSensor(sensorRepository.findByEui(ot.getEui()));
         Project p = projectRepository.findOne(ot.getProjectId());
