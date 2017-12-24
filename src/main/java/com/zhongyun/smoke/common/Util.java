@@ -26,7 +26,7 @@ public class Util {
     public static final DateFormat FORMAT = new SimpleDateFormat(TIME_FORMAT);
 
     public static final String USER_ADMIN = "管理员";
-    public static final String USER_OP = "运维";
+    public static final String USER_OP = "运维用户";
     public static final String USER_USER = "普通用户";
 
     public static final PasswordEncoder ENCODER = new StandardPasswordEncoder("zhy_sm");
