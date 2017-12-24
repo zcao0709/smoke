@@ -30,7 +30,7 @@ public class App {
     public App() {
     }
 
-    public void update(SensorService sensorService, OpTaskService opTaskService, ConcurrentMap<Long, Long> gatewayTs) {
+    public void update(SensorService sensorService, ConcurrentMap<Long, Long> gatewayTs) {
         if (gwrx == null || gwrx.size() == 0) {
             logger.error("sensor " + moteeui + " has no gateway, will not be saved");
             return;
@@ -54,12 +54,8 @@ public class App {
             s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId());
             sensorService.add(s);
         } else {
-            sensorService.updateStatusAndGateway(payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), s.getId());
-
-            if (Util.OpTaskCause.contains(payload)) {
-                OpTask ot = new OpTask(moteeui, 1, new Timestamp(ts), payload, Util.OPTASK_UNSOLVED, s.getProjectId());
-                opTaskService.add(ot);
-            }
+            s.setGatewayId(sg.getId());
+            sensorService.updateStatusAndGateway(payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, s, ts);
         }
         return;
     }

@@ -62,7 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .regexMatchers(HttpMethod.POST, "/api/op/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP)
                     .regexMatchers(HttpMethod.PUT, "/api/op/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP)
                     .regexMatchers(HttpMethod.DELETE, "/api/op/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP)
-                    .regexMatchers(HttpMethod.GET, "/api/op/.*").hasAuthority(Util.USER_USER)
+                    .regexMatchers(HttpMethod.GET, "/api/op/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP, Util.USER_USER)
 
                     .regexMatchers("/api/report/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP, Util.USER_USER)
                 .and()

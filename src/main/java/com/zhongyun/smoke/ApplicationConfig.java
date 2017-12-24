@@ -61,6 +61,20 @@ public class ApplicationConfig {
     @Value("${logout.process}")
     private String logoutProcess;
 
+    @Value("${sms.id}")
+    private String smsId;
+
+    @Value("${sms.sec}")
+    private String smsSec;
+
+    public String getSmsId() {
+        return smsId;
+    }
+
+    public String getSmsSec() {
+        return smsSec;
+    }
+
     public String getLoginPage() {
         return loginPage;
     }

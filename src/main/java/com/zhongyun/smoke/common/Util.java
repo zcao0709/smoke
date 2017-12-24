@@ -9,7 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import java.io.IOException;
-import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +21,9 @@ public class Util {
 
     public static final long DEF_START_TS = 1510818350000L; // in ms
     public static final long DEF_END_TS = 33067727150000L; // in ms
+
+    public static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final DateFormat FORMAT = new SimpleDateFormat(TIME_FORMAT);
 
     public static final String USER_ADMIN = "管理员";
     public static final String USER_OP = "运维";
@@ -47,7 +51,7 @@ public class Util {
         add(SENSOR_UNKNOWN);
     }};
 
-    public static final Set<String> OpTaskCause = new HashSet<String>() {{
+    public static final Set<String> OpTaskAlarmCause = new HashSet<String>() {{
         add(SENSOR_FIRE);
         add(SENSOR_BATTERY);
         add(SENSOR_FAULT);
@@ -55,9 +59,14 @@ public class Util {
         add(SENSOR_DISCONN);
     }};
 
+    public static final Set<String> OpTaskSmsCause = new HashSet<String>() {{
+        add(SENSOR_FIRE);
+    }};
+
     static {
         if (System.getProperty("spring.profiles.active").equals("dev")) {
-            OpTaskCause.add(SENSOR_TEST);
+            OpTaskAlarmCause.add(SENSOR_TEST);
+            OpTaskSmsCause.add(SENSOR_TEST);
         }
     }
 
@@ -120,6 +129,10 @@ public class Util {
             return "%";
         }
         return "%" + str + "%";
+    }
+
+    public static boolean validatePhone(String num) {
+        return num.length() > 0;
     }
 
     public static void main(String[] args) {

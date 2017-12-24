@@ -58,6 +58,8 @@ public class OpTask {
         this.cause = cause;
         this.status = status;
         this.projectId = projectId;
+        this.mtime = postTime;
+        this.ctime = postTime;
     }
 
     public OpTask(long id, long eui, long postUser, Timestamp postTime, long opUser, Timestamp opTime, String cause, String handler, String worker,

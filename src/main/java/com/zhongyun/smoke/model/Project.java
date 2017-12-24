@@ -67,6 +67,10 @@ public class Project {
         this.ctime = ctime;
     }
 
+    public String fullAddress() {
+        return province + city + district + address;
+    }
+
     public void setPhone(String phone) {
         this.phone = phone;
     }

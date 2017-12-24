@@ -56,7 +56,7 @@ public abstract class Payload {
             }
             App app = p.parseApp();
             mongo.save(app, Util.MONGO_COLLECTION);
-            app.update(sensorService, opTaskService, gatewayTs);
+            app.update(sensorService, gatewayTs);
         }
     }
 

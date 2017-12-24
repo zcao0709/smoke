@@ -2,7 +2,10 @@ package com.zhongyun.smoke.service;
 
 import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
+import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
+import com.zhongyun.smoke.model.OpTask;
+import com.zhongyun.smoke.model.Project;
 import com.zhongyun.smoke.model.Sensor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,8 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +28,12 @@ public class SensorService {
 
     @Autowired
     public OpTaskRepository opTaskRepository;
+
+    @Autowired
+    public ProjectRepository projectRepository;
+
+    @Autowired
+    public SmsService smsService;
 
     public Sensor add(Sensor sensor) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
@@ -50,11 +58,23 @@ public class SensorService {
     }
 
     @Transactional
-    public void updateStatusAndGateway(String status, long gatewayId, long id) {
-        if (id == 0) {
-            return;
+    public void updateStatusAndGateway(String status, Sensor sensor, long ts) {
+
+        sensorRepository.updateStatusAndGatewayById(status, sensor.getGatewayId(), sensor.getId());
+
+        if (OpTaskAlarmCause.contains(status)) {
+            OpTask ot = new OpTask(sensor.getEui(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());
+            opTaskRepository.save(ot);
+
+            if (SENSOR_FIRE.equals(status) && validatePhone(sensor.getPhone())) {
+                Project p = projectRepository.findOne(sensor.getProjectId());
+
+                List<String> recvs = new ArrayList<>(2);
+                recvs.add(sensor.getPhone());
+                recvs.add(p.getPhone());
+                smsService.send(recvs, p.fullAddress(), FORMAT.format(new Date(ts)), p.getPhone());
+            }
         }
-        sensorRepository.updateStatusAndGatewayById(status, gatewayId, id);
     }
 
     @Transactional

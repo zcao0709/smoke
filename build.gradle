@@ -29,6 +29,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('mysql:mysql-connector-java')
+	compile files("libs/aliyun-java-sdk-core-3.3.1.jar")
+	compile files("libs/aliyun-java-sdk-dysmsapi-1.0.0.jar")
 //	testCompile('org.springframework.boot:spring-boot-starter-test')
 //	testCompile('org.springframework.security:spring-security-test')
 }

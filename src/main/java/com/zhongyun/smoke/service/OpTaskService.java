@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.stream.Collectors;
 
 /**
  * Created by caozhennan on 2017/11/30.
@@ -68,14 +67,14 @@ public class OpTaskService {
     }
 
     public Page<OpTask> findAll(Pageable pageable) {
-        Page<OpTask> ots = opTaskRepository.findByCauseIn(Util.OpTaskCause, pageable);
+        Page<OpTask> ots = opTaskRepository.findByCauseIn(Util.OpTaskAlarmCause, pageable);
         ots.getContent().forEach(v -> complete(v));
 
         return ots;
     }
 
     public Page<OpTask> findUnsolved(Pageable pageable) {
-        Page<OpTask> ots = opTaskRepository.findByCauseInAndStatus(Util.OpTaskCause, Util.OPTASK_UNSOLVED, pageable);
+        Page<OpTask> ots = opTaskRepository.findByCauseInAndStatus(Util.OpTaskAlarmCause, Util.OPTASK_UNSOLVED, pageable);
         ots.getContent().forEach(v -> complete(v));
 
         return ots;
