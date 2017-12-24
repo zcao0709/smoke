@@ -59,7 +59,9 @@ public class SensorService {
 
     @Transactional
     public void updateStatusAndGateway(String status, Sensor sensor, long ts) {
-
+        if (System.getProperty("spring.profiles.active").equals("prod") && SENSOR_TEST.equals(status)) {
+            status = SENSOR_NORMAL;
+        }
         sensorRepository.updateStatusAndGatewayById(status, sensor.getGatewayId(), sensor.getId());
 
         if (OpTaskAlarmCause.contains(status)) {

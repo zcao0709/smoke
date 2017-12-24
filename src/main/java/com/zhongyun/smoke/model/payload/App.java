@@ -55,7 +55,7 @@ public class App {
             sensorService.add(s);
         } else {
             s.setGatewayId(sg.getId());
-            sensorService.updateStatusAndGateway(payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, s, ts);
+            sensorService.updateStatusAndGateway(payload, s, ts);
         }
         return;
     }
