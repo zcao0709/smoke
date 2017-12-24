@@ -70,9 +70,15 @@ public class SensorService {
                 Project p = projectRepository.findOne(sensor.getProjectId());
 
                 List<String> recvs = new ArrayList<>(2);
-                recvs.add(sensor.getPhone());
-                recvs.add(p.getPhone());
-                smsService.send(recvs, p.fullAddress(), FORMAT.format(new Date(ts)), p.getPhone());
+                if (validatePhone(sensor.getPhone())) {
+                    recvs.add(sensor.getPhone());
+                }
+                if (validatePhone(p.getPhone())) {
+                    recvs.add(p.getPhone());
+                }
+                if (recvs.size() > 0) {
+                    smsService.send(recvs, p.fullAddress() + " " + sensor.getLocation(), FORMAT.format(new Date(ts)), p.getPhone());
+                }
             }
         }
     }
@@ -107,13 +113,15 @@ public class SensorService {
 
     public Page<Sensor> findLike(long projectId, String eui, String model, String type, String location, String guarantee,
                                  String status, String phone, Date start, Date end, Pageable pageable) {
+        Page<Sensor> pages;
         if (projectId < 0) {
-            return sensorRepository.findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
+            pages = sensorRepository.findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
                     (like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, pageable);
         } else {
-            return sensorRepository.findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
+            pages = sensorRepository.findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
                     (projectId, like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, pageable);
         }
+        return pages;
     }
 
     public List<Sensor> findAlarmedByProjectId(long projectId) {
