@@ -62,7 +62,7 @@ public class SensorService {
         if (System.getProperty("spring.profiles.active").equals("prod") && SENSOR_TEST.equals(status)) {
             status = SENSOR_NORMAL;
         }
-        sensorRepository.updateStatusAndGatewayById(status, sensor.getGatewayId(), sensor.getId());
+        sensorRepository.updateStatusAndGatewayById(status.equals(SENSOR_TEST) ? SENSOR_NORMAL : status, sensor.getGatewayId(), sensor.getId());
 
         if (OpTaskAlarmCause.contains(status)) {
             OpTask ot = new OpTask(sensor.getEui(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());

@@ -58,11 +58,17 @@ public class OpTaskService {
     }
 
     public Page<OpTask> findBaseByEui(long eui, Pageable pageable) {
-        return opTaskRepository.findByEui(eui, pageable);
+        Page<OpTask> pages = opTaskRepository.findByEui(eui, pageable);
+        pages.getContent().forEach(v -> complete(v));
+
+        return pages;
     }
 
     public Page<OpTask> findBaseByProjectId(long projectId, Pageable pageable) {
-        return opTaskRepository.findByProjectId(projectId, pageable);
+        Page<OpTask> pages = opTaskRepository.findByProjectId(projectId, pageable);
+        pages.getContent().forEach(v -> complete(v));
+
+        return pages;
     }
 
     public Page<OpTask> findAll(Pageable pageable) {
@@ -80,15 +86,11 @@ public class OpTaskService {
     }
 
     private void complete(OpTask ot) {
+        ot.setEui16(String.format("%X", ot.getEui()));
 //        ot.setPoster(userRepository.findOne(ot.getPostUser()));
         ot.setOp(userRepository.findOne(ot.getOpUser()));
         ot.setSensor(sensorRepository.findByEui(ot.getEui()));
-        Project p = projectRepository.findOne(ot.getProjectId());
-        if (p == null) {
-            ot.setProject(null);
-        } else {
-            ot.setProject(p);
-        }
+        ot.setProject(projectRepository.findOne(ot.getProjectId()));
         ot.setExpired(System.currentTimeMillis() > Util.OPTASK_EXPIRED + ot.getCtime().getTime());
     }
 }

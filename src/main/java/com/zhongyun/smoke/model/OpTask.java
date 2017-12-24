@@ -1,5 +1,7 @@
 package com.zhongyun.smoke.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 
@@ -13,7 +15,13 @@ public class OpTask {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @JsonProperty("eui10")
     private long eui;
+
+    @Transient
+    @JsonProperty("eui")
+    private String eui16;
+
     @Column(name = "post_user")
     private long postUser;
 
@@ -98,6 +106,14 @@ public class OpTask {
             project.setUsers(null);
         }
         return this;
+    }
+
+    public String getEui16() {
+        return eui16;
+    }
+
+    public void setEui16(String eui16) {
+        this.eui16 = eui16;
     }
 
     public void setProject(Project project) {

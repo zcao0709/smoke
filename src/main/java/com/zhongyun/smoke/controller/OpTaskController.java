@@ -65,7 +65,7 @@ public class OpTaskController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<OpTask>> findAll(
-            @RequestParam(value = "eui", defaultValue = "0") long eui,
+            @RequestParam(value = "eui", defaultValue = "0") String eui16,
             @RequestParam(value = "project", defaultValue = "-1") long projectId,
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {
@@ -76,7 +76,8 @@ public class OpTaskController {
         Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
 
         Page<OpTask> pages;
-        if (eui != 0) {
+        if (!eui16.equals("0")) {
+            long eui = Long.parseLong(eui16, 16);
             pages = service.findBaseByEui(eui, new PageRequest(page - 1, limit, new Sort(o1, o2)));
         } else if (projectId != -1) {
             pages = service.findBaseByProjectId(projectId, new PageRequest(page - 1, limit, new Sort(o1, o2)));
@@ -110,4 +111,14 @@ public class OpTaskController {
 //        return new ResponseEntity<>(OpTask.valueOf(ots), hs, HttpStatus.OK);
         return new ResponseEntity<>(ots, hs, HttpStatus.OK);
     }
+
+//    @RequestMapping(method = RequestMethod.GET)
+//    public ResponseEntity<List<OpTask>> findLike(
+//
+//            @RequestParam(value = "_page", defaultValue = "1") int page,
+//            @RequestParam(value = "_limit", defaultValue = "10") int limit) {
+//    ) {
+
+//    }
+
 }
