@@ -75,7 +75,7 @@ public class SensorService {
                 if (validatePhone(sensor.getPhone())) {
                     recvs.add(sensor.getPhone());
                 }
-                if (validatePhone(p.getPhone())) {
+                if (validatePhone(p.getPhone()) && (recvs.size() < 1 || !recvs.get(0).equals(p.getPhone()))) {
                     recvs.add(p.getPhone());
                 }
                 if (recvs.size() > 0) {
