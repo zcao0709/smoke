@@ -68,7 +68,7 @@ public class SensorService {
             OpTask ot = new OpTask(sensor.getEui(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());
             opTaskRepository.save(ot);
 
-            if (SENSOR_FIRE.equals(status) && validatePhone(sensor.getPhone())) {
+            if (OpTaskSmsCause.contains(status) && validatePhone(sensor.getPhone())) {
                 Project p = projectRepository.findOne(sensor.getProjectId());
 
                 List<String> recvs = new ArrayList<>(2);
