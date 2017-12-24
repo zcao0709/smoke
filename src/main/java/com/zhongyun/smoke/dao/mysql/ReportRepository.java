@@ -44,6 +44,19 @@ public class ReportRepository {
         return resultMap(sql, args);
     }
 
+    public Map<String, Map<String, String>> findByLocation(String location, long start, long end) {
+        String sql =
+                "SELECT n, s, COUNT(s) AS c FROM " +
+                        "(SELECT project." + location + " AS n, CONCAT(cause, '/', status) AS s FROM op_task INNER JOIN project ON project_id = project.id " +
+                        "WHERE UNIX_TIMESTAMP(op_task.ctime) >= :start AND UNIX_TIMESTAMP(op_task.ctime) <= :end) AS t " +
+                        "GROUP BY n, s";
+        Map<String, Long> args = new HashMap<>();
+        args.put("start", start / 1000);
+        args.put("end", end / 1000);
+
+        return resultMap(sql, args);
+    }
+
     private Map<String, Map<String, String>> resultMap(String sql, Map<String, Long> args) {
         List<List<String>> entries = jdbcTemplate.query(sql, args, (rs, row) -> {
             List<String> l = new ArrayList<>(2);

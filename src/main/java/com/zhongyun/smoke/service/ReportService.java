@@ -14,9 +14,15 @@ public class ReportService {
     @Autowired
     private ReportRepository reportRepository;
 
-    public Map<String, Map<String, String>> findByProjectId(long projectId, long start, long end) {
+    public Map<String, Map<String, String>> findBy(long projectId, int district, int city, int province, long start, long end) {
         if (projectId >= 0) {
             return reportRepository.findByProjectId(projectId, start, end);
+        } else if (district > 0) {
+            return reportRepository.findByLocation("district", start, end);
+        } else if (city > 0) {
+            return reportRepository.findByLocation("city", start, end);
+        } else if (province > 0) {
+            return reportRepository.findByLocation("province", start, end);
         } else {
             return reportRepository.findInAllProject(start, end);
         }

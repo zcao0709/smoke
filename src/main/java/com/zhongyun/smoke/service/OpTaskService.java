@@ -34,7 +34,6 @@ public class OpTaskService {
 
     public OpTask add(OpTask opTask) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
-//        opTask.setStatus(Util.OPTASK_UNSOLVED);
         opTask.setMtime(ts);
         opTask.setCtime(ts);
         return opTaskRepository.save(opTask);

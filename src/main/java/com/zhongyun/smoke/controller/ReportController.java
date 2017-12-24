@@ -27,8 +27,11 @@ public class ReportController {
     private static final Logger logger = LoggerFactory.getLogger("ReportController");
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Map<String, Map<String, String>>> findByProjectId(
-            @RequestParam(value = "project", defaultValue = "-1") long id,
+    public ResponseEntity<Map<String, Map<String, String>>> findBy(
+            @RequestParam(value = "project", defaultValue = "-1") long projectId,
+            @RequestParam(value = "district", defaultValue = "0") int district,
+            @RequestParam(value = "city", defaultValue = "0") int city,
+            @RequestParam(value = "province", defaultValue = "0") int province,
             @RequestParam(value = "start", defaultValue = "0") long start,
             @RequestParam(value = "end", defaultValue = "0") long end) {
 
@@ -40,7 +43,7 @@ public class ReportController {
         if (end == 0) {
             end = Util.DEF_END_TS;
         }
-        Map<String, Map<String, String>> ret = service.findByProjectId(id, start, end);
+        Map<String, Map<String, String>> ret = service.findBy(projectId, district, city, province, start, end);
         return Resp.ok(ret);
     }
 }
