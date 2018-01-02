@@ -64,7 +64,7 @@ public class Util {
     }};
 
     static {
-        if (System.getProperty("spring.profiles.active").equals("dev")) {
+        if (testEnv()) {
             OpTaskAlarmCause.add(SENSOR_TEST);
             OpTaskSmsCause.add(SENSOR_TEST);
         }
@@ -145,5 +145,9 @@ public class Util {
             System.out.printf("%02x\n", b);
         }
         System.out.println(Payload.status.get((int) bs[bs.length-1]));
+    }
+
+    public static boolean testEnv() {
+        return System.getProperty("spring.profiles.active").equals("dev");
     }
 }

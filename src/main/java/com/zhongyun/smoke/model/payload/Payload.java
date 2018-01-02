@@ -1,8 +1,6 @@
 package com.zhongyun.smoke.model.payload;
 
 import com.zhongyun.smoke.common.Util;
-import com.zhongyun.smoke.model.OpTask;
-import com.zhongyun.smoke.service.OpTaskService;
 import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +25,7 @@ public abstract class Payload {
     }};
 
     static {
-        if (System.getProperty("spring.profiles.active").equals("dev")) {
+        if (Util.testEnv()) {
             status.put(9, Util.SENSOR_TEST);
         }
     }

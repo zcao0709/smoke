@@ -1,6 +1,7 @@
 package com.zhongyun.smoke.service;
 
 import static com.zhongyun.smoke.common.Util.*;
+
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
@@ -59,7 +60,7 @@ public class SensorService {
 
     @Transactional
     public void updateStatusAndGateway(String status, Sensor sensor, long ts) {
-        if (System.getProperty("spring.profiles.active").equals("prod") && SENSOR_TEST.equals(status)) {
+        if (testEnv() && SENSOR_TEST.equals(status)) {
             status = SENSOR_NORMAL;
         }
         sensorRepository.updateStatusAndGatewayById(status.equals(SENSOR_TEST) ? SENSOR_NORMAL : status, sensor.getGatewayId(), sensor.getId());
