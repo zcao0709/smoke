@@ -46,7 +46,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     int updateLatiAndLongiById(String lati, String longi, long id);
 
     @Modifying
-    @Query(value = "DELETE FROM sensor WHERE type = " + SENSOR_GWRX + " and id NOT IN (SELECT DISTINCT gateway_id FROM sensor WHERE type = " +
-            SENSOR_SMOKE + ")", nativeQuery = true)
+    @Query(value = "DELETE FROM sensor WHERE type = '" + SENSOR_GWRX + "' and id NOT IN (SELECT DISTINCT gateway_id FROM sensor WHERE type = '" +
+            SENSOR_SMOKE + "')", nativeQuery = true)
     void deleteUselessGateway();
 }
