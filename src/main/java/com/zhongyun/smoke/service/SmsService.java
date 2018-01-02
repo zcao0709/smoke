@@ -85,7 +85,7 @@ public class SmsService {
                 if (sendSmsResponse.getCode().equals("OK")) {
                     logger.debug("SMS succeeded to " + recv);
                 } else {
-                    logger.error("SMS failed to " + recv);
+                    logger.error("SMS failed to " + recv + ", code: " + sendSmsResponse.getCode() + ", message: " + sendSmsResponse.getMessage());
                 }
             } catch (ClientException e) {
                 logger.error("SMS exception", e);
