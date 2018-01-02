@@ -1,7 +1,7 @@
 package com.zhongyun.smoke.security;
 
 import com.zhongyun.smoke.ApplicationConfig;
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.jdbcAuthentication().dataSource(dataSource)
                 .usersByUsernameQuery("SELECT name, pass, true FROM user WHERE name = ?")
                 .authoritiesByUsernameQuery("SELECT name, type FROM user WHERE name = ?")
-                .passwordEncoder(Util.ENCODER);
+                .passwordEncoder(ENCODER);
 //        auth
 //                .inMemoryAuthentication()
 //                .withUser("alex").password("123456").roles("用户");
@@ -44,27 +44,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .httpBasic()
 //                .and()
                 .authorizeRequests()
-                    .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
-                    .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(Util.USER_ADMIN)
-//                    .regexMatchers(HttpMethod.GET, "/api/user/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_USER, Util.USER_OP)
+                    .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(USER_ADMIN)
+                    .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(USER_ADMIN)
+//                    .regexMatchers(HttpMethod.GET, "/api/user/.*").hasAnyAuthority(USER_ADMIN, USER_USER, USER_OP)
                     .regexMatchers(HttpMethod.GET, "/api/user/.*").authenticated()
-                    .regexMatchers(HttpMethod.PUT, "/api/user/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_USER)
+                    .regexMatchers(HttpMethod.PUT, "/api/user/.*").hasAnyAuthority(USER_ADMIN, USER_USER)
 
-                    .regexMatchers(HttpMethod.POST, "/api/project/.*").hasAuthority(Util.USER_ADMIN)
-                    .regexMatchers(HttpMethod.DELETE, "/api/project/.*").hasAuthority(Util.USER_ADMIN)
-                    .regexMatchers(HttpMethod.PUT, "/api/project/.*").hasAuthority(Util.USER_ADMIN)
-                    .regexMatchers(HttpMethod.GET, "/api/project/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_USER, Util.USER_OP)
+                    .regexMatchers(HttpMethod.POST, "/api/project/.*").hasAuthority(USER_ADMIN)
+                    .regexMatchers(HttpMethod.DELETE, "/api/project/.*").hasAuthority(USER_ADMIN)
+                    .regexMatchers(HttpMethod.PUT, "/api/project/.*").hasAuthority(USER_ADMIN)
+                    .regexMatchers(HttpMethod.GET, "/api/project/.*").hasAnyAuthority(USER_ADMIN, USER_USER, USER_OP)
 
-                    .regexMatchers("/api/up/.*").hasAnyAuthority(Util.USER_ADMIN)
+                    .regexMatchers("/api/up/.*").hasAnyAuthority(USER_ADMIN)
 
-                    .regexMatchers("/api/sensor/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_USER, Util.USER_OP)
+                    .regexMatchers("/api/sensor/.*").hasAnyAuthority(USER_ADMIN, USER_USER, USER_OP)
 
-                    .regexMatchers(HttpMethod.POST, "/api/op/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP)
-                    .regexMatchers(HttpMethod.PUT, "/api/op/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP)
-                    .regexMatchers(HttpMethod.DELETE, "/api/op/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP)
-                    .regexMatchers(HttpMethod.GET, "/api/op/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP, Util.USER_USER)
+                    .regexMatchers(HttpMethod.POST, "/api/op/.*").hasAnyAuthority(USER_ADMIN, USER_USER, USER_OP)
+                    .regexMatchers(HttpMethod.PUT, "/api/op/.*").hasAnyAuthority(USER_ADMIN, USER_USER, USER_OP)
+                    .regexMatchers(HttpMethod.DELETE, "/api/op/.*").hasAnyAuthority(USER_ADMIN, USER_USER, USER_OP)
+                    .regexMatchers(HttpMethod.GET, "/api/op/.*").hasAnyAuthority(USER_ADMIN, USER_USER, USER_OP)
 
-                    .regexMatchers("/api/report/.*").hasAnyAuthority(Util.USER_ADMIN, Util.USER_OP, Util.USER_USER)
+                    .regexMatchers("/api/report/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)
                 .and()
                 .logout().logoutUrl(config.getLogoutProcess()).logoutSuccessUrl(config.getLoginPage())
 //                .and()

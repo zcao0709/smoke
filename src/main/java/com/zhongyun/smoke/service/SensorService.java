@@ -86,13 +86,14 @@ public class SensorService {
     }
 
     @Transactional
-    public int updateLatiAndLongiById(String lati, String longi, long id) {
-        return sensorRepository.updateLatiAndLongiById(lati, longi, id);
+    public void updateLatiAndLongi(String lati, String longi, long id) {
+        sensorRepository.updateLatiAndLongiById(lati, longi, id);
+        sensorRepository.updateLatiAndLongiByGatewayId(id);
     }
 
     @Transactional
-    public int updateLatiAndLongiByGatewayId(long gatewayId) {
-        return sensorRepository.updateLatiAndLongiByGatewayId(gatewayId);
+    public void deleteUselessGateway() {
+        sensorRepository.deleteUselessGateway();
     }
 
     public Sensor find(long id) {

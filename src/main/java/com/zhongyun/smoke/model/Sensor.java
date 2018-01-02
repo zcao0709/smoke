@@ -54,7 +54,7 @@ public class Sensor {
     public Sensor() {
     }
 
-    public Sensor(long eui, String type, Timestamp installTime, String status, long gatewayId) {
+    public Sensor(long eui, String type, Timestamp installTime, String status, long gatewayId, long projectId) {
         this.eui = eui;
         this.type = type;
         this.installTime = installTime;
@@ -65,6 +65,7 @@ public class Sensor {
         } else {
             this.model = MODEL_GWRX;
         }
+        this.projectId = projectId;
     }
 
     public Sensor(long id, String model, String location, String guarantee, String status, long projectId, String phone) {

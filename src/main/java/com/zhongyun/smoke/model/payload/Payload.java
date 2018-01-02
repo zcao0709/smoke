@@ -36,7 +36,7 @@ public abstract class Payload {
 
     public abstract App parseApp();
 
-    public static void parse(String payload, MongoTemplate mongo, SensorService sensorService, OpTaskService opTaskService, ConcurrentMap<Long, Long> gatewayTs) {
+    public static void parse(String payload, MongoTemplate mongo, SensorService sensorService, ConcurrentMap<Long, Long> gatewayTs) {
         if (payload.startsWith("{\"gateway\"")) {
             Gwrx g = Util.json2Object(payload, Gwrx.class);
             g.update(sensorService, gatewayTs);

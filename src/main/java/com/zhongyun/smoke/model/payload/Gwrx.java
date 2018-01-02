@@ -29,12 +29,10 @@ public class Gwrx {
             gatewayTs.remove(gw.getEUI());
         } else {
             if (!sg.getLati().equals(gw.getStatus().getLati()) || !sg.getLongi().equals(gw.getStatus().getLongi())) {
-                service.updateLatiAndLongiById(gw.getStatus().getLati(), gw.getStatus().getLongi(), sg.getId());
-                service.updateLatiAndLongiByGatewayId(sg.getId());
+                service.updateLatiAndLongi(gw.getStatus().getLati(), gw.getStatus().getLongi(), sg.getId());
             } else {
                 service.update(sg);
             }
-
             gatewayTs.put(gw.getEUI(), ts);
         }
     }

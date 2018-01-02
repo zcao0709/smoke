@@ -45,7 +45,7 @@ public class Frame {
         size = 0;
         for (int i = in.read(); i != -1; i = in.read()) {
             byte b = (byte) i;
-//            System.out.printf("%02x ", b);
+            logger.info(String.format("R:%02x ", b));
 
             // read start id
             if (size < COMMAND_OFFSET) {
@@ -128,14 +128,18 @@ public class Frame {
         return content[COMMAND_OFFSET] == CMD_HB;
     }
 
+    public int getSize() {
+        return size;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
             sb.append(String.format("%02x ", content[i]));
         }
-//        return payload() + ":" + sb.toString() + size + "/" + getPayloadLen();
-        return payload();
+        return payload() + ":" + sb.toString() + size + "/" + getPayloadLen();
+//        return payload();
     }
 
     public static void sendAuth(OutputStream out, String user, String pwd) throws IOException {

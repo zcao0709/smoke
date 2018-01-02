@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -35,7 +37,7 @@ public class AServerConnector extends Thread {
     private SensorService sensorService;
 
     @Autowired
-    private OpTaskService opTaskService;
+    private SmsService smsService;
 
     private BlockingQueue<Frame> framesToSendout = new LinkedBlockingQueue<>();
 
@@ -54,6 +56,8 @@ public class AServerConnector extends Thread {
         while (true) {
 
             try (Socket socket = new Socket(config.getAserverIp(), config.getAserverPort())) {
+                cleanupGateway();
+
                 InputStream in = socket.getInputStream();
                 OutputStream out = socket.getOutputStream();
 
@@ -67,8 +71,6 @@ public class AServerConnector extends Thread {
                     return;
                 }
 
-                new GatewayMonitor(sensorService, gatewayTs).run();
-
                 ScheduledExecutorService hb = Executors.newSingleThreadScheduledExecutor();
                 hb.scheduleAtFixedRate(() -> framesToSendout.offer(Frame.newHB()), 0L, 15L, TimeUnit.MINUTES);
 
@@ -76,10 +78,14 @@ public class AServerConnector extends Thread {
 
                 while (true) {
                     Frame f = Frame.recvFrame(in);
+                    if (f.getSize() == 0) {
+                        smsService.send(new ArrayList<String>(){{add("17777791290");}}, "", "", "");
+                        break;
+                    }
                     if (f.isHB()) {
                         continue;
                     } else {
-                        Payload.parse(f.payload(), mongo, sensorService, opTaskService, gatewayTs);
+                        Payload.parse(f.payload(), mongo, sensorService, gatewayTs);
                     }
                 }
             } catch (IOException e) {
@@ -113,19 +119,39 @@ public class AServerConnector extends Thread {
         }
     }
 
-    private class GatewayMonitor implements Runnable {
+    private class SensorMonitor implements Runnable {
         private SensorService service;
-        private ConcurrentMap<Long, Long> gwrxTimer;
+        private ConcurrentMap<Long, Long> gatewayTs;
 
-        public GatewayMonitor(SensorService service, ConcurrentMap<Long, Long> gwrxTimer) {
+        private static final long GATEWAY_TIMEOUT = 3600 * 1000;
+        private static final long SENSOR_TIMEOUT = 3600 * 26 * 1000;
+
+        public SensorMonitor(SensorService service, ConcurrentMap<Long, Long> gatewayTs) {
             this.service = service;
-            this.gwrxTimer = gwrxTimer;
+            this.gatewayTs = gatewayTs;
         }
 
         @Override
         public void run() {
-            List<Sensor> sensors = service.findBaseByType(Util.SENSOR_GWRX);
-            sensors.forEach(v -> gwrxTimer.put(v.getEui(), v.getMtime().getTime()));
+            long ts = System.currentTimeMillis();
+
+            List<Long> keys = new LinkedList<>();
+            gatewayTs.entrySet().forEach(v -> {
+                if (v.getValue() - ts > GATEWAY_TIMEOUT) {
+                    logger.warn("gateway " + String.format("%X", v.getKey()) + "time out");
+                    keys.add(v.getKey());
+                }
+            });
+            keys.forEach(v -> gatewayTs.remove(v));
+
+//            sensorService.findOutOfDate();
         }
+    }
+
+    private void cleanupGateway() {
+
+        sensorService.deleteUselessGateway();
+        List<Sensor> sensors = sensorService.findBaseByType(Util.SENSOR_GWRX);
+        sensors.forEach(v -> gatewayTs.put(v.getEui(), v.getMtime().getTime()));
     }
 }

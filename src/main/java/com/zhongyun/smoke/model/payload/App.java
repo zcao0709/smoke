@@ -40,18 +40,19 @@ public class App {
         long ts = System.currentTimeMillis();
         Gwrx g = gwrx.get(0);
         Sensor sg = sensorService.findBaseByEui(g.eui);
+        Sensor s = sensorService.findBaseByEui(moteeui);
 
         if (sg == null) {
-            sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, 0);
+            sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, 0, s == null ? 0 : s.getProjectId());
             sg = sensorService.add(sg);
 
             gatewayTs.put(g.eui, ts);
         }
         logger.info("gateways: " + gatewayTs);
 
-        Sensor s = sensorService.findBaseByEui(moteeui);
         if (s == null) {
-            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId());
+            // 新的烟感器，项目固定为0，由管理员后续更新
+            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), 0);
             sensorService.add(s);
         } else {
             s.setGatewayId(sg.getId());

@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.dao.mysql;
 
+import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.model.Sensor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,4 +44,9 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     @Modifying
     @Query(value = "UPDATE sensor SET lati = ?1, longi = ?2, mtime = NOW() WHERE id = ?3", nativeQuery = true)
     int updateLatiAndLongiById(String lati, String longi, long id);
+
+    @Modifying
+    @Query(value = "DELETE FROM sensor WHERE type = " + SENSOR_GWRX + " and id NOT IN (SELECT DISTINCT gateway_id FROM sensor WHERE type = " +
+            SENSOR_SMOKE + ")", nativeQuery = true)
+    void deleteUselessGateway();
 }

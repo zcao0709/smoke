@@ -47,7 +47,14 @@ public class OpTaskController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
         return Resp.ok(service.update(opTask));
-//        return Resp.ok(OpTask.valueOf(service.update(opTask.toOpTask())));
+    }
+
+    @RequestMapping(value = "unsolved", method = RequestMethod.PUT)
+    public ResponseEntity<OpTask> updateUnsolved(@RequestBody OpTask opTask) {
+
+        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+
+        return Resp.ok(service.update(opTask));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
