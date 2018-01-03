@@ -92,11 +92,6 @@ public class SensorService {
         sensorRepository.updateLatiAndLongiByGatewayId(id);
     }
 
-    @Transactional
-    public void deleteUselessGateway() {
-        sensorRepository.deleteUselessGateway();
-    }
-
     public Sensor find(long id) {
         Sensor s = sensorRepository.findOne(id);
         if (s != null) {

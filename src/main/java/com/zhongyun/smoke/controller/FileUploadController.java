@@ -40,7 +40,7 @@ public class FileUploadController {
 
     private static final Logger logger = LoggerFactory.getLogger("FileUploadController");
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<String> upload(@RequestParam(value = "project", defaultValue = "0") long projectId) throws IOException, FileUploadException {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
@@ -66,7 +66,7 @@ public class FileUploadController {
                 out.close();
             }
         }
-        projectService.updateGraph(projectId, filename);
+//        projectService.updateGraph(projectId, filename);
         return Resp.ok("upload success");
     }
 }

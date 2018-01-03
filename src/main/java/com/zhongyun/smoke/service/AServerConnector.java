@@ -150,7 +150,6 @@ public class AServerConnector extends Thread {
 
     private void cleanupGateway() {
 
-        sensorService.deleteUselessGateway();
         List<Sensor> sensors = sensorService.findBaseByType(Util.SENSOR_GWRX);
         sensors.forEach(v -> gatewayTs.put(v.getEui(), v.getMtime().getTime()));
     }
