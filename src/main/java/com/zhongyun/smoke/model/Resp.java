@@ -27,15 +27,15 @@ public class Resp<T> {
     }
 
     public static ResponseEntity ok(Object data) {
-        return ResponseEntity.status(HttpStatus.OK).body(data);
+        return ResponseEntity.ok().body(data);
     }
 
     public static ResponseEntity bad(Object data) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(data);
+        return ResponseEntity.badRequest().body(data);
     }
 
-    public static ResponseEntity not(Object data) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(data);
+    public static ResponseEntity not() {
+        return ResponseEntity.notFound().build();
     }
 
     public static ResponseEntity ser(Object data) {

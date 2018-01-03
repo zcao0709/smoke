@@ -89,8 +89,8 @@ public class OpTaskService {
         ot.setEui16(String.format("%X", ot.getEui()));
 //        ot.setPoster(userRepository.findOne(ot.getPostUser()));
         ot.setOp(userRepository.findOne(ot.getOpUser()));
-        ot.setSensor(sensorRepository.findByEui(ot.getEui()));
-        ot.setProject(projectRepository.findOne(ot.getProjectId()));
+//        ot.setSensor(sensorRepository.findByEui(ot.getEui()));
+//        ot.setProject(projectRepository.findOne(ot.getProjectId()));
         ot.setExpired(System.currentTimeMillis() > Util.OPTASK_EXPIRED + ot.getCtime().getTime());
     }
 }

@@ -20,12 +20,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> argumentHandler(HttpServletRequest request, Exception ex) {
+    public ResponseEntity<String> argumentHandler(HttpServletRequest request, IllegalArgumentException ex) {
         return Resp.bad(ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> gloablHandler(HttpServletRequest request, Exception ex) {
+    public ResponseEntity<String> globalHandler(HttpServletRequest request, Exception ex) {
         return Resp.ser(ex.getMessage());
     }
 }

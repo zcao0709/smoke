@@ -56,6 +56,10 @@ public class ProjectService {
         return project;
     }
 
+    public void updateGraph(long projectId, String path) {
+        repository.updateGraphById(path, projectId);
+    }
+
     public Project find(long id) {
         Project p = repository.findOne(id);
         if (p != null) {

@@ -65,7 +65,7 @@ public class ProjectController {
 
         Project p = service.find(id);
         if (p == null) {
-            return Resp.not(id);
+            return Resp.not();
         }
         return Resp.ok(p.beforeReturn());
     }

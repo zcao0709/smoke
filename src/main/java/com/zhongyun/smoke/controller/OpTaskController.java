@@ -64,7 +64,7 @@ public class OpTaskController {
 
         OpTask o = service.find(id);
         if (o == null) {
-            return Resp.not(id);
+            return Resp.not();
         }
 //        return Resp.ok(OpTask.valueOf(o.beforeReturn()));
         return Resp.ok(o.beforeReturn());

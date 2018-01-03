@@ -30,6 +30,7 @@ public class Project {
     private long sensorCount;
 
     private String phone = "";
+    private String graph = "";
     private Timestamp mtime;
     private Timestamp ctime;
 
@@ -65,6 +66,14 @@ public class Project {
         this.phone = phone;
         this.mtime = mtime;
         this.ctime = ctime;
+    }
+
+    public void setGraph(String graph) {
+        this.graph = graph;
+    }
+
+    public String getGraph() {
+        return graph;
     }
 
     public String fullAddress() {

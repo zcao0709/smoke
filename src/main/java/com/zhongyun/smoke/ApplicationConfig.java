@@ -67,6 +67,13 @@ public class ApplicationConfig {
     @Value("${sms.sec}")
     private String smsSec;
 
+    @Value("${file.location}")
+    private String fileLocation;
+
+    public String getFileLocation() {
+        return fileLocation;
+    }
+
     public String getSmsId() {
         return smsId;
     }

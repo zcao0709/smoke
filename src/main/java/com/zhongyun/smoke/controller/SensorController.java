@@ -16,12 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by caozhennan on 2017/11/30.
@@ -62,7 +59,7 @@ public class SensorController {
 
         Sensor s = service.find(id);
         if (s == null) {
-            return Resp.not(id);
+            return Resp.not();
         }
 //        return Resp.ok(Sensor.valueOf(service.findOne(id)));
         return Resp.ok(service.find(id).beforeReturn());

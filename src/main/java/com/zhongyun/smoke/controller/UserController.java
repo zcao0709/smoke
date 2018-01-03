@@ -86,7 +86,7 @@ public class UserController {
 
         User u = service.findOne(id);
         if (u == null) {
-            return Resp.not(id);
+            return Resp.not();
         }
         return Resp.ok(u.beforeReturn());
     }
