@@ -9,8 +9,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
+import javax.servlet.MultipartConfigElement;
 import javax.sql.DataSource;
+import java.io.IOException;
 
 /**
  * Created by caozhennan on 2017/11/16.
@@ -132,6 +136,16 @@ public class ApplicationConfig {
         ds.setUsername(mysqlUser);
         ds.setPassword(mysqlPass);
         return ds;
+    }
+
+    @Bean
+    public MultipartResolver multipartResolver() throws IOException {
+        return new StandardServletMultipartResolver();
+    }
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        return new MultipartConfigElement("/tmp/", 4194304, 4194304, 0);
     }
 
     @Bean

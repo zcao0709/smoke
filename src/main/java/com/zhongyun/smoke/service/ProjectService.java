@@ -56,6 +56,7 @@ public class ProjectService {
         return project;
     }
 
+    @Transactional
     public void updateGraph(long projectId, String path) {
         repository.updateGraphById(path, projectId);
     }

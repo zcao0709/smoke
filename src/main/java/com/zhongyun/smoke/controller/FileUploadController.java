@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileOutputStream;
@@ -41,32 +42,21 @@ public class FileUploadController {
     private static final Logger logger = LoggerFactory.getLogger("FileUploadController");
 
     @PostMapping("")
-    public ResponseEntity<String> upload(@RequestParam(value = "project", defaultValue = "0") long projectId) throws IOException, FileUploadException {
+    public ResponseEntity<String> upload(
+            @RequestParam(value = "project", defaultValue = "0") long projectId,
+            @RequestPart("file") MultipartFile file
+    ) throws IOException {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
         if (projectId <= 0) {
             return Resp.bad("invalid project");
         }
-        // Create a new file upload handler
-        ServletFileUpload upload = new ServletFileUpload();
         String filename = "p" + projectId;
+        OutputStream out = new FileOutputStream(config.getFileLocation() + "/" + filename);
+        IOUtils.copy(file.getInputStream(), out);
 
-        // Parse the request
-        FileItemIterator iter = upload.getItemIterator(request);
-        while (iter.hasNext()) {
-            FileItemStream item = iter.next();
-
-            InputStream stream = item.openStream();
-            if (!item.isFormField()) {
-                // Process the input stream
-                OutputStream out = new FileOutputStream(config.getFileLocation() + filename);
-                IOUtils.copy(stream, out);
-                stream.close();
-                out.close();
-            }
-        }
-//        projectService.updateGraph(projectId, filename);
+        projectService.updateGraph(projectId, filename);
         return Resp.ok("upload success");
     }
 }
