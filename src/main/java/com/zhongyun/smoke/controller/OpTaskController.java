@@ -1,25 +1,19 @@
 package com.zhongyun.smoke.controller;
 
 import com.zhongyun.smoke.common.Page;
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.model.OpTask;
 import com.zhongyun.smoke.model.Resp;
 import com.zhongyun.smoke.service.OpTaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
-
-import static com.zhongyun.smoke.common.Util.DEF_END_TS;
-import static com.zhongyun.smoke.common.Util.DEF_START_TS;
 
 /**
  * Created by caozhennan on 2017/12/1.
@@ -103,7 +97,7 @@ public class OpTaskController {
         Date start = new Date(ctimeStart);
         Date end = new Date(ctimeEnd);
         Page p = service.findLike(projectId, eui16, cause, handler, worker, status, start, end, page, limit);
-        return Util.resp(p.getContent(), p.getTotal());
+        return resp(p.getContent(), p.getTotal());
     }
 
 //    @RequestMapping(method = RequestMethod.GET)
@@ -161,7 +155,7 @@ public class OpTaskController {
 //        Sort.Order o1 = new Sort.Order(Sort.Direction.ASC, "status");
 //        Sort.Order o2 = new Sort.Order(Sort.Direction.DESC, "mtime");
         Page<OpTask> p = service.findUnsolved(page, limit);
-        return Util.resp(p.getContent(), p.getTotal());
+        return resp(p.getContent(), p.getTotal());
 //        List<OpTask> ots = pages.getContent();
 //        ots.forEach(v -> v.beforeReturn());
 

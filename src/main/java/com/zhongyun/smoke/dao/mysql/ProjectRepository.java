@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 /**
  * Created by caozhennan on 2017/11/26.
  */
-public interface ProjectRepository extends JpaRepository<Project, Long> {
+public interface ProjectRepository extends JpaRepository<Project, Long>, ProjectOther {
     Page<Project> findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLikeAndPhoneLike(String name, String province, String city, String district,
                                                                                                     String address, String phone, Pageable pageable);
 

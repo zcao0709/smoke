@@ -16,39 +16,18 @@ public class User {
     private long id;
 
     private String name;
-    private String fullname = "";
+    private String fullname;
     private String pass;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_project", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"))
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "user_project", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+//            inverseJoinColumns = @JoinColumn(name = "project_id", referencedColumnName = "id"))
+    @Transient
     private List<Project> projects;
 
     private String type;
     private Timestamp mtime;
     private Timestamp ctime;
-
-    @Override
-    public String toString() {
-        return name + "/" + Arrays.toString(projects.toArray(new Project[0]));
-    }
-
-    public User beforeReturn() {
-        pass = "";
-        if (projects == null) {
-            return this;
-        }
-        for (Project p : projects) {
-            p.setUsers(null);
-//            if (p.getUsers() == null) {
-//                continue;
-//            }
-//            for (User u : p.getUsers()) {
-//                u.setProjects(null);
-//            }
-        }
-        return this;
-    }
 
     public User() {
     }
@@ -56,7 +35,7 @@ public class User {
     public User(long id, String name, String fullname, String type, Timestamp mtime, Timestamp ctime) {
         this.id = id;
         this.name = name;
-        this.name = fullname;
+        this.fullname = fullname;
         this.type = type;
         this.mtime = mtime;
         this.ctime = ctime;

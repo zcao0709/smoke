@@ -2,14 +2,12 @@ package com.zhongyun.smoke.service;
 
 import static com.zhongyun.smoke.common.Util.*;
 
-import com.zhongyun.smoke.common.Util;
+import com.zhongyun.smoke.common.Page;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.dao.mysql.UserProjectRepository;
 import com.zhongyun.smoke.model.Project;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -61,20 +59,13 @@ public class ProjectService {
         repository.updateGraphById(path, projectId);
     }
 
-    public Project find(long id) {
-        Project p = repository.findOne(id);
-        if (p != null) {
-            complete(p);
-        }
-        return p;
+    public Project findById(long id) {
+        return repository.findById(id);
     }
 
-    public Page<Project> find(String name, String province, String city, String district, String address, String phone, Pageable pageable) {
-        Page<Project> pages = repository.findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLikeAndPhoneLike(
-                like(name), like(province), like(city), like(district), like(address), like(phone), pageable);
-
-        pages.getContent().forEach(v -> complete(v));
-        return pages;
+    public Page<Project> findLike(String name, String province, String city, String district, String address, String phone, int page, int limit) {
+        return repository.findLike(
+                like(name), like(province), like(city), like(district), like(address), like(phone), page, limit);
     }
 
     private void validate(Project project) {
@@ -82,9 +73,5 @@ public class ProjectService {
             || StringUtils.isEmpty(project.getDistrict()) || StringUtils.isEmpty(project.getAddress()) || project.getRoomCount() <= 0) {
             throw new IllegalArgumentException(ERR_NOT_ENOUGH);
         }
-    }
-
-    private void complete(Project project) {
-        project.setSensorCount(sensorRepository.countByProjectIdAndType(project.getId(), Util.SENSOR_SMOKE));
     }
 }

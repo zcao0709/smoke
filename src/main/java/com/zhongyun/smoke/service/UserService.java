@@ -2,13 +2,12 @@ package com.zhongyun.smoke.service;
 
 import static com.zhongyun.smoke.common.Util.*;
 
+import com.zhongyun.smoke.common.Page;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.UserProjectRepository;
 import com.zhongyun.smoke.dao.mysql.UserRepository;
 import com.zhongyun.smoke.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -61,16 +60,16 @@ public class UserService {
         return user;
     }
 
-    public User findOne(long id) {
-        return repository.findOne(id);
+    public User findById(long id) {
+        return repository.findById(id);
     }
 
-    public User find(String name) {
+    public User findByName(String name) {
         return repository.findByName(name);
     }
 
-    public Page<User> findLike(String name, String fullname, String type, Pageable pageable) {
-        return repository.findByNameLikeAndFullnameLikeAndTypeLike(like(name), like(fullname), like(type), pageable);
+    public Page<User> findLike(String name, String fullname, String type, int page, int limit) {
+        return repository.findLike(like(name), like(fullname), like(type), page, limit);
     }
 
     private void validate(User user) {

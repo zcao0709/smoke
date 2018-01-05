@@ -11,11 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 /**
  * Created by caozhennan on 2017/11/26.
  */
-public interface UserRepository extends JpaRepository<User, Long> {
-    User findByName(String name);
-
-    Page<User> findByNameLikeAndFullnameLikeAndTypeLike(String name, String fullname, String type, Pageable pageable);
-
+public interface UserRepository extends JpaRepository<User, Long>, UserOther {
     @Modifying
     @Query(value = "UPDATE user SET name = ?1, fullname = ?2, type = ?3, mtime = NOW() WHERE id = ?4", nativeQuery = true)
     void updateById(String name, String fullname, String type, long id);

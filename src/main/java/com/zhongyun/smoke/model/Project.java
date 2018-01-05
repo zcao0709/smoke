@@ -34,7 +34,8 @@ public class Project {
     private Timestamp mtime;
     private Timestamp ctime;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
+//    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "projects")
+    @Transient
     private List<User> users;
 
     @Override
@@ -55,7 +56,8 @@ public class Project {
     public Project() {
     }
 
-    public Project(long id, String name, String province, String city, String district, String address, int roomCount, String phone, Timestamp mtime, Timestamp ctime) {
+    public Project(long id, String name, String province, String city, String district, String address, int roomCount, String phone,
+                   Timestamp mtime, Timestamp ctime) {
         this.id = id;
         this.name = name;
         this.province = province;
