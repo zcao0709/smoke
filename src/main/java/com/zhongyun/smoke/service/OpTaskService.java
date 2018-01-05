@@ -1,19 +1,19 @@
 package com.zhongyun.smoke.service;
 
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
+
+import com.zhongyun.smoke.common.Page;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.dao.mysql.UserRepository;
 import com.zhongyun.smoke.model.OpTask;
-import com.zhongyun.smoke.model.Project;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * Created by caozhennan on 2017/11/30.
@@ -46,9 +46,13 @@ public class OpTaskService {
     @Transactional
     public OpTask update(OpTask opTask) {
         if (opTask.getId() == 0) {
-            throw new IllegalArgumentException("no op task id");
+            throw new IllegalArgumentException(ERR_INVALID_ID);
         }
-        opTaskRepository.updateById(opTask.getOpUser(), opTask.getHandler(), opTask.getWorker(), opTask.getStatus(), opTask.getId());
+        if (opTask.getStatus().equals(OPTASK_UNSOLVED)) {
+            opTaskRepository.updateById(opTask.getOpUser(), opTask.getHandler(), opTask.getWorker(), opTask.getStatus(), opTask.getId());
+        } else {
+            opTaskRepository.updateByIdWithOpTime(opTask.getOpUser(), opTask.getHandler(), opTask.getWorker(), opTask.getStatus(), opTask.getId());
+        }
         return opTask;
     }
 
@@ -57,40 +61,42 @@ public class OpTaskService {
         return ot;
     }
 
-    public Page<OpTask> findBaseByEui(long eui, Pageable pageable) {
-        Page<OpTask> pages = opTaskRepository.findByEui(eui, pageable);
-        pages.getContent().forEach(v -> complete(v));
-
-        return pages;
-    }
-
-    public Page<OpTask> findBaseByProjectId(long projectId, Pageable pageable) {
-        Page<OpTask> pages = opTaskRepository.findByProjectId(projectId, pageable);
-        pages.getContent().forEach(v -> complete(v));
-
-        return pages;
-    }
-
-    public Page<OpTask> findAll(Pageable pageable) {
-        Page<OpTask> ots = opTaskRepository.findByCauseIn(Util.OpTaskAlarmCause, pageable);
-        ots.getContent().forEach(v -> complete(v));
+    public Page<OpTask> findUnsolved(int page, int limit) {
+        Page<OpTask> ots = opTaskRepository.findByCauseInAndStatus(OpTaskAlarmCause, OPTASK_UNSOLVED, page, limit);
+//        ots.getContent().forEach(v -> complete(v));
 
         return ots;
     }
 
-    public Page<OpTask> findUnsolved(Pageable pageable) {
-        Page<OpTask> ots = opTaskRepository.findByCauseInAndStatus(Util.OpTaskAlarmCause, Util.OPTASK_UNSOLVED, pageable);
-        ots.getContent().forEach(v -> complete(v));
+//    public Page<OpTask> findLike(long projectId, String eui, String cause, String handler, String worker, String status,
+//                                 Date ctimeStart, Date ctimeEnd, Pageable pageable) {
+//        if (projectId < 0) {
+//            return opTaskRepository.findByEui16LikeAndCauseLikeAndHandlerLikeAndWorkerLikeAndStatusLikeAndCtimeBetween
+//                    (like(eui), like(cause), like(handler), like(worker), like(status), ctimeStart, ctimeEnd, pageable);
+//        } else {
+//            return opTaskRepository.findByProjectIdAndEui16LikeAndCauseLikeAndHandlerLikeAndWorkerLikeAndStatusLikeAndCtimeBetween
+//                    (projectId, like(eui), like(cause), like(handler), like(worker), like(status), ctimeStart, ctimeEnd, pageable);
+//        }
+//
+//    }
 
-        return ots;
+    public Page<OpTask> findLike(long projectId, String eui, String cause, String handler, String worker, String status,
+                                 Date ctimeStart, Date ctimeEnd, int page, int limit) {
+        if (projectId < 0) {
+            return opTaskRepository.findLike
+                    (postLike(eui), like(cause), like(handler), like(worker), like(status), ctimeStart, ctimeEnd, page, limit);
+        } else {
+            return opTaskRepository.findLike
+                    (projectId, postLike(eui), like(cause), like(handler), like(worker), like(status), ctimeStart, ctimeEnd, page, limit);
+        }
     }
 
     private void complete(OpTask ot) {
-        ot.setEui16(String.format("%X", ot.getEui()));
+//        ot.setEui16(String.format("%X", ot.getEui()));
 //        ot.setPoster(userRepository.findOne(ot.getPostUser()));
-        ot.setOp(userRepository.findOne(ot.getOpUser()));
+//        ot.setOp(userRepository.findOne(ot.getOpUser()));
 //        ot.setSensor(sensorRepository.findByEui(ot.getEui()));
 //        ot.setProject(projectRepository.findOne(ot.getProjectId()));
-        ot.setExpired(System.currentTimeMillis() > Util.OPTASK_EXPIRED + ot.getCtime().getTime());
+        ot.setExpired(System.currentTimeMillis() > OPTASK_EXPIRED + ot.getCtime().getTime());
     }
 }

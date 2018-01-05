@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.controller;
 
+import com.zhongyun.smoke.common.Page;
 import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.model.Resp;
 import com.zhongyun.smoke.service.SensorService;
@@ -7,9 +8,6 @@ import static com.zhongyun.smoke.common.Util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +60,7 @@ public class SensorController {
             return Resp.not();
         }
 //        return Resp.ok(Sensor.valueOf(service.findOne(id)));
-        return Resp.ok(service.find(id).beforeReturn());
+        return Resp.ok(service.find(id));
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -82,7 +80,6 @@ public class SensorController {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-//        return Resp.ok(Sensor.valueOf(service.findByProjectId(projectId)));
         if (ctimeStart == 0) {
             ctimeStart = DEF_START_TS;
         }
@@ -91,15 +88,8 @@ public class SensorController {
         }
         Date start = new Date(ctimeStart);
         Date end = new Date(ctimeEnd);
-        Page<Sensor> pages = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, start, end,
-                                              new PageRequest(page - 1, limit, Sort.Direction.DESC, "mtime"));
-        List<Sensor> sensors = pages.getContent();
-        sensors.forEach(v -> v.beforeReturn());
-
-        HttpHeaders hs = new HttpHeaders();
-        hs.add("x-total-count", String.valueOf(pages.getTotalElements()));
-
-        return new ResponseEntity<>(sensors, hs, HttpStatus.OK);
+        Page<Sensor> p = service.findLike(projectId, eui, model, type, location, guarantee, status, phone, start, end, page, limit);
+        return resp(p.getContent(), p.getTotal());
     }
 
     @RequestMapping(value = "/alarm", method = RequestMethod.GET)
@@ -110,7 +100,7 @@ public class SensorController {
 
 //        return Resp.ok(Sensor.valueOf(service.findAlarmedByProjectId(projectId)));
         List<Sensor> sensors = service.findAlarmedByProjectId(projectId);
-        sensors.forEach(v -> v.beforeReturn());
+//        sensors.forEach(v -> v.beforeReturn());
         return Resp.ok(sensors);
     }
 }

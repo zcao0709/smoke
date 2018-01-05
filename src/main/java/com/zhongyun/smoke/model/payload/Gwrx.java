@@ -2,6 +2,7 @@ package com.zhongyun.smoke.model.payload;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.service.SensorService;
 
@@ -28,8 +29,10 @@ public class Gwrx {
         if (sg == null) {
             gatewayTs.remove(gw.getEUI());
         } else {
+            sg.setStatus(Util.SENSOR_NORMAL);
+
             if (!sg.getLati().equals(gw.getStatus().getLati()) || !sg.getLongi().equals(gw.getStatus().getLongi())) {
-                service.updateLatiAndLongi(gw.getStatus().getLati(), gw.getStatus().getLongi(), sg.getId());
+                service.updateLocationAndStatus(gw.getStatus().getLati(), gw.getStatus().getLongi(), sg.getStatus(), sg.getId());
             } else {
                 service.update(sg);
             }

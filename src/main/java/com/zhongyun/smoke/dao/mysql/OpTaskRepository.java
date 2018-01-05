@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -14,14 +15,20 @@ import java.util.Set;
  */
 public interface OpTaskRepository extends JpaRepository<OpTask, Long>, OpTaskOther {
     Page<OpTask> findByCauseIn(Set<String> cause, Pageable pageable);
-    Page<Long> findIdByCauseIn(Set<String> carse, Pageable pageable);
-    Page<OpTask> findByCauseInAndStatus(Set<String> cause, String status, Pageable pageable);
-
-    @Modifying
-    @Query(value = "UPDATE op_task SET op_user = ?1, op_time = NOW(), handler = ?2, worker = ?3, status = ?4, mtime = NOW() WHERE id = ?5", nativeQuery = true)
-    void updateById(long opUser, String handler, String worker, String status, long id);
-
+//    Page<OpTask> findByCauseInAndStatus(Set<String> cause, String status, Pageable pageable);
     long countByEui(long eui);
     Page<OpTask> findByEui(long eui, Pageable pageable);
     Page<OpTask> findByProjectId(long projectId, Pageable pageable);
+    Page<OpTask> findByEui16LikeAndCauseLikeAndHandlerLikeAndWorkerLikeAndStatusLikeAndCtimeBetween(
+            String eui, String cause, String handler, String worker, String status, Date ctimeStart, Date ctimeEnd, Pageable pageable);
+    Page<OpTask> findByProjectIdAndEui16LikeAndCauseLikeAndHandlerLikeAndWorkerLikeAndStatusLikeAndCtimeBetween(
+            long projectId, String eui, String cause, String handler, String worker, String status, Date ctimeStart, Date ctimeEnd, Pageable pageable);
+
+    @Modifying
+    @Query(value = "UPDATE op_task SET op_user = ?1, op_time = NOW(), handler = ?2, worker = ?3, status = ?4, mtime = NOW() WHERE id = ?5", nativeQuery = true)
+    void updateByIdWithOpTime(long opUser, String handler, String worker, String status, long id);
+
+    @Modifying
+    @Query(value = "UPDATE op_task SET op_user = ?1, handler = ?2, worker = ?3, status = ?4, mtime = NOW() WHERE id = ?5", nativeQuery = true)
+    void updateById(long opUser, String handler, String worker, String status, long id);
 }

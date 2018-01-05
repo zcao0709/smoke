@@ -2,14 +2,17 @@ package com.zhongyun.smoke.service;
 
 import static com.zhongyun.smoke.common.Util.*;
 
+import com.zhongyun.smoke.ApplicationConfig;
+import com.zhongyun.smoke.common.Page;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.OpTask;
 import com.zhongyun.smoke.model.Project;
 import com.zhongyun.smoke.model.Sensor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,16 +28,21 @@ import java.util.List;
 @Service
 public class SensorService {
     @Autowired
-    public SensorRepository sensorRepository;
+    private ApplicationConfig config;
 
     @Autowired
-    public OpTaskRepository opTaskRepository;
+    private SensorRepository sensorRepository;
 
     @Autowired
-    public ProjectRepository projectRepository;
+    private OpTaskRepository opTaskRepository;
 
     @Autowired
-    public SmsService smsService;
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private SmsService smsService;
+
+    private static final Logger logger = LoggerFactory.getLogger("SensorService");
 
     public Sensor add(Sensor sensor) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
@@ -49,9 +57,14 @@ public class SensorService {
     }
 
     @Transactional
+    public void updateMtime() {
+        sensorRepository.updateMtime();
+    }
+
+    @Transactional
     public Sensor update(Sensor sensor) {
         if (sensor.getId() == 0) {
-            throw new IllegalArgumentException("no sensor id");
+            throw new IllegalArgumentException(ERR_INVALID_ID);
         }
         sensorRepository.updateById(sensor.getModel(), sensor.getLocation(), sensor.getGuarantee(), sensor.getStatus(),
                                     sensor.getProjectId(), sensor.getPhone(), sensor.getId());
@@ -69,34 +82,39 @@ public class SensorService {
             OpTask ot = new OpTask(sensor.getEui(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());
             opTaskRepository.save(ot);
 
-            if (OpTaskSmsCause.contains(status) && validatePhone(sensor.getPhone())) {
-                Project p = projectRepository.findOne(sensor.getProjectId());
+            if (OpTaskSmsCause.contains(status)) {
 
                 List<String> recvs = new ArrayList<>(2);
                 if (validatePhone(sensor.getPhone())) {
                     recvs.add(sensor.getPhone());
                 }
-                if (validatePhone(p.getPhone()) && (recvs.size() < 1 || !recvs.get(0).equals(p.getPhone()))) {
+
+                Project p = null;
+                if (sensor.getProjectId() > 0) {
+                    p = projectRepository.findOne(sensor.getProjectId());
+                }
+                if (p != null && validatePhone(p.getPhone()) && (recvs.size() < 1 || !recvs.get(0).equals(p.getPhone()))) {
                     recvs.add(p.getPhone());
                 }
-                if (recvs.size() > 0) {
-                    smsService.send(recvs, p.fullAddress() + " " + sensor.getLocation(), FORMAT.format(new Date(ts)), p.getPhone());
+                if (recvs.size() == 0) {
+                    recvs.add(config.getAdminPhone());
                 }
+                smsService.send(recvs, p.fullAddress() + " " + sensor.getLocation(), FORMAT.format(new Date(ts)), p.getPhone());
             }
         }
     }
 
     @Transactional
-    public void updateLatiAndLongi(String lati, String longi, long id) {
-        sensorRepository.updateLatiAndLongiById(lati, longi, id);
+    public void updateLocationAndStatus(String lati, String longi, String status, long id) {
+        sensorRepository.updateLatiAndLongiAndStatusById(lati, longi, status, id);
         sensorRepository.updateLatiAndLongiByGatewayId(id);
     }
 
     public Sensor find(long id) {
-        Sensor s = sensorRepository.findOne(id);
-        if (s != null) {
-            complete(s);
-        }
+        Sensor s = sensorRepository.findById(id);
+//        if (s != null) {
+//            complete(s);
+//        }
         return s;
     }
 
@@ -104,21 +122,19 @@ public class SensorService {
         return sensorRepository.findByEui(eui);
     }
 
-    public List<Sensor> findByProjectId(long projectId) {
-        List<Sensor> sensors = sensorRepository.findByProjectIdAndType(projectId, SENSOR_SMOKE);
-        sensors.forEach(v -> complete(v));
-        return sensors;
+    public long countByGatewayId(long gatewayId) {
+        return sensorRepository.countByGatewayId(gatewayId);
     }
 
     public Page<Sensor> findLike(long projectId, String eui, String model, String type, String location, String guarantee,
-                                 String status, String phone, Date start, Date end, Pageable pageable) {
+                                 String status, String phone, Date start, Date end, int page, int limit) {
         Page<Sensor> pages;
         if (projectId < 0) {
-            pages = sensorRepository.findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
-                    (like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, pageable);
+            pages = sensorRepository.findLike
+                    (postLike(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, page, limit);
         } else {
-            pages = sensorRepository.findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween
-                    (projectId, like(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, pageable);
+            pages = sensorRepository.findLike
+                    (projectId, postLike(eui), like(model), like(type), like(location), like(guarantee), like(status), like(phone), start, end, page, limit);
         }
         return pages;
     }
@@ -131,6 +147,10 @@ public class SensorService {
 
     public List<Sensor> findBaseByType(String type) {
         return sensorRepository.findByType(type);
+    }
+
+    public List<Sensor> findByMtimeBefore(Date date) {
+        return sensorRepository.findByMtimeBefore(date);
     }
 
     private void complete(Sensor sensor) {

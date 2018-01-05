@@ -1,7 +1,9 @@
 package com.zhongyun.smoke.model.payload;
 
+import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.service.SensorService;
+import javafx.application.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -34,7 +36,7 @@ public abstract class Payload {
 
     public abstract App parseApp();
 
-    public static void parse(String payload, MongoTemplate mongo, SensorService sensorService, ConcurrentMap<Long, Long> gatewayTs) {
+    public static void parse(String payload, MongoTemplate mongo, SensorService sensorService, ConcurrentMap<Long, Long> gatewayTs, ApplicationConfig config) {
         if (payload.startsWith("{\"gateway\"")) {
             Gwrx g = Util.json2Object(payload, Gwrx.class);
             g.update(sensorService, gatewayTs);
@@ -54,7 +56,7 @@ public abstract class Payload {
             }
             App app = p.parseApp();
             mongo.save(app, Util.MONGO_COLLECTION);
-            app.update(sensorService, gatewayTs);
+            app.update(sensorService, gatewayTs, config);
         }
     }
 

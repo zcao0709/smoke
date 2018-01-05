@@ -1,6 +1,7 @@
 package com.zhongyun.smoke.model.payload;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.OpTask;
 import com.zhongyun.smoke.model.Sensor;
@@ -30,7 +31,7 @@ public class App {
     public App() {
     }
 
-    public void update(SensorService sensorService, ConcurrentMap<Long, Long> gatewayTs) {
+    public void update(SensorService sensorService, ConcurrentMap<Long, Long> gatewayTs, ApplicationConfig config) {
         if (gwrx == null || gwrx.size() == 0) {
             logger.error("sensor " + moteeui + " has no gateway, will not be saved");
             return;
@@ -44,6 +45,7 @@ public class App {
 
         if (sg == null) {
             sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, 0, s == null ? 0 : s.getProjectId());
+            sg.setPhone(config.getAdminPhone());
             sg = sensorService.add(sg);
 
             gatewayTs.put(g.eui, ts);

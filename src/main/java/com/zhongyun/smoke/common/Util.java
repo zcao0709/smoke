@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zhongyun.smoke.model.payload.ImmeApp;
 import com.zhongyun.smoke.model.payload.Payload;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
@@ -12,15 +15,19 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by caozhennan on 2017/11/16.
  */
 public class Util {
+    public static final String ERR_NOT_ENOUGH = "信息不足，请补全";
+    public static final String ERR_INVALID_ID = "无效的ID";
+    public static final String ERR_DEL_ADMIN = "不支持删除第一管理员";
 
-    public static final long DEF_START_TS = 1510818350000L; // in ms
-    public static final long DEF_END_TS = 33067727150000L; // in ms
+    public static final long DEF_START_TS = 1510818350000L; // in ms 2017/11/16 3:45:00
+    public static final long DEF_END_TS = 33067727150000L; // in ms 3017/11/16 3:45:00
 
     public static final String TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final DateFormat FORMAT = new SimpleDateFormat(TIME_FORMAT);
@@ -131,6 +138,13 @@ public class Util {
         return "%" + str + "%";
     }
 
+    public static String postLike(String str) {
+        if (str == null || str.length() == 0) {
+            return "%";
+        }
+        return "%" + str;
+    }
+
     public static boolean validatePhone(String num) {
         return num.length() > 0;
     }
@@ -145,6 +159,21 @@ public class Util {
             System.out.printf("%02x\n", b);
         }
         System.out.println(Payload.status.get((int) bs[bs.length-1]));
+    }
+
+    public static <T> ResponseEntity<List<T>> resp(List<T> content, long total) {
+        HttpHeaders hs = new HttpHeaders();
+        hs.add("x-total-count", String.valueOf(total));
+        return new ResponseEntity<>(content, hs, HttpStatus.OK);
+    }
+
+    public static String order(String column) {
+        return "ORDER BY " + column + " ASC ";
+    }
+
+    public static String page(int page, int limit) {
+        int offset = (page - 1) * limit;
+        return "LIMIT " + offset + "," + limit + " ";
     }
 
     public static boolean testEnv() {

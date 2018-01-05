@@ -21,12 +21,14 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> statuses);
     List<Sensor> findByType(String type);
     long countByProjectIdAndType(long projectId, String type);
+    long countByGatewayId(long gatewayId);
     Page<Sensor> findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
             String eui, String model, String type, String location, String gurantee, String status, String phone,
             Date installTimeStart, Date installTimeEnd, Pageable pageable);
     Page<Sensor> findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
             long projectId, String eui, String model, String type, String location, String gurantee, String status, String phone,
             Date installTimeStart, Date installTimeEnd, Pageable pageable);
+    List<Sensor> findByMtimeBefore(Date date);
 
     @Modifying
     @Query(value = "UPDATE sensor SET project_id = 0 WHERE project_id = ?1", nativeQuery = true)
@@ -42,11 +44,11 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     void updateStatusAndGatewayById(String status, long gatewayId, long id);
 
     @Modifying
-    @Query(value = "UPDATE sensor SET lati = ?1, longi = ?2, mtime = NOW() WHERE id = ?3", nativeQuery = true)
-    int updateLatiAndLongiById(String lati, String longi, long id);
+    @Query(value = "UPDATE sensor SET lati = ?1, longi = ?2, status = ?3, mtime = NOW() WHERE id = ?4", nativeQuery = true)
+    int updateLatiAndLongiAndStatusById(String lati, String longi, String status, long id);
 
     @Modifying
-    @Query(value = "DELETE FROM sensor WHERE type = '" + SENSOR_GWRX + "' and id NOT IN (SELECT DISTINCT gateway_id FROM sensor WHERE type = '" +
-            SENSOR_SMOKE + "')", nativeQuery = true)
-    void deleteUselessGateway();
+    @Query(value = "UPDATE sensor SET mtime = NOW()", nativeQuery = true)
+    void updateMtime();
+
 }

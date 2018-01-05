@@ -74,6 +74,27 @@ public class ApplicationConfig {
     @Value("${file.location}")
     private String fileLocation;
 
+    @Value("${gateway.timeout}")
+    private long gatewayTimeout;
+
+    @Value("${sensor.timeout}")
+    private long sensorTimeout;
+
+    @Value("${admin.phone}")
+    private String adminPhone;
+
+    public long getGatewayTimeout() {
+        return gatewayTimeout;
+    }
+
+    public long getSensorTimeout() {
+        return sensorTimeout;
+    }
+
+    public String getAdminPhone() {
+        return adminPhone;
+    }
+
     public String getFileLocation() {
         return fileLocation;
     }

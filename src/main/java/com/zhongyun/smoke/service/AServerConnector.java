@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -56,7 +57,7 @@ public class AServerConnector extends Thread {
         while (true) {
 
             try (Socket socket = new Socket(config.getAserverIp(), config.getAserverPort())) {
-                cleanupGateway();
+                initSensors();
 
                 InputStream in = socket.getInputStream();
                 OutputStream out = socket.getOutputStream();
@@ -74,6 +75,11 @@ public class AServerConnector extends Thread {
                 ScheduledExecutorService hb = Executors.newSingleThreadScheduledExecutor();
                 hb.scheduleAtFixedRate(() -> framesToSendout.offer(Frame.newHB()), 0L, 15L, TimeUnit.MINUTES);
 
+                ScheduledExecutorService mt = Executors.newSingleThreadScheduledExecutor();
+                SensorMonitor sm = new SensorMonitor(sensorService, gatewayTs);
+                long rate = config.getGatewayTimeout() / 2;
+                mt.scheduleAtFixedRate(sm, rate, rate, TimeUnit.MILLISECONDS);
+
                 new Sender(out).start();
 
                 while (true) {
@@ -85,7 +91,7 @@ public class AServerConnector extends Thread {
                     if (f.isHB()) {
                         continue;
                     } else {
-                        Payload.parse(f.payload(), mongo, sensorService, gatewayTs);
+                        Payload.parse(f.payload(), mongo, sensorService, gatewayTs, config);
                     }
                 }
             } catch (IOException e) {
@@ -123,9 +129,6 @@ public class AServerConnector extends Thread {
         private SensorService service;
         private ConcurrentMap<Long, Long> gatewayTs;
 
-        private static final long GATEWAY_TIMEOUT = 3600 * 1000;
-        private static final long SENSOR_TIMEOUT = 3600 * 26 * 1000;
-
         public SensorMonitor(SensorService service, ConcurrentMap<Long, Long> gatewayTs) {
             this.service = service;
             this.gatewayTs = gatewayTs;
@@ -135,21 +138,35 @@ public class AServerConnector extends Thread {
         public void run() {
             long ts = System.currentTimeMillis();
 
-            List<Long> keys = new LinkedList<>();
+            List<Long> timeoutGateways = new LinkedList<>();
             gatewayTs.entrySet().forEach(v -> {
-                if (v.getValue() - ts > GATEWAY_TIMEOUT) {
-                    logger.warn("gateway " + String.format("%X", v.getKey()) + "time out");
-                    keys.add(v.getKey());
+                if (v.getValue() > 0 && v.getValue() - ts > config.getGatewayTimeout()) {
+                    logger.warn("gateway " + String.format("%X", v.getKey()) + " lost connection");
+                    timeoutGateways.add(v.getKey());
                 }
             });
-            keys.forEach(v -> gatewayTs.remove(v));
-
-//            sensorService.findOutOfDate();
+            timeoutGateways.forEach(eui -> {
+                Sensor g = sensorService.findBaseByEui(eui);
+                long c = sensorService.countByGatewayId(g.getId());
+                if (c == 0) {
+                    gatewayTs.remove(eui);
+                    sensorService.delete(g.getId());
+                    logger.warn("gateway " + String.format("%X", eui) + " removed from DB since no sensor");
+                } else {
+                    gatewayTs.put(eui, 0L);
+                    sensorService.updateStatusAndGateway(Util.SENSOR_DISCONN, g, ts);
+                }
+            });
+            List<Sensor> ss = sensorService.findByMtimeBefore(new Date(ts - config.getSensorTimeout()));
+            ss.forEach(s -> {
+                sensorService.updateStatusAndGateway(Util.SENSOR_DISCONN, s, ts);
+                logger.warn("sensor " + s.getEui16() + " lost connection");
+            });
         }
     }
 
-    private void cleanupGateway() {
-
+    private void initSensors() {
+        sensorService.updateMtime();
         List<Sensor> sensors = sensorService.findBaseByType(Util.SENSOR_GWRX);
         sensors.forEach(v -> gatewayTs.put(v.getEui(), v.getMtime().getTime()));
     }

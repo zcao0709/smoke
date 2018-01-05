@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+import static com.zhongyun.smoke.common.Util.OPTASK_EXPIRED;
+
 /**
  * Created by caozhennan on 2017/11/30.
  */
@@ -18,7 +20,6 @@ public class OpTask {
     @JsonProperty("eui10")
     private long eui;
 
-    @Transient
     @JsonProperty("eui")
     private String eui16;
 
@@ -61,6 +62,7 @@ public class OpTask {
 
     public OpTask(long eui, long postUser, Timestamp postTime, String cause, String status, long projectId) {
         this.eui = eui;
+        this.eui16 = String.format("%X", eui);
         this.postUser = postUser;
         this.postTime = postTime;
         this.cause = cause;
@@ -70,10 +72,11 @@ public class OpTask {
         this.ctime = postTime;
     }
 
-    public OpTask(long id, long eui, long postUser, Timestamp postTime, long opUser, Timestamp opTime, String cause, String handler, String worker,
+    public OpTask(long id, long eui, String eui16, long postUser, Timestamp postTime, long opUser, Timestamp opTime, String cause, String handler, String worker,
                   String status, long projectId, Timestamp mtime, Timestamp ctime) {
         this.id = id;
         this.eui = eui;
+        this.eui16 = eui16;
         this.postUser = postUser;
         this.postTime = postTime;
         this.opUser = opUser;
@@ -85,14 +88,8 @@ public class OpTask {
         this.projectId = projectId;
         this.mtime = mtime;
         this.ctime = ctime;
-    }
 
-    public OpTask(long id, long opUser, String handler, String worker, String status) {
-        this.id = id;
-        this.opUser = opUser;
-        this.handler = handler;
-        this.worker = worker;
-        this.status = status;
+        this.expired = System.currentTimeMillis() > OPTASK_EXPIRED + ctime.getTime();
     }
 
     public OpTask beforeReturn() {

@@ -56,6 +56,7 @@ public class Sensor {
 
     public Sensor(long eui, String type, Timestamp installTime, String status, long gatewayId, long projectId) {
         this.eui = eui;
+        this.eui16 = String.format("%X", eui);
         this.type = type;
         this.installTime = installTime;
         this.status = status;
@@ -68,19 +69,25 @@ public class Sensor {
         this.projectId = projectId;
     }
 
-    public Sensor(long id, String model, String location, String guarantee, String status, long projectId, String phone) {
+    public Sensor(long id, long eui, String eui16, String model, String type, String location, String lati, String longi, Timestamp installTime,
+                  String guarantee, String status, long projectId, long gatewayId, String phone, Timestamp mtime, Timestamp ctime, long opCount) {
         this.id = id;
+        this.eui = eui;
+        this.eui16 = eui16;
         this.model = model;
+        this.type = type;
         this.location = location;
+        this.lati = lati;
+        this.longi = longi;
+        this.installTime = installTime;
         this.guarantee = guarantee;
         this.status = status;
         this.projectId = projectId;
+        this.gatewayId = gatewayId;
         this.phone = phone;
-    }
-
-    public Sensor beforeReturn() {
-//        setEui16(String.format("%X", getEui()));
-        return this;
+        this.mtime = mtime;
+        this.ctime = ctime;
+        this.opCount = opCount;
     }
 
     public void setEui16(String eui16) {

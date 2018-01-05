@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 
 import javax.sql.DataSource;
 
@@ -38,16 +39,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.formLogin().loginPage(config.getLoginPage()).loginProcessingUrl(config.getLoginProcess())
-        http.formLogin().loginProcessingUrl(config.getLoginProcess())
+        http.formLogin().loginPage(config.getLoginPage()).loginProcessingUrl(config.getLoginProcess())
                     .defaultSuccessUrl(config.getLoginSuccess()).failureUrl(config.getLoginFailure()).permitAll()
                 .and()
-//                .httpBasic()
-//                .and()
                 .authorizeRequests()
-                    .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(USER_ADMIN)
+                .regexMatchers(".*").permitAll()
+                    /*.regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(USER_ADMIN)
                     .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(USER_ADMIN)
-//                    .regexMatchers(HttpMethod.GET, "/api/user/.*").hasAnyAuthority(USER_ADMIN, USER_USER, USER_OP)
                     .regexMatchers(HttpMethod.GET, "/api/user/.*").authenticated()
                     .regexMatchers(HttpMethod.PUT, "/api/user/.*").hasAnyAuthority(USER_ADMIN, USER_USER)
 
@@ -67,8 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                     .regexMatchers("/api/report/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)
 
-//                    .regexMatchers("/api/file/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)
-                    .regexMatchers("/api/file/.*").permitAll()
+                    .regexMatchers("/api/file/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)*/
                 .and()
                 .logout().logoutUrl(config.getLogoutProcess()).logoutSuccessUrl(config.getLoginPage())
 //                .and()
@@ -76,8 +73,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                    .regexMatchers(".*").requiresSecure()
                 .and()
                 .rememberMe()
-                    .tokenRepository(new InMemoryTokenRepositoryImpl())
-                    .tokenValiditySeconds(3600 * 24)
+//                    .tokenRepository(new InMemoryTokenRepositoryImpl())
+                    .tokenRepository(new JdbcTokenRepositoryImpl())
+                    .tokenValiditySeconds(3600 * 24 * 7)
                     .key("zhongyun")
                 .and()
                 .csrf()

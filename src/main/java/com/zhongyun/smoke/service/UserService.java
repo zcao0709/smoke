@@ -28,7 +28,7 @@ public class UserService {
 
     public User add(User user) {
         if (StringUtils.isEmpty(user.getPass())) {
-            throw new IllegalArgumentException("no user password");
+            throw new IllegalArgumentException(ERR_NOT_ENOUGH);
         }
         user.setPass(Util.ENCODER.encode(user.getPass()));
         validate(user);
@@ -40,7 +40,7 @@ public class UserService {
 
     public void delete(long id) {
         if (id == 1) {
-            throw new IllegalArgumentException("cannot remove system administrator");
+            throw new IllegalArgumentException(ERR_DEL_ADMIN);
         }
         repository.delete(id);
         upRepository.deleteByUserId(id);
@@ -49,7 +49,7 @@ public class UserService {
     @Transactional
     public User update(User user) {
         if (user.getId() == 0) {
-            throw new IllegalArgumentException("no user id");
+            throw new IllegalArgumentException(ERR_INVALID_ID);
         }
         validate(user);
         if (user.getPass().length() == 0) {
@@ -76,7 +76,7 @@ public class UserService {
     private void validate(User user) {
 
         if (StringUtils.isEmpty(user.getName()) || StringUtils.isEmpty(user.getType())) {
-            throw new IllegalArgumentException("not enough user info");
+            throw new IllegalArgumentException(ERR_NOT_ENOUGH);
         }
     }
 }

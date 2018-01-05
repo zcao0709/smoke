@@ -48,7 +48,7 @@ public class ProjectService {
     @Transactional
     public Project update(Project project) {
         if (project.getId() == 0) {
-            throw new IllegalArgumentException("no project id");
+            throw new IllegalArgumentException(ERR_INVALID_ID);
         }
         validate(project);
         repository.updateById(project.getName(), project.getProvince(), project.getCity(), project.getDistrict(), project.getAddress(),
@@ -70,9 +70,9 @@ public class ProjectService {
     }
 
     public Page<Project> find(String name, String province, String city, String district, String address, String phone, Pageable pageable) {
-        Page<Project> pages
-                = repository.findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLikeAndPhoneLike(like(name), like(province), like(city),
-                                                                                                               like(district), like(address), like(phone), pageable);
+        Page<Project> pages = repository.findByNameLikeAndProvinceLikeAndCityLikeAndDistrictLikeAndAddressLikeAndPhoneLike(
+                like(name), like(province), like(city), like(district), like(address), like(phone), pageable);
+
         pages.getContent().forEach(v -> complete(v));
         return pages;
     }
@@ -80,7 +80,7 @@ public class ProjectService {
     private void validate(Project project) {
         if (StringUtils.isEmpty(project.getName()) || StringUtils.isEmpty(project.getProvince()) || StringUtils.isEmpty(project.getCity())
             || StringUtils.isEmpty(project.getDistrict()) || StringUtils.isEmpty(project.getAddress()) || project.getRoomCount() <= 0) {
-            throw new IllegalArgumentException("not enough project info");
+            throw new IllegalArgumentException(ERR_NOT_ENOUGH);
         }
     }
 
