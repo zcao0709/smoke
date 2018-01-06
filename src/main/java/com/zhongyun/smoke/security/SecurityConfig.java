@@ -43,8 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .defaultSuccessUrl(config.getLoginSuccess()).failureUrl(config.getLoginFailure()).permitAll()
                 .and()
                 .authorizeRequests()
-                .regexMatchers(".*").permitAll()
-                    /*.regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(USER_ADMIN)
+//                .regexMatchers(".*").permitAll()
+                    .regexMatchers(HttpMethod.POST, "/api/user/.*").hasAuthority(USER_ADMIN)
                     .regexMatchers(HttpMethod.DELETE, "/api/user/.*").hasAuthority(USER_ADMIN)
                     .regexMatchers(HttpMethod.GET, "/api/user/.*").authenticated()
                     .regexMatchers(HttpMethod.PUT, "/api/user/.*").hasAnyAuthority(USER_ADMIN, USER_USER)
@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                     .regexMatchers("/api/report/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)
 
-                    .regexMatchers("/api/file/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)*/
+                    .regexMatchers("/api/file/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)
                 .and()
                 .logout().logoutUrl(config.getLogoutProcess()).logoutSuccessUrl(config.getLoginPage())
 //                .and()
