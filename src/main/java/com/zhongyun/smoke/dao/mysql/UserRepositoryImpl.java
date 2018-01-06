@@ -70,7 +70,7 @@ public class UserRepositoryImpl implements UserOther {
         Map<String, Object> args = new HashMap<>();
         args.put("name", name);
 
-        return jdbcTemplate.queryForObject(selectOne + where, args, rowMapperOne);
+        return findOne(selectOne + where, args);
     }
 
     @Override
@@ -79,7 +79,11 @@ public class UserRepositoryImpl implements UserOther {
         Map<String, Object> args = new HashMap<>();
         args.put("id", id);
 
-        List<User> us = jdbcTemplate.query(selectOne + where, args, rowMapperOne);
+        return findOne(selectOne + where, args);
+    }
+
+    private User findOne(String sql, Map<String, Object> args) {
+        List<User> us = jdbcTemplate.query(sql, args, rowMapperOne);
         if (us == null || us.size() == 0) {
             return null;
         } else {
