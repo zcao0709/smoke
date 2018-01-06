@@ -85,7 +85,7 @@ public class AServerConnector extends Thread {
                 while (true) {
                     Frame f = Frame.recvFrame(in);
                     if (f.getSize() == 0) {
-                        smsService.send(new ArrayList<String>(){{add("17777791290");}}, "", "", "");
+                        logger.error("got empty frame");
                         break;
                     }
                     if (f.isHB()) {

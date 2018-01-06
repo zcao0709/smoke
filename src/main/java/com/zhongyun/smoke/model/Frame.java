@@ -45,7 +45,6 @@ public class Frame {
         size = 0;
         for (int i = in.read(); i != -1; i = in.read()) {
             byte b = (byte) i;
-            logger.info(String.format("R:%02x ", b));
 
             // read start id
             if (size < COMMAND_OFFSET) {
@@ -70,19 +69,6 @@ public class Frame {
                     payloadLen = getPayloadLen();
                     return;
                 }
-//                if (size == START_LEN + CMD_LEN + LEN_LEN) {
-//                    payloadLen = getPayloadLen();
-//                }
-//            } else if (size < PAYLOAD_OFFSET + payloadLen) {
-//                content[size++] = b;
-//            } else {
-//                if (b != END) {
-//                    clear();
-//                    continue;
-//                } else {
-//                    content[size++] = END;
-//                    break;
-//                }
             }
         }
     }
@@ -138,8 +124,8 @@ public class Frame {
         for (int i = 0; i < size; i++) {
             sb.append(String.format("%02x ", content[i]));
         }
-        return payload() + ":" + sb.toString() + size + "/" + getPayloadLen();
-//        return payload();
+//        return payload() + ":" + sb.toString() + size + "/" + getPayloadLen();
+        return payload();
     }
 
     public static void sendAuth(OutputStream out, String user, String pwd) throws IOException {
