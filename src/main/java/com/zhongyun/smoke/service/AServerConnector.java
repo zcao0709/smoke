@@ -54,10 +54,10 @@ public class AServerConnector extends Thread {
 
     @Override
     public void run() {
+        initSensors();
         while (true) {
 
             try (Socket socket = new Socket(config.getAserverIp(), config.getAserverPort())) {
-                initSensors();
 
                 InputStream in = socket.getInputStream();
                 OutputStream out = socket.getOutputStream();
@@ -76,7 +76,7 @@ public class AServerConnector extends Thread {
                 hb.scheduleAtFixedRate(() -> framesToSendout.offer(Frame.newHB()), 0L, 15L, TimeUnit.MINUTES);
 
                 ScheduledExecutorService mt = Executors.newSingleThreadScheduledExecutor();
-                SensorMonitor sm = new SensorMonitor(sensorService, gatewayTs);
+                SensorMonitor sm = new SensorMonitor();
                 long rate = config.getGatewayTimeout() / 2;
                 mt.scheduleAtFixedRate(sm, rate, rate, TimeUnit.MILLISECONDS);
 
@@ -126,12 +126,8 @@ public class AServerConnector extends Thread {
     }
 
     private class SensorMonitor implements Runnable {
-        private SensorService service;
-        private ConcurrentMap<Long, Long> gatewayTs;
 
-        public SensorMonitor(SensorService service, ConcurrentMap<Long, Long> gatewayTs) {
-            this.service = service;
-            this.gatewayTs = gatewayTs;
+        public SensorMonitor() {
         }
 
         @Override
