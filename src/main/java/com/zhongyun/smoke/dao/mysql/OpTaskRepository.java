@@ -14,15 +14,7 @@ import java.util.Set;
  * Created by caozhennan on 2017/11/30.
  */
 public interface OpTaskRepository extends JpaRepository<OpTask, Long>, OpTaskOther {
-    Page<OpTask> findByCauseIn(Set<String> cause, Pageable pageable);
-//    Page<OpTask> findByCauseInAndStatus(Set<String> cause, String status, Pageable pageable);
     long countByEui(long eui);
-    Page<OpTask> findByEui(long eui, Pageable pageable);
-    Page<OpTask> findByProjectId(long projectId, Pageable pageable);
-    Page<OpTask> findByEui16LikeAndCauseLikeAndHandlerLikeAndWorkerLikeAndStatusLikeAndCtimeBetween(
-            String eui, String cause, String handler, String worker, String status, Date ctimeStart, Date ctimeEnd, Pageable pageable);
-    Page<OpTask> findByProjectIdAndEui16LikeAndCauseLikeAndHandlerLikeAndWorkerLikeAndStatusLikeAndCtimeBetween(
-            long projectId, String eui, String cause, String handler, String worker, String status, Date ctimeStart, Date ctimeEnd, Pageable pageable);
 
     @Modifying
     @Query(value = "UPDATE op_task SET op_user = ?1, op_time = NOW(), handler = ?2, worker = ?3, status = ?4, mtime = NOW() WHERE id = ?5", nativeQuery = true)

@@ -17,17 +17,9 @@ import java.util.Set;
  */
 public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOther {
     Sensor findByEui(long eui);
-    List<Sensor> findByProjectIdAndType(long projectId, String type);
     List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> statuses);
     List<Sensor> findByType(String type);
-    long countByProjectIdAndType(long projectId, String type);
     long countByGatewayId(long gatewayId);
-    Page<Sensor> findByEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
-            String eui, String model, String type, String location, String gurantee, String status, String phone,
-            Date installTimeStart, Date installTimeEnd, Pageable pageable);
-    Page<Sensor> findByProjectIdAndEui16LikeAndModelLikeAndTypeLikeAndLocationLikeAndGuaranteeLikeAndStatusLikeAndPhoneLikeAndInstallTimeBetween(
-            long projectId, String eui, String model, String type, String location, String gurantee, String status, String phone,
-            Date installTimeStart, Date installTimeEnd, Pageable pageable);
     List<Sensor> findByMtimeBefore(Date date);
 
     @Modifying

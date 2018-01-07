@@ -32,9 +32,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usersByUsernameQuery("SELECT name, pass, true FROM user WHERE name = ?")
                 .authoritiesByUsernameQuery("SELECT name, type FROM user WHERE name = ?")
                 .passwordEncoder(ENCODER);
-//        auth
-//                .inMemoryAuthentication()
-//                .withUser("alex").password("123456").roles("用户");
     }
 
     @Override

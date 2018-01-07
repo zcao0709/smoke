@@ -111,11 +111,7 @@ public class SensorService {
     }
 
     public Sensor find(long id) {
-        Sensor s = sensorRepository.findById(id);
-//        if (s != null) {
-//            complete(s);
-//        }
-        return s;
+        return sensorRepository.findById(id);
     }
 
     public Sensor findBaseByEui(long eui) {

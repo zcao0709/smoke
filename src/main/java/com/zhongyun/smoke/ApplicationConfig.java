@@ -160,7 +160,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public MultipartResolver multipartResolver() throws IOException {
+    public MultipartResolver multipartResolver() {
         return new StandardServletMultipartResolver();
     }
 

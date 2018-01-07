@@ -62,23 +62,8 @@ public class OpTaskService {
     }
 
     public Page<OpTask> findUnsolved(int page, int limit) {
-        Page<OpTask> ots = opTaskRepository.findByCauseInAndStatus(OpTaskAlarmCause, OPTASK_UNSOLVED, page, limit);
-//        ots.getContent().forEach(v -> complete(v));
-
-        return ots;
+        return opTaskRepository.findByCauseInAndStatus(OpTaskAlarmCause, OPTASK_UNSOLVED, page, limit);
     }
-
-//    public Page<OpTask> findLike(long projectId, String eui, String cause, String handler, String worker, String status,
-//                                 Date ctimeStart, Date ctimeEnd, Pageable pageable) {
-//        if (projectId < 0) {
-//            return opTaskRepository.findByEui16LikeAndCauseLikeAndHandlerLikeAndWorkerLikeAndStatusLikeAndCtimeBetween
-//                    (like(eui), like(cause), like(handler), like(worker), like(status), ctimeStart, ctimeEnd, pageable);
-//        } else {
-//            return opTaskRepository.findByProjectIdAndEui16LikeAndCauseLikeAndHandlerLikeAndWorkerLikeAndStatusLikeAndCtimeBetween
-//                    (projectId, like(eui), like(cause), like(handler), like(worker), like(status), ctimeStart, ctimeEnd, pageable);
-//        }
-//
-//    }
 
     public Page<OpTask> findLike(long projectId, String eui, String cause, String handler, String worker, String status,
                                  Date ctimeStart, Date ctimeEnd, int page, int limit) {
@@ -92,11 +77,6 @@ public class OpTaskService {
     }
 
     private void complete(OpTask ot) {
-//        ot.setEui16(String.format("%X", ot.getEui()));
-//        ot.setPoster(userRepository.findOne(ot.getPostUser()));
-//        ot.setOp(userRepository.findOne(ot.getOpUser()));
-//        ot.setSensor(sensorRepository.findByEui(ot.getEui()));
-//        ot.setProject(projectRepository.findOne(ot.getProjectId()));
         ot.setExpired(System.currentTimeMillis() > OPTASK_EXPIRED + ot.getCtime().getTime());
     }
 }
