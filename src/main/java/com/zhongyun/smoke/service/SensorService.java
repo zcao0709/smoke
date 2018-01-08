@@ -90,16 +90,20 @@ public class SensorService {
                 }
 
                 Project p = null;
+                String addr = sensor.getLocation();
+                String tel = config.getAdminPhone();
                 if (sensor.getProjectId() > 0) {
                     p = projectRepository.findOne(sensor.getProjectId());
                 }
                 if (p != null && validatePhone(p.getPhone()) && (recvs.size() < 1 || !recvs.get(0).equals(p.getPhone()))) {
                     recvs.add(p.getPhone());
+                    addr = p.fullAddress() + " " + addr;
+                    tel = p.getPhone();
                 }
                 if (recvs.size() == 0) {
                     recvs.add(config.getAdminPhone());
                 }
-                smsService.send(recvs, p.fullAddress() + " " + sensor.getLocation(), FORMAT.format(new Date(ts)), p.getPhone());
+                smsService.send(recvs, addr, FORMAT.format(new Date(ts)), tel);
             }
         }
     }
