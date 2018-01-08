@@ -133,10 +133,11 @@ public class AServerConnector extends Thread {
         @Override
         public void run() {
             long ts = System.currentTimeMillis();
+            logger.debug("smoke monitor at " + ts);
 
             List<Long> timeoutGateways = new LinkedList<>();
             gatewayTs.entrySet().forEach(v -> {
-                if (v.getValue() > 0 && v.getValue() - ts > config.getGatewayTimeout()) {
+                if (v.getValue() > 0 && ts - v.getValue() > config.getGatewayTimeout()) {
                     logger.warn("gateway " + String.format("%X", v.getKey()) + " lost connection");
                     timeoutGateways.add(v.getKey());
                 }
