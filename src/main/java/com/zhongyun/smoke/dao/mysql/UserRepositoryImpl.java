@@ -21,7 +21,7 @@ public class UserRepositoryImpl implements UserOther {
 
     private static final String selectOne = "SELECT u.id, u.name, u.fullname, u.type, u.mtime, u.ctime, " +
             "p.id AS pid, p.name AS pname, p.province, p.city, p.district, p.address, p.room_count, p.phone, " +
-            "p.mtime AS pmtime, p.ctime AS pctime " +
+            "p.graph, p.mtime AS pmtime, p.ctime AS pctime " +
             "FROM user u LEFT JOIN user_project up ON u.id = up.user_id LEFT JOIN project p ON up.project_id = p.id ";
 
     private static final String count = "SELECT COUNT(u.id) AS c FROM user u ";
@@ -44,7 +44,7 @@ public class UserRepositoryImpl implements UserOther {
         } else {
             Project p = new Project(pid, rs.getString("pname"), rs.getString("province"), rs.getString("city"),
                                     rs.getString("district"), rs.getString("address"), rs.getInt("room_count"), rs.getString("phone"),
-                                    rs.getTimestamp("pmtime"), rs.getTimestamp("pctime"));
+                                    rs.getString("graph"), rs.getTimestamp("pmtime"), rs.getTimestamp("pctime"));
             u.getProjects().add(p);
             return u;
         }

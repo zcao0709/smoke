@@ -17,11 +17,11 @@ public class ProjectRepositoryImpl implements ProjectOther {
     @Autowired
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    private static final String select = "SELECT p.id, p.name, p.province, p.city, p.district, p.address, p.room_count, p.phone, p.mtime, p.ctime, " +
+    private static final String select = "SELECT p.id, p.name, p.province, p.city, p.district, p.address, p.room_count, p.phone, p.graph, p.mtime, p.ctime, " +
             "COUNT(s.id) AS c FROM project p LEFT JOIN sensor s ON p.id = s.project_id AND s.type = :stype " ;
 
     private static final String selectById = "SELECT m.*, u.id AS uid, u.name AS uname, u.fullname, u.type, u.mtime AS umtime, u.ctime AS uctime " +
-            "FROM (SELECT p.id, p.name, p.province, p.city, p.district, p.address, p.room_count, p.phone, p.mtime, p.ctime, " +
+            "FROM (SELECT p.id, p.name, p.province, p.city, p.district, p.address, p.room_count, p.phone, p.graph, p.mtime, p.ctime, " +
             "COUNT(s.id) AS c FROM project p LEFT JOIN sensor s ON p.id = s.project_id AND s.type = :stype WHERE p.id = :id GROUP BY p.id) m " +
             "LEFT JOIN user_project up ON m.id = up.project_id LEFT JOIN user u ON up.user_id = u.id ";
 
@@ -30,7 +30,7 @@ public class ProjectRepositoryImpl implements ProjectOther {
     private static final RowMapper<Project> rowMapper = (rs, row) -> {
         Project p = new Project(rs.getLong("id"), rs.getString("name"), rs.getString("province"), rs.getString("city"),
                                 rs.getString("district"), rs.getString("address"), rs.getInt("room_count"), rs.getString("phone"),
-                                rs.getTimestamp("mtime"), rs.getTimestamp("ctime"));
+                                rs.getString("graph"), rs.getTimestamp("mtime"), rs.getTimestamp("ctime"));
         p.setUsers(new ArrayList<>(0));
         p.setSensorCount(rs.getLong("c"));
 
@@ -40,7 +40,7 @@ public class ProjectRepositoryImpl implements ProjectOther {
     private static final RowMapper<Project> rowMapperOne = (rs, row) -> {
         Project p = new Project(rs.getLong("id"), rs.getString("name"), rs.getString("province"), rs.getString("city"),
                                 rs.getString("district"), rs.getString("address"), rs.getInt("room_count"), rs.getString("phone"),
-                                rs.getTimestamp("mtime"), rs.getTimestamp("ctime"));
+                                rs.getString("graph"), rs.getTimestamp("mtime"), rs.getTimestamp("ctime"));
         p.setUsers(new LinkedList<>());
         p.setSensorCount(rs.getLong("c"));
 

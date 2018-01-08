@@ -22,7 +22,7 @@ public class OpTaskRepositoryImpl implements OpTaskOther {
             "SELECT o.id, o.eui, o.eui16, o.post_user, o.post_time, o.op_user, o.op_time, o.cause, o.handler, o.worker, o.status, o.project_id, o.mtime, o.ctime, " +
                     "u1.id AS u1id, u1.name AS u1name, u1.fullname AS u1fname, u1.type AS u1type, u1.mtime AS u1mtime, u1.ctime AS u1ctime, " +
                     "u2.id AS u2id, u2.name AS u2name, u2.fullname AS u2fname, u2.type AS u2type, u2.mtime AS u2mtime, u2.ctime AS u2ctime, " +
-                    "p.id As pid, p.name AS pname, p.province, p.city, p.district, p.address, p.room_count, p.phone, p.mtime AS pmtime, p.ctime AS pctime " +
+                    "p.id As pid, p.name AS pname, p.province, p.city, p.district, p.address, p.room_count, p.phone, p.graph, p.mtime AS pmtime, p.ctime AS pctime " +
             "FROM op_task o LEFT JOIN project p ON o.project_id = p.id LEFT JOIN user u2 ON o.op_user = u2.id INNER JOIN user u1 ON o.post_user = u1.id ";
 
     private static final String count = "SELECT COUNT(o.id) AS c FROM op_task o ";
@@ -33,7 +33,8 @@ public class OpTaskRepositoryImpl implements OpTaskOther {
         User u2 = new User(rs.getLong("u2id"), rs.getString("u2name"), rs.getString("u2fname"), rs.getString("u2type"),
                            rs.getTimestamp("u2mtime"), rs.getTimestamp("u2ctime"));
         Project p = new Project(rs.getLong("pid"), rs.getString("pname"), rs.getString("province"), rs.getString("city"), rs.getString("district"),
-                                rs.getString("address"), rs.getInt("room_count"), rs.getString("phone"), rs.getTimestamp("pmtime"), rs.getTimestamp("pctime"));
+                                rs.getString("address"), rs.getInt("room_count"), rs.getString("phone"), rs.getString("graph"),
+                                rs.getTimestamp("pmtime"), rs.getTimestamp("pctime"));
 
         OpTask o = new OpTask(rs.getLong("id"), rs.getLong("eui"), rs.getString("eui16"), rs.getLong("post_user"), rs.getTimestamp("post_time"),
                               rs.getLong("op_user"), rs.getTimestamp("op_time"), rs.getString("cause"), rs.getString("handler"),

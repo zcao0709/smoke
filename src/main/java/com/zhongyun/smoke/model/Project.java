@@ -56,7 +56,7 @@ public class Project {
     public Project() {
     }
 
-    public Project(long id, String name, String province, String city, String district, String address, int roomCount, String phone,
+    public Project(long id, String name, String province, String city, String district, String address, int roomCount, String phone, String graph,
                    Timestamp mtime, Timestamp ctime) {
         this.id = id;
         this.name = name;
