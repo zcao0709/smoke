@@ -24,7 +24,7 @@ import java.util.Set;
 public class Util {
     public static final String ERR_NOT_ENOUGH = "信息不足，请补全";
     public static final String ERR_INVALID_ID = "无效的ID";
-    public static final String ERR_DEL_ADMIN = "不支持删除第一管理员";
+    public static final String ERR_DEL_ADMIN = "第一管理员不可删除";
 
     public static final long DEF_START_TS = 1510818350000L; // in ms 2017/11/16 3:45:00
     public static final long DEF_END_TS = 33067727150000L; // in ms 3017/11/16 3:45:00
@@ -169,6 +169,10 @@ public class Util {
 
     public static String order(String column) {
         return "ORDER BY " + column + " ASC ";
+    }
+
+    public static String orderDesc(String column) {
+        return "ORDER BY " + column + " DESC ";
     }
 
     public static String page(int page, int limit) {

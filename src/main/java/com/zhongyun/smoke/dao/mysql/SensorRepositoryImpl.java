@@ -69,6 +69,10 @@ public class SensorRepositoryImpl implements SensorOther {
         return query(where, args, page, limit);
     }
 
+//    public List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> status) {
+//
+//    }
+
     private Page<Sensor> query(String where, Map<String, Object> args, int page, int limit) {
         String sql = select + where + "GROUP BY s.id " + Util.order("s.eui16") + Util.page(page, limit);
 
