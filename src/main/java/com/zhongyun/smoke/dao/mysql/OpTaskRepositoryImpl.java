@@ -84,7 +84,7 @@ public class OpTaskRepositoryImpl implements OpTaskOther {
     }
 
     private Page<OpTask> query(String where, Map<String, Object> args, int page, int limit) {
-        String sql = select + where + Util.order("o.eui16") + Util.page(page, limit);
+        String sql = select + where + Util.order("o.mtime") + Util.page(page, limit);
 
         List<OpTask> os = jdbcTemplate.query(sql, args, rowMapper);
         if (os == null) {
