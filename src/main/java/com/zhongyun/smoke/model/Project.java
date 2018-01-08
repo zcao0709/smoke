@@ -66,6 +66,7 @@ public class Project {
         this.address = address;
         this.roomCount = roomCount;
         this.phone = phone;
+        this.graph = graph;
         this.mtime = mtime;
         this.ctime = ctime;
     }
