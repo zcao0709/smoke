@@ -132,7 +132,6 @@ public class AServerConnector extends Thread {
     }
 
     private class SensorMonitor implements Runnable {
-
         public SensorMonitor() {
         }
 
@@ -169,8 +168,9 @@ public class AServerConnector extends Thread {
     }
 
     private void initSensors() {
-        sensorService.updateMtime();
+//        sensorService.updateMtime();
+        long ts = System.currentTimeMillis();
         List<Sensor> sensors = sensorService.findBaseByType(Util.SENSOR_GWRX);
-        sensors.forEach(v -> gatewayTs.put(v.getEui(), v.getMtime().getTime()));
+        sensors.forEach(v -> gatewayTs.put(v.getEui(), ts));
     }
 }

@@ -1,16 +1,12 @@
 package com.zhongyun.smoke.dao.mysql;
 
-import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.model.Sensor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by caozhennan on 2017/11/30.
