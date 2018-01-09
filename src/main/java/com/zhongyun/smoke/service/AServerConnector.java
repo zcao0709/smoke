@@ -77,7 +77,7 @@ public class AServerConnector extends Thread {
                 long rate = config.getGatewayTimeout() / 2;
                 mt.scheduleAtFixedRate(sm, rate, rate, TimeUnit.MILLISECONDS);
 
-//                new Sender(out).start();
+                new Sender(out).start();
 
                 while (true) {
                     Frame f = Frame.recvFrame(in);
@@ -90,10 +90,10 @@ public class AServerConnector extends Thread {
                     } else {
                         Payload.parse(f.payload(), mongo, sensorService, gatewayTs, config);
                     }
-                    Frame s = framesToSendout.poll();
-                    if (s != null) {
-                        s.sendFrame(out);
-                    }
+//                    Frame s = framesToSendout.poll();
+//                    if (s != null) {
+//                        s.sendFrame(out);
+//                    }
                 }
             } catch (IOException e) {
                 logger.error("", e);
