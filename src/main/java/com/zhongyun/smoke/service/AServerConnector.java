@@ -51,10 +51,15 @@ public class AServerConnector extends Thread {
 
     @Override
     public void run() {
-        initSensors();
+        try {
+            initSensors();
+        } catch (Exception e) {
+            logger.error("init sensors failed");
+        }
         while (true) {
 
             try (Socket socket = new Socket(config.getAserverIp(), config.getAserverPort())) {
+                logger.info("socket connected");
 
                 InputStream in = socket.getInputStream();
                 OutputStream out = socket.getOutputStream();
