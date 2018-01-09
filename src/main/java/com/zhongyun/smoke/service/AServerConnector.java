@@ -54,7 +54,7 @@ public class AServerConnector extends Thread {
         try {
             initSensors();
         } catch (Exception e) {
-            logger.error("init sensors failed");
+            logger.error("init sensors failed", e);
         }
         while (true) {
 
