@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOther {
     Sensor findByEui(long eui);
-    List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> statuses);
+//    List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> statuses);
     List<Sensor> findByType(String type);
     long countByGatewayId(long gatewayId);
     List<Sensor> findByMtimeBefore(Date date);

@@ -141,7 +141,7 @@ public class SensorService {
 
     public List<Sensor> findAlarmedByProjectId(long projectId) {
         List<Sensor> sensors = sensorRepository.findByProjectIdAndTypeAndStatusIsIn(projectId, SENSOR_SMOKE, CriticalSensorStatus);
-        sensors.forEach(v -> complete(v));
+//        sensors.forEach(v -> complete(v));
         return sensors;
     }
 

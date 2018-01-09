@@ -44,7 +44,6 @@ public class SensorController {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-//        return Resp.ok(Sensor.valueOf(service.update(sensor.toSensor())));
         return Resp.ok(service.update(sensor));
     }
 
@@ -57,7 +56,6 @@ public class SensorController {
         if (s == null) {
             return Resp.not();
         }
-//        return Resp.ok(Sensor.valueOf(service.findOne(id)));
         return Resp.ok(service.find(id));
     }
 
@@ -96,9 +94,7 @@ public class SensorController {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
 
-//        return Resp.ok(Sensor.valueOf(service.findAlarmedByProjectId(projectId)));
         List<Sensor> sensors = service.findAlarmedByProjectId(projectId);
-//        sensors.forEach(v -> v.beforeReturn());
         return resp(sensors, sensors.size());
     }
 }

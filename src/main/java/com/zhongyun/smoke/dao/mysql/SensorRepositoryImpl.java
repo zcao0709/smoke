@@ -69,9 +69,15 @@ public class SensorRepositoryImpl implements SensorOther {
         return query(where, args, page, limit);
     }
 
-//    public List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> status) {
-//
-//    }
+    @Override
+    public List<Sensor> findByProjectIdAndTypeAndStatusIsIn(long projectId, String type, Set<String> status) {
+        String where = "WHERE s.project_id = :projectId AND s.type = :type AND s.status IN (:status) ";
+        Map<String, Object> args = new HashMap<>();
+        args.put("projectId", projectId);
+        args.put("type", type);
+        args.put("status", status);
+        return jdbcTemplate.query(select + where + "GROUP BY s.id " + Util.order("s.eui16"), args, rowMapper);
+    }
 
     private Page<Sensor> query(String where, Map<String, Object> args, int page, int limit) {
         String sql = select + where + "GROUP BY s.id " + Util.order("s.eui16") + Util.page(page, limit);

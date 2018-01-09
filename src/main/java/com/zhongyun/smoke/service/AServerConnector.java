@@ -37,9 +37,6 @@ public class AServerConnector extends Thread {
     @Autowired
     private SensorService sensorService;
 
-    @Autowired
-    private SmsService smsService;
-
     private BlockingQueue<Frame> framesToSendout = new LinkedBlockingQueue<>();
 
     private ConcurrentMap<Long, Long> gatewayTs = new ConcurrentHashMap<>();
