@@ -72,38 +72,46 @@ public class SensorService {
 
     @Transactional
     public void updateStatusAndGateway(String status, Sensor sensor, long ts) {
-        if (!testEnv() && SENSOR_TEST.equals(status)) {
-            status = SENSOR_NORMAL;
-        }
-        sensorRepository.updateStatusAndGatewayById(status.equals(SENSOR_TEST) ? SENSOR_NORMAL : status, sensor.getGatewayId(), sensor.getId());
-
-        if (OpTaskAlarmCause.contains(status)) {
-            OpTask ot = new OpTask(sensor.getEui(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());
-            opTaskRepository.save(ot);
-
-            if (OpTaskSmsCause.contains(status)) {
-
-                List<String> recvs = new ArrayList<>(2);
-                if (validatePhone(sensor.getPhone())) {
-                    recvs.add(sensor.getPhone());
-                }
-
-                Project p = null;
-                String addr = sensor.getLocation();
-                String tel = config.getAdminPhone();
-                if (sensor.getProjectId() > 0) {
-                    p = projectRepository.findOne(sensor.getProjectId());
-                }
-                if (p != null && validatePhone(p.getPhone()) && (recvs.size() < 1 || !recvs.get(0).equals(p.getPhone()))) {
-                    recvs.add(p.getPhone());
-                    addr = p.fullAddress() + " " + addr;
-                    tel = p.getPhone();
-                }
-                if (recvs.size() == 0) {
-                    recvs.add(config.getAdminPhone());
-                }
-                smsService.send(recvs, addr, FORMAT.format(new Date(ts)), tel);
+        try {
+            if (!testEnv() && SENSOR_TEST.equals(status)) {
+                status = SENSOR_NORMAL;
             }
+            sensorRepository.updateStatusAndGatewayById(status.equals(SENSOR_TEST) ? SENSOR_NORMAL : status, sensor.getGatewayId(), sensor.getId());
+
+            if (OpTaskAlarmCause.contains(status)) {
+                OpTask ot = new OpTask(sensor.getEui(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());
+                opTaskRepository.save(ot);
+
+                if (OpTaskSmsCause.contains(status)) {
+
+                    List<String> recvs = new ArrayList<>(2);
+                    if (validatePhone(sensor.getPhone())) {
+                        recvs.add(sensor.getPhone());
+                    }
+
+                    Project p = null;
+                    String addr = sensor.getLocation();
+                    String tel = config.getAdminPhone();
+                    if (sensor.getProjectId() > 0) {
+                        p = projectRepository.findOne(sensor.getProjectId());
+                    }
+                    if (p != null && validatePhone(p.getPhone()) && (recvs.size() < 1 || !recvs.get(0).equals(p.getPhone()))) {
+                        recvs.add(p.getPhone());
+                        addr = p.fullAddress() + " " + addr;
+                        tel = p.getPhone();
+                    }
+                    if (recvs.size() == 0) {
+                        recvs.add(config.getAdminPhone());
+                    }
+                    String ret = smsService.send(recvs, addr, FORMAT.format(new Date(ts)), tel);
+                    if (ret != null) {
+                        OpTask o = new OpTask(sensor.getEui(), 1, new Timestamp(ts), ret, OPTASK_UNSOLVED, sensor.getProjectId());
+                        opTaskRepository.save(o);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("updateStatusAndGateway failed for " + sensor, e);
         }
     }
 
@@ -145,7 +153,12 @@ public class SensorService {
     }
 
     public List<Sensor> findBaseByType(String type) {
-        return sensorRepository.findByType(type);
+        try {
+            return sensorRepository.findByType(type);
+        } catch (Exception e) {
+            logger.error("findBaseByType failed for " + type, e);
+            return new ArrayList<>(0);
+        }
     }
 
     public List<Sensor> findByMtimeBefore(Date date) {

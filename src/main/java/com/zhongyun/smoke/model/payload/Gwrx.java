@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.service.SensorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentMap;
 
@@ -15,6 +17,8 @@ import java.util.concurrent.ConcurrentMap;
 public class Gwrx {
     @JsonProperty("gateway")
     private Gw gw;
+
+    private static final Logger logger = LoggerFactory.getLogger("Gwrx");
 
     public Gwrx() {
     }
@@ -31,12 +35,16 @@ public class Gwrx {
         } else {
             sg.setStatus(Util.SENSOR_NORMAL);
 
-            if (!sg.getLati().equals(gw.getStatus().getLati()) || !sg.getLongi().equals(gw.getStatus().getLongi())) {
-                service.updateLocationAndStatus(gw.getStatus().getLati(), gw.getStatus().getLongi(), sg.getStatus(), sg.getId());
-            } else {
-                service.update(sg);
+            try {
+                if (!sg.getLati().equals(gw.getStatus().getLati()) || !sg.getLongi().equals(gw.getStatus().getLongi())) {
+                    service.updateLocationAndStatus(gw.getStatus().getLati(), gw.getStatus().getLongi(), sg.getStatus(), sg.getId());
+                } else {
+                    service.update(sg);
+                }
+                gatewayTs.put(gw.getEUI(), ts);
+            } catch (Exception e) {
+                logger.error("update sensor failed for " + sg, e);
             }
-            gatewayTs.put(gw.getEUI(), ts);
         }
     }
 

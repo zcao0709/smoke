@@ -90,6 +90,11 @@ public class Sensor {
         this.opCount = opCount;
     }
 
+    @Override
+    public String toString() {
+        return type + eui16;
+    }
+
     public void setEui16(String eui16) {
         this.eui16 = eui16;
     }

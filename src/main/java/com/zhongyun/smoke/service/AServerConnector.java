@@ -51,11 +51,8 @@ public class AServerConnector extends Thread {
 
     @Override
     public void run() {
-        try {
-            initSensors();
-        } catch (Exception e) {
-            logger.error("init sensors failed", e);
-        }
+        initSensors();
+
         while (true) {
 
             try (Socket socket = new Socket(config.getAserverIp(), config.getAserverPort())) {
@@ -101,9 +98,9 @@ public class AServerConnector extends Thread {
                     }
                 }
             } catch (IOException e) {
-                logger.error("", e);
+                logger.error("socket broken", e);
             } catch (Exception e) {
-                logger.error("", e);
+                logger.error("socket broken", e);
             }
         }
     }
@@ -124,7 +121,7 @@ public class AServerConnector extends Thread {
                 } catch (InterruptedException e) {
                     logger.info("", e);
                 } catch (IOException e) {
-                    logger.error("", e);
+                    logger.error("socket broken when sending", e);
                     return;
                 }
             }
@@ -162,14 +159,14 @@ public class AServerConnector extends Thread {
             List<Sensor> ss = sensorService.findByMtimeBefore(new Date(ts - config.getSensorTimeout()));
             ss.forEach(s -> {
                 sensorService.updateStatusAndGateway(Util.SENSOR_DISCONN, s, ts);
-                logger.warn("sensor " + s.getEui16() + " lost connection");
+                logger.warn("sensor " + s + " lost connection");
             });
         }
     }
 
     private void initSensors() {
-//        sensorService.updateMtime();
         long ts = System.currentTimeMillis();
+//        sensorService.updateMtime();
         List<Sensor> sensors = sensorService.findBaseByType(Util.SENSOR_GWRX);
         sensors.forEach(v -> gatewayTs.put(v.getEui(), ts));
     }

@@ -37,15 +37,15 @@ public class SmsService {
 
     private static final Logger logger = LoggerFactory.getLogger("SmsService");
 
-    public void send(List<String> recvs, String address, String time, String tel) {
+    public String send(List<String> recvs, String address, String time, String tel) {
         Map<String, String> args = new HashMap<>();
         args.put("address", address);
         args.put("time", time);
         args.put("tel", tel);
-        sendSms(recvs, Util.object2Json(args));
+        return sendSms(recvs, Util.object2Json(args));
     }
 
-    private void sendSms(List<String> recvs, String params) {
+    private String sendSms(List<String> recvs, String params) {
 
         //可自助调整超时时间
         System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
@@ -60,6 +60,7 @@ public class SmsService {
             e.printStackTrace();
         }
         IAcsClient acsClient = new DefaultAcsClient(profile);
+        String ret = null;
 
         for (String recv : recvs) {
             //组装请求对象-具体描述见控制台-文档部分内容
@@ -86,11 +87,13 @@ public class SmsService {
                     logger.debug("SMS succeeded to " + recv);
                 } else {
                     logger.error("SMS failed to " + recv + ", code: " + sendSmsResponse.getCode() + ", message: " + sendSmsResponse.getMessage());
+                    ret = sendSmsResponse.getMessage();
                 }
             } catch (ClientException e) {
                 logger.error("SMS exception", e);
-                return;
+                ret = "短信发送异常";
             }
         }
+        return ret;
     }
 }

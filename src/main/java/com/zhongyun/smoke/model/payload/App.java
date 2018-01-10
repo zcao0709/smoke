@@ -3,9 +3,7 @@ package com.zhongyun.smoke.model.payload;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
-import com.zhongyun.smoke.model.OpTask;
 import com.zhongyun.smoke.model.Sensor;
-import com.zhongyun.smoke.service.OpTaskService;
 import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,16 +44,23 @@ public class App {
         if (sg == null) {
             sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, 0, s == null ? 0 : s.getProjectId());
             sg.setPhone(config.getAdminPhone());
-            sg = sensorService.add(sg);
-
-            gatewayTs.put(g.eui, ts);
+            try {
+                sg = sensorService.add(sg);
+                gatewayTs.put(g.eui, ts);
+            } catch (Exception e) {
+                logger.error("add sensor failed for " + sg, e);
+            }
         }
         logger.info("gateways: " + gatewayTs);
 
         if (s == null) {
             // 新的烟感器，项目固定为0，由管理员后续更新
             s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), 0);
-            sensorService.add(s);
+            try {
+                sensorService.add(s);
+            } catch (Exception e) {
+                logger.error("add sensor failed for " + s, e);
+            }
         } else {
             s.setGatewayId(sg.getId());
             sensorService.updateStatusAndGateway(payload, s, ts);
