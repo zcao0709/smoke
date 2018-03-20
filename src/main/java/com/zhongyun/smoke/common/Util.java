@@ -184,6 +184,18 @@ public class Util {
         return "LIMIT " + offset + "," + limit + " ";
     }
 
+    public static String byteArray(byte[] b) {
+        return byteArray(b, 0, b.length);
+    }
+
+    public static String byteArray(byte[] b, int start, int end) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = start; i < end; i++) {
+            sb.append(String.format("%02X ", b[i]));
+        }
+        return sb.toString();
+    }
+
     public static boolean testEnv() {
         return System.getProperty("spring.profiles.active").equals("dev");
     }

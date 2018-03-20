@@ -1,6 +1,7 @@
 package com.zhongyun.smoke.service;
 
 import com.zhongyun.smoke.ApplicationConfig;
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
 import com.zhongyun.smoke.model.siter.Frame;
 import org.slf4j.Logger;
@@ -118,7 +119,7 @@ public class SiterConnector extends Thread {
                         if (r == null) {
                             logger.error("no response for: " + f.toString());
                         } else {
-                            logger.info("response for " + f.toString() + ": " + Arrays.toString(r));
+                            logger.info("response for " + f.toString() + ": " + Util.byteArray(r));
                             sendbuffer.clear();
                             sendbuffer.put(r);
                             sendbuffer.flip();

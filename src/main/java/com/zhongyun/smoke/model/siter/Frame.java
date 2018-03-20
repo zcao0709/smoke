@@ -1,12 +1,11 @@
 package com.zhongyun.smoke.model.siter;
 
+import com.zhongyun.smoke.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by caozhennan on 2018/3/15.
@@ -43,7 +42,7 @@ public class Frame {
     public static Frame parse(ByteBuffer buffer) {
         int p = buffer.position();
         byte[] buf = buffer.array();
-        logger.info("buffer received: " + Arrays.toString(buf));
+        logger.info("buffer received: " + Util.byteArray(buf));
         int startIndex = 0;
         for (; startIndex < p; startIndex++) {
             if (buf[startIndex] == HEAD) {
@@ -73,11 +72,7 @@ public class Frame {
     }
 
     public static Frame create(byte[] bytes, int start, int end) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = start; i < end; i++) {
-            sb.append(String.format("%02X ", bytes[i]));
-        }
-        logger.info(sb.toString());
+        logger.info("frame start at " + start + ", end at " + end);
 
         if (bytes[start] != HEAD) {
             logger.error("unsupported head: " + bytes[start]);
@@ -116,7 +111,7 @@ public class Frame {
 
     @Override
     public String toString() {
-        return id + "(" + String.format("%X", id)+ ")-" + seq + "-" + term + "-" + cmd;
+        return id + "(" + Util.byteArray(rawId) + ")-" + seq + "-" + term + "-" + cmd;
     }
 
     public static byte checksum(byte[] bytes, int start, int end) {
