@@ -112,7 +112,11 @@ public class SiterConnector extends Thread {
                 count = client.read(recv);
                 if (count > 0) {
                     Frame f = Frame.parse(recv);
-                    logger.info("recv: " + f.toString());
+                    if (f != null) {
+                        logger.info("recv: " + f.toString());
+                    } else {
+                        logger.info("recv: invalid frame");
+                    }
                 }
                 sendbuffer.clear();
 //                sendText = "message from server--";
