@@ -32,13 +32,14 @@ public class Frame {
         int p = buffer.position();
         if (p >= MIN_LEN) {
             byte[] buf = buffer.array();
-            logger.info("buffer: " + Arrays.toString(buf));
+            logger.info("buffer received: " + Arrays.toString(buf));
             int size = buf[HEADER_LEN - 1];
             if (size == 0) {
                 Frame f = Frame.create(buf, 0, MIN_LEN);
                 buffer.clear();
                 if (p > MIN_LEN) {
                     buffer.put(buf, MIN_LEN, p-MIN_LEN);
+                    logger.info("buffer returned: " + Arrays.toString(buf));
                 }
                 return f;
             } else {
@@ -47,6 +48,7 @@ public class Frame {
                     buffer.clear();
                     if (p > MIN_LEN+size) {
                         buffer.put(buf, MIN_LEN+size, p-MIN_LEN-size);
+                        logger.info("buffer returned: " + Arrays.toString(buf));
                     }
                     return f;
                 }
