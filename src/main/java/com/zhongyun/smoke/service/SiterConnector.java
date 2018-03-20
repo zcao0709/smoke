@@ -44,7 +44,7 @@ public class SiterConnector extends Thread {
             Server server = null;
             try {
                 server = new Server(config.getSiterPort());
-
+                server.listen();
             } catch (SocketException e) {
                 e.printStackTrace();
                 logger.error("socket broken", e);
@@ -121,7 +121,7 @@ public class SiterConnector extends Thread {
 
 //                client.write(sendbuffer);
 //                System.out.println("服务器端向客户端发送数据--：" + sendText);
-                client.register(selector, SelectionKey.OP_READ);
+                client.register(selector, SelectionKey.OP_READ, recv);
             }
         }
 
