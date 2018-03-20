@@ -89,8 +89,9 @@ public class Frame {
         f.seq = bytes[start+1];
         f.cmd = bytes[start+11];
         f.id = 0;
+        int mask = 0xFF;
         for (int i = 3; i < 6; i++) {
-            f.id += (int)bytes[start+i];
+            f.id += (bytes[start+i] & mask);
             if (i == 5)
                 break;
             f.id <<= 8;
