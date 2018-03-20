@@ -181,7 +181,7 @@ public class Frame {
         ret[20] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.SECOND)), 16);
 
         ret[21] = checksum(ret);
-        return null;
+        return ret;
     }
 
     public static void main(String[] args) {
