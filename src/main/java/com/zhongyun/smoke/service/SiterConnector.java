@@ -118,7 +118,7 @@ public class SiterConnector extends Thread {
                         logger.info("recv: invalid frame");
                     }
                 }
-                sendbuffer.clear();
+//                sendbuffer.clear();
 //                sendText = "message from server--";
 //                sendbuffer.put(sendText.getBytes());
 //                sendbuffer.flip();

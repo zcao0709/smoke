@@ -17,7 +17,8 @@ public class Frame {
 
     public static final byte HEAD = 0x57;
     public static final byte ENCY = 0x00;
-    public static final byte TERM = 0x04;
+    public static final byte TERM_SENSOR = 0x04;
+    public static final byte TERM_GATEWAY = 0x0A;
 
     private static final Logger logger = LoggerFactory.getLogger("Frame");
 
@@ -30,62 +31,54 @@ public class Frame {
 
     public static Frame parse(ByteBuffer buffer) {
         int p = buffer.position();
-        if (p >= MIN_LEN) {
-            byte[] buf = buffer.array();
-            logger.info("buffer received: " + Arrays.toString(buf));
-            int size = buf[HEADER_LEN-1];
-            if (size == 0) {
-                Frame f = Frame.create(buf, 0, MIN_LEN);
-                buffer.clear();
-                if (p > MIN_LEN) {
-                    buffer.put(buf, MIN_LEN, p-MIN_LEN);
-                    logger.info("buffer returned: " + Arrays.toString(buf));
-                }
-                return f;
-            } else {
-                if (p >= MIN_LEN+size) {
-                    Frame f = Frame.create(buf, 0, MIN_LEN+size);
-                    buffer.clear();
-                    if (p > MIN_LEN+size) {
-                        buffer.put(buf, MIN_LEN+size, p-MIN_LEN-size);
-                        logger.info("buffer returned: " + Arrays.toString(buf));
-                    }
-                    return f;
-                } else {
-                    logger.error("not enough data read: " + buffer.toString() + ", need " + (MIN_LEN+size));
-                    return null;
-                }
+        byte[] buf = buffer.array();
+        logger.info("buffer received: " + Arrays.toString(buf));
+        int startIndex = 0;
+        for (; startIndex < p; startIndex++) {
+            if (buf[startIndex] == HEAD) {
+                break;
             }
-        } else {
+        }
+        int endIndex = startIndex + MIN_LEN;  // exclusive
+        if (p < endIndex) {
             logger.error("not enough data read: " + buffer.toString() + ", need " + MIN_LEN);
             return null;
         }
+        int lenIndex = startIndex + HEADER_LEN - 1;
+        endIndex += buf[lenIndex];
+        if (p < endIndex) {
+            logger.error("not enough data read: " + buffer.toString() + ", need " + MIN_LEN + buf[lenIndex]);
+            return null;
+        }
+        Frame f = Frame.create(buf, startIndex, endIndex);
+        resetBuffer(buffer, buf, endIndex, p);
+        return f;
     }
 
-    public static Frame create(byte[] bytes, int offset, int len) {
-        if (bytes[offset] != HEAD) {
-            logger.error("unsupported head: " + bytes[offset]);
+    public static Frame create(byte[] bytes, int start, int end) {
+        if (bytes[start] != HEAD) {
+            logger.error("unsupported head: " + bytes[start]);
             return null;
         }
-        if (bytes[offset+2] != ENCY) {
-            logger.error("unsupported encryption: " + bytes[offset+2]);
+        if (bytes[start+2] != ENCY) {
+            logger.error("unsupported encryption: " + bytes[start+2]);
             return null;
         }
-        if (bytes[offset+10] != TERM) {
-            logger.error("unsupported termination: " + bytes[offset+10]);
+        if (bytes[start+10] != TERM_GATEWAY || bytes[start+10] != TERM_SENSOR) {
+            logger.error("unsupported termination: " + bytes[start+10]);
             return null;
         }
-        int c = checksum(bytes, offset, len-1);
-        if (c != bytes[offset+len-1]) {
-            logger.error("checksum failed: " + bytes[offset+len-1] + " != " + c);
+        int c = checksum(bytes, start, end-1);
+        if (c != bytes[end-1]) {
+            logger.error("checksum failed: " + bytes[end-1] + " != " + c);
             return null;
         }
         Frame f = new Frame();
-        f.seq = bytes[offset+1];
-        f.cmd = bytes[offset+11];
+        f.seq = bytes[start+1];
+        f.cmd = bytes[start+11];
         f.id = 0;
         for (int i = 3; i < 6; i++) {
-            f.id += bytes[offset+i];
+            f.id += bytes[start+i];
             f.id <<= 8;
         }
         return f;
@@ -96,11 +89,21 @@ public class Frame {
         return id + "-" + seq + "-" + cmd;
     }
 
-    public static int checksum(byte[] bytes, int offset, int len) {
-        int sum = 0;
-        for (int i = offset; i < len; i++) {
+    public static byte checksum(byte[] bytes, int offset, int end) {
+        byte sum = 0;
+        for (int i = offset; i < end; i++) {
             sum += bytes[i];
         }
         return sum;
+    }
+
+    private static void resetBuffer(ByteBuffer buffer, byte[] buf, int start, int end) {
+        if (start == 0) {
+            return;
+        }
+        buffer.reset();
+        if (end > start) {
+            buffer.put(buf, start, end-start);
+        }
     }
 }
