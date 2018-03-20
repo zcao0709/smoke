@@ -33,7 +33,7 @@ public class Frame {
         if (p >= MIN_LEN) {
             byte[] buf = buffer.array();
             logger.info("buffer received: " + Arrays.toString(buf));
-            int size = buf[HEADER_LEN - 1];
+            int size = buf[HEADER_LEN-1];
             if (size == 0) {
                 Frame f = Frame.create(buf, 0, MIN_LEN);
                 buffer.clear();
@@ -51,11 +51,13 @@ public class Frame {
                         logger.info("buffer returned: " + Arrays.toString(buf));
                     }
                     return f;
+                } else {
+                    logger.error("not enough data read: " + buffer.toString() + ", need " + (MIN_LEN+size));
+                    return null;
                 }
-                return null;
             }
         } else {
-            logger.error("not enough data read: " + buffer.toString());
+            logger.error("not enough data read: " + buffer.toString() + ", need " + MIN_LEN);
             return null;
         }
     }
