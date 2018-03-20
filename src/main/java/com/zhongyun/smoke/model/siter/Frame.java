@@ -90,7 +90,9 @@ public class Frame {
         f.cmd = bytes[start+11];
         f.id = 0;
         for (int i = 3; i < 6; i++) {
-            f.id += bytes[start+i];
+            f.id += (int)bytes[start+i];
+            if (i == 5)
+                break;
             f.id <<= 8;
         }
         logger.info(f.toString());
@@ -99,7 +101,7 @@ public class Frame {
 
     @Override
     public String toString() {
-        return id + "-" + seq + "-" + cmd;
+        return id + "(" + String.format("%X", id)+ ")-" + seq + "-" + cmd;
     }
 
     public static byte checksum(byte[] bytes, int start, int end) {
@@ -114,7 +116,7 @@ public class Frame {
         if (start == 0) {
             return;
         }
-        buffer.reset();
+        buffer.clear();
         if (end > start) {
             byte[] src = new byte[end-start];
             for (int i = 0; i < src.length; i++) {
