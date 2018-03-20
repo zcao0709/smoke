@@ -6,6 +6,7 @@ import com.zhongyun.smoke.model.siter.Frame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -16,6 +17,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -61,9 +63,7 @@ public class SiterConnector extends Thread {
 
     private static class Server {
 
-        private int BLOCK = 4096;
-        private ByteBuffer sendbuffer = ByteBuffer.allocate(BLOCK);
-        private ByteBuffer recvbuffer = ByteBuffer.allocate(270);
+        private ByteBuffer sendbuffer = ByteBuffer.allocate(Frame.MAX_LEN);
 
         private Selector selector;
 
@@ -114,17 +114,20 @@ public class SiterConnector extends Thread {
                     Frame f = Frame.parse(recv);
                     if (f != null) {
                         logger.info("recv: " + f.toString());
+                        byte[] r = f.response();
+                        if (r == null) {
+                            logger.error("no response for: " + f.toString());
+                        } else {
+                            logger.info("response for " + f.toString() + ": " + Arrays.toString(r));
+                            sendbuffer.clear();
+                            sendbuffer.put(r);
+                            sendbuffer.flip();
+                            client.write(sendbuffer);
+                        }
                     } else {
                         logger.info("recv: invalid frame");
                     }
                 }
-//                sendbuffer.clear();
-//                sendText = "message from server--";
-//                sendbuffer.put(sendText.getBytes());
-//                sendbuffer.flip();
-
-//                client.write(sendbuffer);
-//                System.out.println("服务器端向客户端发送数据--：" + sendText);
                 client.register(selector, SelectionKey.OP_READ, recv);
             }
         }

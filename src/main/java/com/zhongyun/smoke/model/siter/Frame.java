@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by caozhennan on 2018/3/15.
@@ -19,12 +21,21 @@ public class Frame {
     public static final byte ENCY = 0x00;
     public static final byte TERM_SENSOR = 0x04;
     public static final byte TERM_GATEWAY = 0x0A;
+    public static final byte CMD_LOGIN = 0x01;
+    public static final byte CMD_HB    = 0x02;
+    public static final byte CMD_DISC  = 0x03;
+    public static final byte CMD_CONN  = 0x13;
+    public static final byte CMD_ALARM = 0x04;
+    public static final byte CMD_LOW   = 0x05;
+    public static final byte CMD_NORMAL= 0x15;
 
     private static final Logger logger = LoggerFactory.getLogger("Frame");
 
     private byte seq;
     private byte cmd;
+    private byte[] rawId;
     private int id;
+    private byte term;
 
     public Frame() {
     }
@@ -88,26 +99,37 @@ public class Frame {
         Frame f = new Frame();
         f.seq = bytes[start+1];
         f.cmd = bytes[start+11];
+        f.rawId = new byte[3];
         f.id = 0;
         int mask = 0xFF;
         for (int i = 3; i < 6; i++) {
             f.id += (bytes[start+i] & mask);
+            f.rawId[i-3] = bytes[start+i];
             if (i == 5)
                 break;
             f.id <<= 8;
         }
+        f.term = bytes[start+10];
         logger.info(f.toString());
         return f;
     }
 
     @Override
     public String toString() {
-        return id + "(" + String.format("%X", id)+ ")-" + seq + "-" + cmd;
+        return id + "(" + String.format("%X", id)+ ")-" + seq + "-" + term + "-" + cmd;
     }
 
     public static byte checksum(byte[] bytes, int start, int end) {
         byte sum = 0;
         for (int i = start; i < end; i++) {
+            sum += bytes[i];
+        }
+        return sum;
+    }
+
+    public static byte checksum(byte[] bytes) {
+        byte sum = 0;
+        for (int i = 0; i < bytes.length-1; i++) {
             sum += bytes[i];
         }
         return sum;
@@ -125,5 +147,52 @@ public class Frame {
             }
             buffer.put(src, 0, src.length);
         }
+    }
+
+    public byte[] response() {
+        if (cmd == CMD_LOGIN) {
+            return loginResponse();
+        }
+        return null;
+    }
+
+    private byte[] loginResponse() {
+        byte[] ret = new byte[MIN_LEN+8];
+        ret[0] = HEAD;
+        ret[1] = seq;
+        ret[2] = ENCY;
+        ret[3] = rawId[0];
+        ret[4] = rawId[1];
+        ret[5] = rawId[2];
+        // reg code
+        ret[10] = term;
+        ret[11] = CMD_LOGIN;
+        ret[12] = 8;
+        // data
+        ret[13] = 0; // successful ack
+        Calendar c = Calendar.getInstance();
+        String year = String.valueOf(c.get(Calendar.YEAR));
+        ret[14] = (byte)Integer.parseInt(year.substring(0, 2), 16);
+        ret[15] = (byte)Integer.parseInt(year.substring(2, 4), 16);
+        ret[16] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.MONTH) + 1), 16);
+        ret[17] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.DAY_OF_MONTH)), 16);
+        ret[18] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), 16);
+        ret[19] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.MINUTE)), 16);
+        ret[20] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.SECOND)), 16);
+
+        ret[21] = checksum(ret);
+        return null;
+    }
+
+    public static void main(String[] args) {
+        Calendar c = Calendar.getInstance();
+        String year = String.valueOf(c.get(Calendar.YEAR));
+        System.out.printf("%02X\n", Integer.parseInt(year.substring(0, 2), 16));
+        System.out.printf("%02X\n", Integer.parseInt(year.substring(2, 4), 16));
+        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.MONTH) + 1), 16));
+        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.DAY_OF_MONTH)), 16));
+        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), 16));
+        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.MINUTE)), 16));
+        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.SECOND)), 16));
     }
 }
