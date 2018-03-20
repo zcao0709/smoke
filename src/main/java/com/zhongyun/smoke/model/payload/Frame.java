@@ -1,7 +1,6 @@
-package com.zhongyun.smoke.model;
+package com.zhongyun.smoke.model.payload;
 
 import com.zhongyun.smoke.common.Util;
-import com.zhongyun.smoke.model.payload.Auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

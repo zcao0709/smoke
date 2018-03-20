@@ -41,6 +41,9 @@ public class ApplicationConfig {
     @Value("${mongo.port}")
     private int mongoPort;
 
+    @Value("${siter.port}")
+    private int siterPort;
+
     @Value("${mysql.url}")
     private String mysqlUrl;
 
@@ -141,6 +144,10 @@ public class ApplicationConfig {
 
     public String getAserverPwd() {
         return aserverPwd;
+    }
+
+    public int getSiterPort() {
+        return siterPort;
     }
 
     @Bean

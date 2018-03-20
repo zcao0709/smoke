@@ -2,7 +2,7 @@ package com.zhongyun.smoke.service;
 
 import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
-import com.zhongyun.smoke.model.Frame;
+import com.zhongyun.smoke.model.payload.Frame;
 import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.model.payload.Auth;
 import com.zhongyun.smoke.model.payload.Payload;
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,13 +97,16 @@ public class AServerConnector extends Thread {
                     }
                 }
             } catch (IOException e) {
+                e.printStackTrace();
                 logger.error("socket broken", e);
             } catch (Exception e) {
+                e.printStackTrace();
                 logger.error("socket broken", e);
             }
         }
     }
 
+    // deprecated
     private class Sender extends Thread {
         private OutputStream out;
 

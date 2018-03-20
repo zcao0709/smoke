@@ -80,6 +80,10 @@ public class Util {
     public static final String SENSOR_SMOKE = "烟感器";
     public static final String SENSOR_GWRX = "网关";
 
+    // vendor of sensors
+    public static final int FIRST = 1;
+    public static final int SITER = 2;
+
     public static final String OPTASK_UNSOLVED = "待处理";
     public static final String OPTASK_COMPLETE = "完成";
     public static final String OPTASK_OWNGOAL = "误报";
