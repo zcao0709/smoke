@@ -22,8 +22,8 @@ public class Frame {
 
     private static final Logger logger = LoggerFactory.getLogger("Frame");
 
-    private int seq;
-    private int cmd;
+    private byte seq;
+    private byte cmd;
     private int id;
 
     public Frame() {
@@ -62,6 +62,12 @@ public class Frame {
     }
 
     public static Frame create(byte[] bytes, int start, int end) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = start; i < end; i++) {
+            sb.append(String.format("%02X ", bytes[i]));
+        }
+        logger.info(sb.toString());
+
         if (bytes[start] != HEAD) {
             logger.error("unsupported head: " + bytes[start]);
             return null;
@@ -95,9 +101,9 @@ public class Frame {
         return id + "-" + seq + "-" + cmd;
     }
 
-    public static byte checksum(byte[] bytes, int offset, int end) {
+    public static byte checksum(byte[] bytes, int start, int end) {
         byte sum = 0;
-        for (int i = offset; i < end; i++) {
+        for (int i = start; i < end; i++) {
             sum += bytes[i];
         }
         return sum;
