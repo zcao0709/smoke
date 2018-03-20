@@ -64,7 +64,7 @@ public class Frame {
             logger.error("unsupported encryption: " + bytes[start+2]);
             return null;
         }
-        if (bytes[start+10] != TERM_GATEWAY || bytes[start+10] != TERM_SENSOR) {
+        if (bytes[start+10] != TERM_GATEWAY && bytes[start+10] != TERM_SENSOR) {
             logger.error("unsupported termination: " + bytes[start+10]);
             return null;
         }
