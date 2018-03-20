@@ -39,15 +39,21 @@ public class Frame {
                 break;
             }
         }
+        if (startIndex == p) {
+            buffer.clear();
+            return null;
+        }
         int endIndex = startIndex + MIN_LEN;  // exclusive
         if (p < endIndex) {
             logger.error("not enough data read: " + buffer.toString() + ", need " + MIN_LEN);
+            resetBuffer(buffer, buf, startIndex, p);
             return null;
         }
         int lenIndex = startIndex + HEADER_LEN - 1;
         endIndex += buf[lenIndex];
         if (p < endIndex) {
             logger.error("not enough data read: " + buffer.toString() + ", need " + MIN_LEN + buf[lenIndex]);
+            resetBuffer(buffer, buf, startIndex, p);
             return null;
         }
         Frame f = Frame.create(buf, startIndex, endIndex);
