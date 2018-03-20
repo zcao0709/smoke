@@ -93,6 +93,7 @@ public class Frame {
             f.id += bytes[start+i];
             f.id <<= 8;
         }
+        logger.info(f.toString());
         return f;
     }
 
@@ -115,7 +116,11 @@ public class Frame {
         }
         buffer.reset();
         if (end > start) {
-            buffer.put(buf, start, end-start);
+            byte[] src = new byte[end-start];
+            for (int i = 0; i < src.length; i++) {
+                src[i] = buf[start+i];
+            }
+            buffer.put(src, 0, src.length);
         }
     }
 }
