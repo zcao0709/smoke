@@ -77,7 +77,7 @@ public class SiterConnector extends Thread {
             selector = Selector.open();
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-            logger.debug("Server Start: " + port);
+            logger.info("Server Start: " + port);
         }
 
         public void listen() throws IOException {
@@ -112,7 +112,7 @@ public class SiterConnector extends Thread {
                 count = client.read(recv);
                 if (count > 0) {
                     Frame f = Frame.parse(recv);
-                    logger.debug("recv: " + f.toString());
+                    logger.info("recv: " + f.toString());
                 }
                 sendbuffer.clear();
 //                sendText = "message from server--";

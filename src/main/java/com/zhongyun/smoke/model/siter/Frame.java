@@ -32,7 +32,7 @@ public class Frame {
         int p = buffer.position();
         if (p >= MIN_LEN) {
             byte[] buf = buffer.array();
-            logger.debug("buffer: " + Arrays.toString(buf));
+            logger.info("buffer: " + Arrays.toString(buf));
             int size = buf[HEADER_LEN - 1];
             if (size == 0) {
                 Frame f = Frame.create(buf, 0, MIN_LEN);
