@@ -193,7 +193,7 @@ public class Util {
         for (int i = start; i < end; i++) {
             sb.append(String.format("%02X ", b[i]));
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     public static boolean testEnv() {
