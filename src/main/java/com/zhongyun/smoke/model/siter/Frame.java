@@ -104,7 +104,7 @@ public class Frame {
             logger.error("unsupported termination: " + f.term());
             return null;
         }
-        if (f.checksum()) {
+        if (!f.checksum()) {
             logger.error("checksum failed: " + Util.byteArray(bytes));
             return null;
         }
