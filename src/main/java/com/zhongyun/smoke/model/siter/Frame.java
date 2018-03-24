@@ -161,7 +161,7 @@ public class Frame {
 
     @Override
     public String toString() {
-        return Util.byteArray(raw);
+        return String.format("head-%c/seq-%d/id-%d/term-%d/cmd-%d/len-%d/%s", head(), seq(), id(), term(), cmd(), len(), Util.byteArray(raw));
     }
 
     private static void resetBuffer(ByteBuffer buffer, byte[] buf, int start, int end) {
