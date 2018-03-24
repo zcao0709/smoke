@@ -132,7 +132,6 @@ public class Frame {
 
         Auth auth = new Auth(user, pwd);
         Frame f = new Frame(COMMAND_JS, Util.object2Json(auth));
-//        Frame f = new Frame(COMMAND_JS, auth);
         out.write(f.content);
         logger.info("sent auth: " + f.toString());
     }

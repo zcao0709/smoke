@@ -3,11 +3,10 @@ package com.zhongyun.smoke.service;
 import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
-import com.zhongyun.smoke.model.siter.Frame;
+import com.zhongyun.smoke.model.siter.SiterFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -18,7 +17,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -64,7 +62,7 @@ public class SiterConnector extends Thread {
 
     private static class Server {
 
-        private ByteBuffer sendbuffer = ByteBuffer.allocate(Frame.MAX_LEN);
+        private ByteBuffer sendbuffer = ByteBuffer.allocate(SiterFrame.MAX_LEN);
 
         private Selector selector;
 
@@ -104,7 +102,7 @@ public class SiterConnector extends Thread {
                 server = (ServerSocketChannel) key.channel();
                 client = server.accept();
                 client.configureBlocking(false);
-                client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(Frame.MAX_LEN*2));
+                client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(SiterFrame.MAX_LEN*2));
 
             } else if (key.isReadable()) {
                 ByteBuffer recv = (ByteBuffer) key.attachment();
@@ -112,7 +110,7 @@ public class SiterConnector extends Thread {
 
                 count = client.read(recv);
                 if (count > 0) {
-                    Frame f = Frame.parse(recv);
+                    SiterFrame f = SiterFrame.parse(recv);
                     if (f != null) {
                         logger.info("recv: " + f.toString());
                         byte[] r = f.response();
