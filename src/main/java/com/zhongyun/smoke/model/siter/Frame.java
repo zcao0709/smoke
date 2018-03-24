@@ -12,14 +12,27 @@ import java.util.Calendar;
  */
 public class Frame {
 
-    public static final int HEADER_LEN = 13;
-    public static final int MIN_LEN = HEADER_LEN + 1; // add 1 byte checksum
-    public static final int MAX_LEN = HEADER_LEN + 256 + 1;
+    public static final int W_HEAD_LEN = 13;
+    public static final int W_MIN_LEN = W_HEAD_LEN + 1; // including checksum
+    public static final int M_MIN_LEN = 4;
+    public static final int MAX_LEN = W_HEAD_LEN + 256 + 1;
 
-    public static final byte HEAD = 0x57;
+    public static final int OFFSET_HEAD = 0;
+    public static final int OFFSET_SEQ  = 1;
+    public static final int OFFSET_ENCY = 2;
+    public static final int OFFSET_ID   = 3;
+    public static final int OFFSET_REG  = 6;
+    public static final int OFFSET_TERM = 10;
+    public static final int OFFSET_CMD  = 11;
+    public static final int OFFSET_LEN  = 12;
+    public static final int OFFSET_DATA = 13;
+
+    public static final byte HEAD_W = 0x57;
+    public static final byte HEAD_M = 0x4D;
     public static final byte ENCY = 0x00;
     public static final byte TERM_SENSOR = 0x04;
     public static final byte TERM_GATEWAY = 0x0A;
+
     public static final byte CMD_LOGIN = 0x01;
     public static final byte CMD_HB    = 0x02;
     public static final byte CMD_DISC  = 0x03;
@@ -28,106 +41,127 @@ public class Frame {
     public static final byte CMD_LOW   = 0x05;
     public static final byte CMD_NORMAL= 0x15;
 
+    public static final byte ACK_OK = 0;
+
+    public static final int LEN_LOGIN = 8;
+
+    public static final int FULL_LEN_HB = 2;
+
     private static final Logger logger = LoggerFactory.getLogger("Frame");
 
-    private byte seq;
-    private byte cmd;
-    private byte[] rawId;
-    private int id;
-    private byte term;
+    private byte[] raw;
 
-    public Frame() {
+    public Frame(byte[] raw) {
+        this.raw = raw;
     }
 
     public static Frame parse(ByteBuffer buffer) {
-        int p = buffer.position();
+        int limit = buffer.position();
         byte[] buf = buffer.array();
-        logger.info("buffer received: " + Util.byteArray(buf));
-        int startIndex = 0;
-        for (; startIndex < p; startIndex++) {
-            if (buf[startIndex] == HEAD) {
+        logger.info("buffer received: " + buffer.toString() + " - " + Util.byteArray(buf, 0, limit));
+
+        int start = 0;
+        for (; start < limit; start++) {
+            if (buf[start] == HEAD_W || buf[start] == HEAD_M) {
                 break;
             }
         }
-        if (startIndex == p) {
+        if (start == limit) {
             buffer.clear();
             return null;
         }
-        int endIndex = startIndex + MIN_LEN;  // exclusive
-        if (p < endIndex) {
-            logger.error("not enough data read: " + buffer.toString() + ", need " + MIN_LEN);
-            resetBuffer(buffer, buf, startIndex, p);
+        int end = 0;
+        if (buf[start] == HEAD_W) {
+            end = start + W_MIN_LEN;  // exclusive
+            if (limit >= end) {
+                end += buf[start+OFFSET_LEN];
+            }
+        } else if (buf[start] == HEAD_W) {
+            end = start + M_MIN_LEN;
+        }
+        if (limit < end) {
+            logger.error("not enough data in buffer, expected: " + end + ", but got: " + limit);
             return null;
         }
-        int lenIndex = startIndex + HEADER_LEN - 1;
-        endIndex += buf[lenIndex];
-        if (p < endIndex) {
-            logger.error("not enough data read: " + buffer.toString() + ", need " + MIN_LEN + buf[lenIndex]);
-            resetBuffer(buffer, buf, startIndex, p);
+        buffer.clear();
+
+        byte[] real = new byte[end-start];
+        for (int i = 0; i < real.length; i++) {
+            real[i] = buf[start+i];
+        }
+        return Frame.create(real);
+    }
+
+    public static Frame create(byte[] bytes) {
+        logger.info("raw frame: " + Util.byteArray(bytes));
+        Frame f = new Frame(bytes);
+
+        if (f.ency() != ENCY) {
+            logger.error("unsupported encryption: " + f.ency());
             return null;
         }
-        Frame f = Frame.create(buf, startIndex, endIndex);
-        resetBuffer(buffer, buf, endIndex, p);
+        if (f.term() != TERM_GATEWAY && f.term() != TERM_SENSOR) {
+            logger.error("unsupported termination: " + f.term());
+            return null;
+        }
+        if (f.checksum()) {
+            logger.error("checksum failed: " + Util.byteArray(bytes));
+            return null;
+        }
         return f;
     }
 
-    public static Frame create(byte[] bytes, int start, int end) {
-        logger.info("frame start at " + start + ", end at " + end);
+    public byte head() {
+        return raw[OFFSET_HEAD];
+    }
 
-        if (bytes[start] != HEAD) {
-            logger.error("unsupported head: " + bytes[start]);
-            return null;
-        }
-        if (bytes[start+2] != ENCY) {
-            logger.error("unsupported encryption: " + bytes[start+2]);
-            return null;
-        }
-        if (bytes[start+10] != TERM_GATEWAY && bytes[start+10] != TERM_SENSOR) {
-            logger.error("unsupported termination: " + bytes[start+10]);
-            return null;
-        }
-        int c = checksum(bytes, start, end-1);
-        if (c != bytes[end-1]) {
-            logger.error("checksum failed: " + bytes[end-1] + " != " + c);
-            return null;
-        }
-        Frame f = new Frame();
-        f.seq = bytes[start+1];
-        f.cmd = bytes[start+11];
-        f.rawId = new byte[3];
-        f.id = 0;
-        int mask = 0xFF;
-        for (int i = 3; i < 6; i++) {
-            f.id += (bytes[start+i] & mask);
-            f.rawId[i-3] = bytes[start+i];
+    public byte seq() {
+        return raw[OFFSET_SEQ];
+    }
+
+    public byte ency() {
+        return raw[OFFSET_ENCY];
+    }
+
+    public int id() {
+        int id = 0;
+//        int mask = 0xFF;
+        for (int i = OFFSET_ID; i < OFFSET_REG; i++) {
+            id += (raw[i] & 0xFF);
             if (i == 5)
                 break;
-            f.id <<= 8;
+            id <<= 8;
         }
-        f.term = bytes[start+10];
-        logger.info(f.toString());
-        return f;
+        return id;
+    }
+
+    public byte term() {
+        return raw[OFFSET_TERM];
+    }
+
+    public byte cmd() {
+        return raw[OFFSET_CMD];
+    }
+
+    public byte len() {
+        return raw[OFFSET_LEN];
+    }
+
+    public boolean checksum() {
+        return calcChecksum(raw) == raw[raw.length-1];
+    }
+
+    public static byte calcChecksum(byte[] raw) {
+        byte sum = 0;
+        for (int i = 0; i < raw.length-1; i++) {
+            sum += raw[i];
+        }
+        return sum;
     }
 
     @Override
     public String toString() {
-        return id + "(" + Util.byteArray(rawId) + ")-" + seq + "-" + term + "-" + cmd;
-    }
-
-    public static byte checksum(byte[] bytes, int start, int end) {
-        byte sum = 0;
-        for (int i = start; i < end; i++) {
-            sum += bytes[i];
-        }
-        return sum;
-    }
-
-    public static byte checksum(byte[] bytes) {
-        byte sum = 0;
-        for (int i = 0; i < bytes.length-1; i++) {
-            sum += bytes[i];
-        }
-        return sum;
+        return Util.byteArray(raw);
     }
 
     private static void resetBuffer(ByteBuffer buffer, byte[] buf, int start, int end) {
@@ -145,26 +179,35 @@ public class Frame {
     }
 
     public byte[] response() {
-        if (cmd == CMD_LOGIN) {
-            return loginResponse();
+        if (head() == HEAD_M) {
+            return hbResp();
+
+        } else if (head() == HEAD_W) {
+            switch (cmd()) {
+                case CMD_LOGIN:
+                    return loginResp();
+                default:
+                    logger.error("unsupported command: " + cmd());
+                    return null;
+            }
         }
+        logger.error("unsupported head: " + head());
         return null;
     }
 
-    private byte[] loginResponse() {
-        byte[] ret = new byte[MIN_LEN+8];
-        ret[0] = HEAD;
-        ret[1] = seq;
-        ret[2] = ENCY;
-        ret[3] = rawId[0];
-        ret[4] = rawId[1];
-        ret[5] = rawId[2];
-        // reg code
-        ret[10] = term;
+    private byte[] loginResp() {
+        byte[] ret = new byte[W_MIN_LEN+LEN_LOGIN];
+        ret[0] = HEAD_W;
+        ret[1] = seq();
+        ret[2] = ency();
+        for (int i = OFFSET_ID; i < OFFSET_TERM; i++) {
+            ret[i] = raw[i];
+        }
+        ret[10] = term();
         ret[11] = CMD_LOGIN;
-        ret[12] = 8;
-        // data
-        ret[13] = 0; // successful ack
+        ret[12] = LEN_LOGIN;
+
+        ret[13] = ACK_OK;
         Calendar c = Calendar.getInstance();
         String year = String.valueOf(c.get(Calendar.YEAR));
         ret[14] = (byte)Integer.parseInt(year.substring(0, 2), 16);
@@ -174,8 +217,14 @@ public class Frame {
         ret[18] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), 16);
         ret[19] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.MINUTE)), 16);
         ret[20] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.SECOND)), 16);
+        ret[21] = calcChecksum(ret);
+        return ret;
+    }
 
-        ret[21] = checksum(ret);
+    private byte[] hbResp() {
+        byte[] ret = new byte[FULL_LEN_HB];
+        ret[0] = HEAD_M;
+        ret[1] = ACK_OK;
         return ret;
     }
 

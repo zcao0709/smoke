@@ -104,7 +104,7 @@ public class SiterConnector extends Thread {
                 server = (ServerSocketChannel) key.channel();
                 client = server.accept();
                 client.configureBlocking(false);
-                client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(Frame.MAX_LEN));
+                client.register(selector, SelectionKey.OP_READ, ByteBuffer.allocate(Frame.MAX_LEN*2));
 
             } else if (key.isReadable()) {
                 ByteBuffer recv = (ByteBuffer) key.attachment();
