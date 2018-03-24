@@ -36,8 +36,10 @@ public class Gwrx {
             sg.setStatus(Util.SENSOR_NORMAL);
 
             try {
-                if (!sg.getLati().equals(gw.getStatus().getLati()) || !sg.getLongi().equals(gw.getStatus().getLongi())) {
-                    service.updateLocationAndStatus(gw.getStatus().getLati(), gw.getStatus().getLongi(), sg.getStatus(), sg.getId());
+                String lati = gw.getStatus().getLati().length() > 0 ? gw.getStatus().getLati() : sg.getLati();
+                String longi = gw.getStatus().getLongi().length() > 0 ? gw.getStatus().getLongi() : sg.getLongi();
+                if (!sg.getLati().equals(lati) || !sg.getLongi().equals(longi)) {
+                    service.updateLocationAndStatus(lati, longi, sg.getStatus(), sg.getId());
                 } else {
                     service.update(sg);
                 }

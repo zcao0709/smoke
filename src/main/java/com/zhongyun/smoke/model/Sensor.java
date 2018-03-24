@@ -27,6 +27,7 @@ public class Sensor {
 
     private String model;
     private String type;
+    private int vendor;
     private String location = "";
 
     private String lati = "0";
@@ -54,10 +55,11 @@ public class Sensor {
     public Sensor() {
     }
 
-    public Sensor(long eui, String type, Timestamp installTime, String status, long gatewayId, long projectId) {
+    public Sensor(long eui, String type, int vendor, Timestamp installTime, String status, long gatewayId, long projectId) {
         this.eui = eui;
         this.eui16 = String.format("%X", eui);
         this.type = type;
+        this.vendor = vendor;
         this.installTime = installTime;
         this.status = status;
         this.gatewayId = gatewayId;
@@ -88,6 +90,14 @@ public class Sensor {
         this.mtime = mtime;
         this.ctime = ctime;
         this.opCount = opCount;
+    }
+
+    public void setVendor(int vendor) {
+        this.vendor = vendor;
+    }
+
+    public int getVendor() {
+        return vendor;
     }
 
     @Override

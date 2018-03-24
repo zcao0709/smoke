@@ -76,7 +76,7 @@ public class AServerConnector extends Thread {
                 ScheduledExecutorService mt = Executors.newSingleThreadScheduledExecutor();
                 SensorMonitor sm = new SensorMonitor();
                 long rate = config.getGatewayTimeout() / 2;
-                mt.scheduleAtFixedRate(sm, rate, rate, TimeUnit.MILLISECONDS);
+                mt.scheduleAtFixedRate(sm, config.getGatewayTimeout(), rate, TimeUnit.MILLISECONDS);
 
 //                new Sender(out).start();
 
@@ -106,7 +106,7 @@ public class AServerConnector extends Thread {
         }
     }
 
-    // deprecated
+    @Deprecated
     private class Sender extends Thread {
         private OutputStream out;
 
@@ -168,8 +168,7 @@ public class AServerConnector extends Thread {
 
     private void initSensors() {
         long ts = System.currentTimeMillis();
-//        sensorService.updateMtime();
-        List<Sensor> sensors = sensorService.findBaseByType(Util.SENSOR_GWRX);
+        List<Sensor> sensors = sensorService.findBaseByTypeAndVendor(Util.SENSOR_GWRX, Util.VENDOR_FIRST);
         sensors.forEach(v -> gatewayTs.put(v.getEui(), ts));
     }
 }

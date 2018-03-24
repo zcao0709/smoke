@@ -1,41 +1,64 @@
 package com.zhongyun.smoke.model.siter;
 
+import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
+import com.zhongyun.smoke.model.Sensor;
+import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Calendar;
+import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by caozhennan on 2018/3/24.
  */
-public class SiterW extends SiterFrame {
-    private static final int HEAD_LEN = 13;
-    private static final int MIN_LEN = HEAD_LEN + 1; // including checksum
+public abstract class SiterW extends SiterFrame {
+    //    private static final int HEAD_LEN = 13;
+    protected static final int MIN_LEN = 14; // including checksum
 
-    private static final int OFFSET_HEAD = 0;
-    private static final int OFFSET_SEQ  = 1;
-    private static final int OFFSET_ENCY = 2;
-    private static final int OFFSET_ID   = 3;
-    private static final int OFFSET_REG  = 6;
-    private static final int OFFSET_TERM = 10;
-    private static final int OFFSET_CMD  = 11;
-    private static final int OFFSET_LEN  = 12;
-    private static final int OFFSET_DATA = 13;
+    protected static final int OFFSET_HEAD = 0;
+    protected static final int OFFSET_SEQ = 1;
+    protected static final int OFFSET_ENCY = 2;
+    protected static final int OFFSET_ID = 3;
+    protected static final int OFFSET_REG = 6;
+    protected static final int OFFSET_TERM = 10;
+    protected static final int OFFSET_CMD = 11;
+    protected static final int OFFSET_LEN = 12;
+    protected static final int OFFSET_DATA = 13;
+    protected static final int OFFSET_CHILD = 13;
+    protected static final int OFFSET_SERIAL = 16;
 
     private static final byte ENCY = 0x00;
-    private static final byte TERM_SENSOR = 0x04;
-    private static final byte TERM_GATEWAY = 0x0A;
+    protected static final byte TERM_SENSOR = 0x04;
+    protected static final byte TERM_GATEWAY = 0x0A;
 
-    private static final byte CMD_LOGIN = 0x01;
-    private static final byte CMD_HB    = 0x02;
-    private static final byte CMD_DISC  = 0x03;
-    private static final byte CMD_CONN  = 0x13;
-    private static final byte CMD_ALARM = 0x04;
-    private static final byte CMD_LOW   = 0x05;
-    private static final byte CMD_NORMAL= 0x15;
+    protected static final byte CMD_LOGIN = 0x01;
+    protected static final byte CMD_HB = 0x02;
+    protected static final byte CMD_DISC = 0x03;
+    protected static final byte CMD_CONN = 0x13;
+    protected static final byte CMD_ALARM = 0x04;
+    protected static final byte CMD_BATLOW = 0x05;
+    protected static final byte CMD_BATNOR = 0x15;
+    protected static final byte CMD_POWEROFF = 0x0D;
+    protected static final byte CMD_POWERON = 0x0E;
 
-    private static final int LEN_LOGIN = 8;
+    // data section length
+
+    private static final int REQ_OTHER_LEN = 5;
+    private static final int RESP_OTHER_LEN = 1;
+
+    private static final Set<Byte> CMD_WITH_CHILD = new HashSet<>();
+
+    static {
+        CMD_WITH_CHILD.add(CMD_DISC);
+        CMD_WITH_CHILD.add(CMD_CONN);
+        CMD_WITH_CHILD.add(CMD_ALARM);
+        CMD_WITH_CHILD.add(CMD_BATLOW);
+        CMD_WITH_CHILD.add(CMD_BATNOR);
+    }
+
 
     private static final Logger logger = LoggerFactory.getLogger("SiterW");
 
@@ -48,21 +71,45 @@ public class SiterW extends SiterFrame {
     public static SiterW parse(byte[] buf, int start, int limit) {
         int end = start + MIN_LEN;
         if (limit >= end) {
-            end += buf[start+OFFSET_LEN];
+            end += buf[start + OFFSET_LEN];
         }
         if (limit < end) {
             logger.error("not enough data in buffer, expected: " + end + ", but got: " + limit);
             return null;
         }
-        byte[] real = new byte[end-start];
+        byte[] real = new byte[end - start];
         for (int i = 0; i < real.length; i++) {
-            real[i] = buf[start+i];
+            real[i] = buf[start + i];
         }
-        return new SiterW(real);
+        switch (buf[OFFSET_CMD]) {
+            case CMD_LOGIN:
+                return new Login(real);
+            case CMD_ALARM:
+                return new Alarm(real);
+            case CMD_DISC:
+            case CMD_CONN:
+            case CMD_POWEROFF:
+            case CMD_POWERON:
+                return new Other(real);
+            default:
+                logger.error("unsupported command: " + buf[OFFSET_CMD]);
+                return null;
+        }
     }
 
     @Override
     public boolean validate() {
+        if (validateHeader()) {
+            if (validateCmd()) {
+                return true;
+            } else {
+                logger.error("unsupported data len: " + len() + " in cmd: " + cmd());
+            }
+        }
+        return false;
+    }
+
+    protected boolean validateHeader() {
         logger.info("raw frame: " + Util.byteArray(raw));
 
         if (ency() != ENCY) {
@@ -80,50 +127,49 @@ public class SiterW extends SiterFrame {
         return true;
     }
 
-    private byte head() {
+    protected final byte head() {
         return raw[OFFSET_HEAD];
     }
 
-    private byte seq() {
+    protected final byte seq() {
         return raw[OFFSET_SEQ];
     }
 
-    private byte ency() {
+    protected final byte ency() {
         return raw[OFFSET_ENCY];
     }
 
     @Override
-    public int id() {
-        int id = 0;
-//        int mask = 0xFF;
-        for (int i = OFFSET_ID; i < OFFSET_REG; i++) {
-            id += (raw[i] & 0xFF);
-            if (i == 5)
-                break;
-            id <<= 8;
-        }
-        return id;
+    public final long id() {
+        return id(raw, OFFSET_ID, OFFSET_REG);
     }
 
-    private byte term() {
+    public long child() {
+        if (hasChild()) {
+            return id(raw, OFFSET_CHILD, OFFSET_SERIAL);
+        }
+        return INVALID_ID;
+    }
+
+    protected final byte term() {
         return raw[OFFSET_TERM];
     }
 
-    private byte cmd() {
+    protected final byte cmd() {
         return raw[OFFSET_CMD];
     }
 
-    private byte len() {
+    protected final byte len() {
         return raw[OFFSET_LEN];
     }
 
-    private boolean checksum() {
-        return calcChecksum(raw) == raw[raw.length-1];
+    protected final boolean checksum() {
+        return calcChecksum(raw) == raw[raw.length - 1];
     }
 
-    private static byte calcChecksum(byte[] raw) {
+    protected static byte calcChecksum(byte[] raw) {
         byte sum = 0;
-        for (int i = 0; i < raw.length-1; i++) {
+        for (int i = 0; i < raw.length - 1; i++) {
             sum += raw[i];
         }
         return sum;
@@ -135,52 +181,54 @@ public class SiterW extends SiterFrame {
     }
 
     @Override
-    public byte[] response() {
-        switch (cmd()) {
-            case CMD_LOGIN:
-                return loginResp();
-            default:
-                logger.error("unsupported command: " + cmd());
-                return null;
+    public final void persist(SensorService sensorService, ApplicationConfig config) {
+        long id = id();
+        Sensor sg = sensorService.findBaseByEui(id());
+        long ts = System.currentTimeMillis();
+        if (sg == null) {
+            sg = new Sensor(id, Util.SENSOR_GWRX, Util.VENDOR_SITER, new Timestamp(ts), Util.SENSOR_NORMAL,
+                            Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
+            sg.setPhone(config.getAdminPhone());
+            sg = sensorService.add(sg);
+        }
+        long child = child();
+        if (child < 0) {
+            return;
+        }
+        Sensor s = sensorService.findBaseByEui(child);
+        if (s == null) {
+            // 新的烟感器，项目固定为0，由管理员后续更新
+            s = new Sensor(child, Util.SENSOR_SMOKE, Util.VENDOR_SITER, new Timestamp(ts), state(), sg.getId(), Util.PROJECT_UNSET);
+            sensorService.add(s);
+        } else {
+            s.setGatewayId(sg.getId());
+            sensorService.updateStatusAndGateway(state(), s, ts);
         }
     }
 
-    private byte[] loginResp() {
-        byte[] ret = new byte[MIN_LEN +LEN_LOGIN];
-        ret[0] = HEAD_W;
-        ret[1] = seq();
-        ret[2] = ency();
+    @Override
+    public byte[] response() {
+        byte[] ret = responseCmd();
+        // common part
+        ret[OFFSET_HEAD] = HEAD_W;
+        ret[OFFSET_SEQ] = seq();
+        ret[OFFSET_ENCY] = ency();
         for (int i = OFFSET_ID; i < OFFSET_TERM; i++) {
             ret[i] = raw[i];
         }
-        ret[10] = term();
-        ret[11] = CMD_LOGIN;
-        ret[12] = LEN_LOGIN;
+        ret[OFFSET_TERM] = term();
+        ret[OFFSET_CMD]  = raw[OFFSET_CMD];
+        ret[OFFSET_DATA] = ACK_OK;
+        ret[ret.length-1] = calcChecksum(ret);
 
-        ret[13] = ACK_OK;
-        Calendar c = Calendar.getInstance();
-        String year = String.valueOf(c.get(Calendar.YEAR));
-        ret[14] = (byte)Integer.parseInt(year.substring(0, 2), 16);
-        ret[15] = (byte)Integer.parseInt(year.substring(2, 4), 16);
-        ret[16] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.MONTH) + 1), 16);
-        ret[17] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.DAY_OF_MONTH)), 16);
-        ret[18] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), 16);
-        ret[19] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.MINUTE)), 16);
-        ret[20] = (byte)Integer.parseInt(String.valueOf(c.get(Calendar.SECOND)), 16);
-        ret[21] = calcChecksum(ret);
         return ret;
     }
 
+    protected abstract boolean validateCmd();
 
-    public static void main(String[] args) {
-        Calendar c = Calendar.getInstance();
-        String year = String.valueOf(c.get(Calendar.YEAR));
-        System.out.printf("%02X\n", Integer.parseInt(year.substring(0, 2), 16));
-        System.out.printf("%02X\n", Integer.parseInt(year.substring(2, 4), 16));
-        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.MONTH) + 1), 16));
-        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.DAY_OF_MONTH)), 16));
-        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.HOUR_OF_DAY)), 16));
-        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.MINUTE)), 16));
-        System.out.printf("%02X\n", Integer.parseInt(String.valueOf(c.get(Calendar.SECOND)), 16));
-    }
+    protected abstract byte[] responseCmd();
+
+    protected abstract boolean hasChild();
+
+    protected abstract String state();
 }

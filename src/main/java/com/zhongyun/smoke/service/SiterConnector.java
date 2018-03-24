@@ -65,16 +65,16 @@ public class SiterConnector extends Thread {
         private ByteBuffer sendbuffer = ByteBuffer.allocate(SiterFrame.MAX_LEN);
 
         private Selector selector;
+        private ServerSocketChannel server;
 
         public Server(int port) throws IOException {
-            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.configureBlocking(false);
-
-            ServerSocket serverSocket = serverSocketChannel.socket();
-            serverSocket.bind(new InetSocketAddress(port));
+            server = ServerSocketChannel.open();
+            server.configureBlocking(false);
+            server.socket().bind(new InetSocketAddress(port));
+            server.configureBlocking(false);
 
             selector = Selector.open();
-            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+            server.register(selector, SelectionKey.OP_ACCEPT);
 
             logger.info("Server Start: " + port);
         }
@@ -126,18 +126,25 @@ public class SiterConnector extends Thread {
                     } else {
                         logger.info("recv: invalid frame");
                     }
+                    client.register(selector, SelectionKey.OP_READ, recv);
+                } else if (count < 0) {
+                    logger.info("some sensor disconnected");
+                    client.close();
                 }
-                client.register(selector, SelectionKey.OP_READ, recv);
             }
         }
 
         public void close() {
-            if (selector != null) {
-                try {
+            try {
+                if (selector != null) {
                     selector.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+                if (server != null) {
+                    server.socket().close();
+                    server.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

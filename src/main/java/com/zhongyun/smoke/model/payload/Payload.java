@@ -41,13 +41,11 @@ public abstract class Payload {
             g.update(sensorService, gatewayTs);
 
         } else {
-            Payload p;
+            Payload p = null;
             if (payload.startsWith("{\"immeAPP\"")) {
                 p = Util.json2Object(payload, ImmeApp.class);
             } else if (payload.startsWith("{\"app\"")) {
                 p = Util.json2Object(payload, UpApp.class);
-            } else {
-                return;
             }
             if (p == null) {
                 logger.error("invalid app message: " + payload);

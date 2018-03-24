@@ -1,6 +1,9 @@
 package com.zhongyun.smoke.model.siter;
 
+import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
+import com.zhongyun.smoke.model.Sensor;
+import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,15 +38,8 @@ public class SiterM extends SiterFrame {
     }
 
     @Override
-    public int id() {
-        int id = 0;
-        for (int i = OFFSET_ID; i < raw.length; i++) {
-            id += (raw[i] & 0xFF);
-            if (i == 5)
-                break;
-            id <<= 8;
-        }
-        return id;
+    public long id() {
+        return id(raw, OFFSET_ID, raw.length);
     }
 
     @Override
@@ -57,6 +53,18 @@ public class SiterM extends SiterFrame {
         ret[0] = HEAD_M;
         ret[1] = ACK_OK;
         return ret;
+    }
+
+    @Override
+    public void persist(SensorService sensorService, ApplicationConfig config) {
+        long id = id();
+        Sensor sg = sensorService.findBaseByEui(id());
+        if (sg == null) {
+            logger.error("recv a frame from unknown sensor: " + id);
+        } else {
+            // update mtime
+            sensorService.update(sg);
+        }
     }
 
     @Override

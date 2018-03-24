@@ -152,9 +152,9 @@ public class SensorService {
         return sensors;
     }
 
-    public List<Sensor> findBaseByType(String type) {
+    public List<Sensor> findBaseByTypeAndVendor(String type, int vendor) {
         try {
-            return sensorRepository.findByType(type);
+            return sensorRepository.findByTypeAndVendor(type, vendor);
         } catch (Exception e) {
             logger.error("findBaseByType failed for " + type, e);
             return new ArrayList<>(0);

@@ -36,13 +36,14 @@ public class App {
         }
         String payload = payload();
 
-        long ts = System.currentTimeMillis();
         Gwrx g = gwrx.get(0);
         Sensor sg = sensorService.findBaseByEui(g.eui);
         Sensor s = sensorService.findBaseByEui(moteeui);
+        long ts = System.currentTimeMillis();
 
         if (sg == null) {
-            sg = new Sensor(g.eui, Util.SENSOR_GWRX, new Timestamp(ts), Util.SENSOR_NORMAL, 0, s == null ? 0 : s.getProjectId());
+            sg = new Sensor(g.eui, Util.SENSOR_GWRX, Util.VENDOR_FIRST, new Timestamp(ts), Util.SENSOR_NORMAL, Util.GATEWAY_UNSET,
+                            s == null ? Util.PROJECT_UNSET : s.getProjectId());
             sg.setPhone(config.getAdminPhone());
             try {
                 sg = sensorService.add(sg);
@@ -55,17 +56,13 @@ public class App {
 
         if (s == null) {
             // 新的烟感器，项目固定为0，由管理员后续更新
-            s = new Sensor(moteeui, Util.SENSOR_SMOKE, new Timestamp(ts), payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), 0);
-            try {
-                sensorService.add(s);
-            } catch (Exception e) {
-                logger.error("add sensor failed for " + s, e);
-            }
+            s = new Sensor(moteeui, Util.SENSOR_SMOKE, Util.VENDOR_FIRST, new Timestamp(ts),
+                           payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), 0);
+            sensorService.add(s);
         } else {
             s.setGatewayId(sg.getId());
             sensorService.updateStatusAndGateway(payload, s, ts);
         }
-        return;
     }
 
     public String payload() {
