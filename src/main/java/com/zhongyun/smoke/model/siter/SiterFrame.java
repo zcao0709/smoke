@@ -23,7 +23,7 @@ public abstract class SiterFrame {
 
     private static final Logger logger = LoggerFactory.getLogger("SiterFrame");
 
-    public static final SiterFrame parse(ByteBuffer buffer) {
+    public static final SiterFrame parse(ByteBuffer buffer, SensorService sensorService, ApplicationConfig config) {
         int limit = buffer.position();
         byte[] buf = buffer.array();
         logger.info("recv: " + buffer.toString() + " - " + Util.byteArray(buf, 0, limit));
@@ -49,6 +49,7 @@ public abstract class SiterFrame {
         }
         buffer.clear();
         if (f.validate()) {
+            f.persist(sensorService, config);
             return f;
         } else {
             return null;
