@@ -35,7 +35,6 @@ public abstract class SiterW extends SiterFrame {
     protected static final byte TERM_GATEWAY = 0x0A;
 
     protected static final byte CMD_LOGIN = 0x01;
-    protected static final byte CMD_HB = 0x02;
     protected static final byte CMD_DISC = 0x03;
     protected static final byte CMD_CONN = 0x13;
     protected static final byte CMD_ALARM = 0x04;
@@ -43,22 +42,6 @@ public abstract class SiterW extends SiterFrame {
     protected static final byte CMD_BATNOR = 0x15;
     protected static final byte CMD_POWEROFF = 0x0D;
     protected static final byte CMD_POWERON = 0x0E;
-
-    // data section length
-
-    private static final int REQ_OTHER_LEN = 5;
-    private static final int RESP_OTHER_LEN = 1;
-
-    private static final Set<Byte> CMD_WITH_CHILD = new HashSet<>();
-
-    static {
-        CMD_WITH_CHILD.add(CMD_DISC);
-        CMD_WITH_CHILD.add(CMD_CONN);
-        CMD_WITH_CHILD.add(CMD_ALARM);
-        CMD_WITH_CHILD.add(CMD_BATLOW);
-        CMD_WITH_CHILD.add(CMD_BATNOR);
-    }
-
 
     private static final Logger logger = LoggerFactory.getLogger("SiterW");
 
@@ -90,6 +73,8 @@ public abstract class SiterW extends SiterFrame {
             case CMD_CONN:
             case CMD_POWEROFF:
             case CMD_POWERON:
+            case CMD_BATLOW:
+            case CMD_BATNOR:
                 return new Other(real);
             default:
                 logger.error("unsupported command: " + buf[OFFSET_CMD]);
@@ -190,6 +175,9 @@ public abstract class SiterW extends SiterFrame {
                             Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
             sg.setPhone(config.getAdminPhone());
             sg = sensorService.add(sg);
+        } else {
+            sg.setStatus(state());
+            sensorService.update(sg);
         }
         long child = child();
         if (child < 0) {
