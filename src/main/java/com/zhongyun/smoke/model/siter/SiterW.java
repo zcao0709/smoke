@@ -162,7 +162,7 @@ public abstract class SiterW extends SiterFrame {
 
     @Override
     public String toString() {
-        return String.format("head-%c/seq-%d/id-%d/term-%d/cmd-%d/len-%d/%s", head(), seq(), id(), term(), cmd(), len(), Util.byteArray(raw));
+        return String.format("head-%c/seq-%02X/id-%d/term-%02X/cmd-%02X/len-%d/%s", head(), seq(), id(), term(), cmd(), len(), Util.byteArray(raw));
     }
 
     @Override
