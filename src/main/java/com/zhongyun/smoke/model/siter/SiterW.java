@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by caozhennan on 2018/3/24.
@@ -176,21 +174,22 @@ public abstract class SiterW extends SiterFrame {
             sg.setPhone(config.getAdminPhone());
             sg = sensorService.add(sg);
         } else {
-            sg.setStatus(state());
-            sensorService.update(sg);
-        }
-        long child = child();
-        if (child < 0) {
-            return;
-        }
-        Sensor s = sensorService.findBaseByEui(child);
-        if (s == null) {
-            // 新的烟感器，项目固定为0，由管理员后续更新
-            s = new Sensor(child, Util.SENSOR_SMOKE, Util.VENDOR_SITER, new Timestamp(ts), state(), sg.getId(), Util.PROJECT_UNSET);
-            sensorService.add(s);
-        } else {
-            s.setGatewayId(sg.getId());
-            sensorService.updateStatusAndGateway(state(), s, ts);
+            long child = child();
+            if (child < 0) {
+                // 无子设备，则是网关的状态
+                sg.setStatus(state());
+                sensorService.update(sg);
+            } else {
+                Sensor s = sensorService.findBaseByEui(child);
+                if (s == null) {
+                    // 新的烟感器，项目固定为0，由管理员后续更新
+                    s = new Sensor(child, Util.SENSOR_SMOKE, Util.VENDOR_SITER, new Timestamp(ts), state(), sg.getId(), Util.PROJECT_UNSET);
+                    sensorService.add(s);
+                } else {
+                    s.setGatewayId(sg.getId());
+                    sensorService.updateStatusAndGateway(state(), s, ts);
+                }
+            }
         }
     }
 
