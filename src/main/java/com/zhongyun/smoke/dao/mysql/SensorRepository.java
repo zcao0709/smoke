@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOther {
     Sensor findByEui(long eui);
+    Sensor findByEui16(String eui16);
     List<Sensor> findByTypeAndVendor(String type, int vendor);
     long countByGatewayId(long gatewayId);
     List<Sensor> findByMtimeBefore(Date date);

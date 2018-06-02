@@ -71,6 +71,26 @@ public class Sensor {
         this.projectId = projectId;
     }
 
+    public Sensor(String eui16, String type, int vendor, Timestamp installTime, String status, long gatewayId, long projectId) {
+        this.eui16 = eui16;
+        try {
+            this.eui = Long.parseLong(this.eui16);
+        } catch (Exception e) {
+            this.eui = System.currentTimeMillis();
+        }
+        this.type = type;
+        this.vendor = vendor;
+        this.installTime = installTime;
+        this.status = status;
+        this.gatewayId = gatewayId;
+        if (type.equals(Util.SENSOR_SMOKE)) {
+            this.model = MODEL_SMOKE;
+        } else {
+            this.model = MODEL_GWRX;
+        }
+        this.projectId = projectId;
+    }
+
     public Sensor(long id, long eui, String eui16, String model, String type, String location, String lati, String longi, Timestamp installTime,
                   String guarantee, String status, long projectId, long gatewayId, String phone, Timestamp mtime, Timestamp ctime, long opCount) {
         this.id = id;

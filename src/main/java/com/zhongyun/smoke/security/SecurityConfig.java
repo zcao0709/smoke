@@ -63,6 +63,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .regexMatchers("/api/report/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)
 
                     .regexMatchers("/api/file/.*").hasAnyAuthority(USER_ADMIN, USER_OP, USER_USER)
+
+                    .regexMatchers("/api/nb/.*").permitAll()
                 .and()
                 .logout().logoutUrl(config.getLogoutProcess()).logoutSuccessUrl(config.getLoginPage())
 //                .and()

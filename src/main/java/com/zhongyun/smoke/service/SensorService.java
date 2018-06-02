@@ -129,6 +129,10 @@ public class SensorService {
         return sensorRepository.findByEui(eui);
     }
 
+    public Sensor findBaseByEui16(String eui16) {
+        return sensorRepository.findByEui16(eui16);
+    }
+
     public long countByGatewayId(long gatewayId) {
         return sensorRepository.countByGatewayId(gatewayId);
     }
