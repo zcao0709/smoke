@@ -70,7 +70,7 @@ public abstract class SiterFrame {
         }
     }
 
-    public final long id(byte[] bs, int start, int end) {
+    public static final long id(byte[] bs, int start, int end) {
         if (end <= start || bs.length < end) {
             return INVALID_ID;
         }

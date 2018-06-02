@@ -183,7 +183,7 @@ public abstract class SiterW extends SiterFrame {
                 Sensor s = sensorService.findBaseByEui(child);
                 if (s == null) {
                     // 新的烟感器，项目固定为0，由管理员后续更新
-                    s = new Sensor(child, Util.SENSOR_SMOKE, Util.VENDOR_SITER, new Timestamp(ts), state(), sg.getId(), Util.PROJECT_UNSET);
+                    s = new Sensor(child, Util.SENSOR_SMOKE, Util.VENDOR_SITER, new Timestamp(ts), Util.SENSOR_NORMAL, sg.getId(), Util.PROJECT_UNSET);
                     sensorService.add(s);
                 } else {
                     s.setGatewayId(sg.getId());

@@ -44,6 +44,9 @@ public class ApplicationConfig {
     @Value("${siter.port}")
     private int siterPort;
 
+    @Value("${nbiot.port}")
+    private int nbiotPort;
+
     @Value("${mysql.url}")
     private String mysqlUrl;
 
@@ -148,6 +151,10 @@ public class ApplicationConfig {
 
     public int getSiterPort() {
         return siterPort;
+    }
+
+    public int getNbiotPort() {
+        return nbiotPort;
     }
 
     @Bean

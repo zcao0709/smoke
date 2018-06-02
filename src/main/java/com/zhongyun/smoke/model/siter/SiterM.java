@@ -62,7 +62,7 @@ public class SiterM extends SiterFrame {
         if (sg == null) {
             logger.error("recv a frame from unknown sensor: " + id);
         } else {
-            // update mtime
+            sg.setStatus(Util.SENSOR_NORMAL);
             sensorService.update(sg);
         }
     }
