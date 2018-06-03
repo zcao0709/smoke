@@ -158,7 +158,7 @@ public class AServerConnector extends Thread {
                     sensorService.updateStatusAndGateway(Util.SENSOR_DISCONN, g, ts);
                 }
             });
-            List<Sensor> ss = sensorService.findByMtimeBefore(new Date(ts - config.getSensorTimeout()));
+            List<Sensor> ss = sensorService.findByVendorAndMtimeBefore(Util.VENDOR_FIRST, new Date(ts - config.getSensorTimeout()));
             ss.forEach(s -> {
                 sensorService.updateStatusAndGateway(Util.SENSOR_DISCONN, s, ts);
                 logger.warn("sensor " + s + " lost connection");

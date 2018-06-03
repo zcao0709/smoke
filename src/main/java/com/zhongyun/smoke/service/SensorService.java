@@ -165,8 +165,8 @@ public class SensorService {
         }
     }
 
-    public List<Sensor> findByMtimeBefore(Date date) {
-        return sensorRepository.findByMtimeBefore(date);
+    public List<Sensor> findByVendorAndMtimeBefore(int vendor, Date date) {
+        return sensorRepository.findByVendorAndMtimeBefore(vendor, date);
     }
 
     private void complete(Sensor sensor) {
