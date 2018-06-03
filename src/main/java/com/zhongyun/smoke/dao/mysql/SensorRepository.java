@@ -16,7 +16,7 @@ public interface SensorRepository extends JpaRepository<Sensor, Long>, SensorOth
     Sensor findByEui16(String eui16);
     List<Sensor> findByTypeAndVendor(String type, int vendor);
     long countByGatewayId(long gatewayId);
-    List<Sensor> findByVendorAndMtimeBefore(int vendor, Date date);
+    List<Sensor> findByVendorAndStatusAndMtimeBefore(int vendor, String status, Date date);
 
     @Modifying
     @Query(value = "UPDATE sensor SET project_id = 0 WHERE project_id = ?1", nativeQuery = true)

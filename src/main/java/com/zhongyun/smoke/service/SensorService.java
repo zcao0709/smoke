@@ -4,6 +4,7 @@ import static com.zhongyun.smoke.common.Util.*;
 
 import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Page;
+import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
 import com.zhongyun.smoke.dao.mysql.SensorRepository;
@@ -165,8 +166,8 @@ public class SensorService {
         }
     }
 
-    public List<Sensor> findByVendorAndMtimeBefore(int vendor, Date date) {
-        return sensorRepository.findByVendorAndMtimeBefore(vendor, date);
+    public List<Sensor> findNormalByVendorAndMtimeBefore(int vendor, Date date) {
+        return sensorRepository.findByVendorAndStatusAndMtimeBefore(vendor, Util.SENSOR_NORMAL, date);
     }
 
     private void complete(Sensor sensor) {
