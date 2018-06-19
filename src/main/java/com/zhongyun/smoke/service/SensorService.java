@@ -46,7 +46,9 @@ public class SensorService {
 
     public Sensor add(Sensor sensor) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
-        sensor.setEui16(String.format("%X", sensor.getEui()));
+        if (sensor.getEui16().length() == 0) {
+            sensor.setEui16(String.format("%X", sensor.getEui()));
+        }
         sensor.setMtime(ts);
         sensor.setCtime(ts);
         return sensorRepository.save(sensor);
