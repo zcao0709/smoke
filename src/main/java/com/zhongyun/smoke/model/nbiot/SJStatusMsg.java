@@ -20,7 +20,7 @@ public class SJStatusMsg implements NbiotMsg {
     private String data;
     private int level;
     private String location;
-    private int oid;
+    private long oid;
     private String rawData;
 
     private RawData raw;
@@ -108,7 +108,7 @@ public class SJStatusMsg implements NbiotMsg {
         this.location = location;
     }
 
-    public void setOid(int oid) {
+    public void setOid(long oid) {
         this.oid = oid;
     }
 
@@ -152,7 +152,7 @@ public class SJStatusMsg implements NbiotMsg {
         return location;
     }
 
-    public int getOid() {
+    public long getOid() {
         return oid;
     }
 
