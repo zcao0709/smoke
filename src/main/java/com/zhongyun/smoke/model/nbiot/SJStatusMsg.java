@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.model.nbiot;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.model.Sensor;
@@ -34,19 +35,24 @@ public class SJStatusMsg implements NbiotMsg {
     }
 
     @Override
+    @JsonIgnore
     public String getId() {
         return getDeviceId();
     }
 
     @Override
     public String state() {
-        if (raw == null) {
+        String msg = rawData;
+        if (raw == null && rawData.startsWith("{")) {
             raw = json2Object(rawData, RawData.class);
         }
-        if (raw == null || raw.getMsg().length() < 4 || !"02".equals(raw.getMsg().substring(0, 2))) {
+        if (raw != null) {
+            msg = raw.getMsg();
+        }
+        if (msg.length() < 4 || !"02".equals(msg.substring(0, 2))) {
             return null;
         }
-        switch (raw.getMsg().substring(2, 4)) {
+        switch (msg.substring(2, 4)) {
             case "00":
             case "04":
             case "05":

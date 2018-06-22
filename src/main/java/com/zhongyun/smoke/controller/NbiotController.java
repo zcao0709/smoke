@@ -63,7 +63,7 @@ public class NbiotController {
 
     private void handleMsg(NbiotMsg msg) {
         String state = msg.state();
-        if (state.length() == 0) {
+        if (state == null || state.length() == 0) {
             return;
         }
         Sensor s = sensorService.findBaseByEui16(msg.getId());
