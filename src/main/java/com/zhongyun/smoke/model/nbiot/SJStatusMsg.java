@@ -160,6 +160,7 @@ public class SJStatusMsg implements NbiotMsg {
         return rawData;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     private static class RawData {
         private String msg;
 
