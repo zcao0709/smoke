@@ -45,6 +45,8 @@ public class SensorService {
     private static final Logger logger = LoggerFactory.getLogger("SensorService");
 
     public Sensor add(Sensor sensor) {
+        if (sensor == null)
+            return null;
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         if (sensor.getEui16().length() == 0) {
             sensor.setEui16(String.format("%X", sensor.getEui()));
@@ -75,6 +77,9 @@ public class SensorService {
 
     @Transactional
     public void updateStatusAndGateway(String status, Sensor sensor, long ts) {
+        if (status == null || status.length() == 0) {
+            return;
+        }
         try {
             if (!testEnv() && SENSOR_TEST.equals(status)) {
                 status = SENSOR_NORMAL;

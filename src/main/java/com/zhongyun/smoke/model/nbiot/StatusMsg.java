@@ -1,12 +1,16 @@
 package com.zhongyun.smoke.model.nbiot;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import static com.zhongyun.smoke.common.Util.*;
+import com.zhongyun.smoke.model.Sensor;
+
+import java.sql.Timestamp;
 
 /**
  * Created by caozhennan on 2018/6/2.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StatusMsg {
+public class StatusMsg implements NbiotMsg {
     private String deviceId;
     private String imei;
     private String msgType;
@@ -15,6 +19,38 @@ public class StatusMsg {
     private String msgTime;
 
     public StatusMsg() {
+    }
+
+    @Override
+    public String toString() {
+        return object2Json(this);
+    }
+
+    @Override
+    public String getId() {
+        return getDeviceId();
+    }
+
+    public String state() {
+        switch (getMsgType()) {
+            case "fire":
+                return SENSOR_FIRE;
+            case "fault":
+            case "sampleerror":
+            case "initerror":
+                return SENSOR_FAULT;
+            case "lowpower":
+                return SENSOR_BATTERY;
+            case "test":
+                return SENSOR_TEST;
+            default:
+                return SENSOR_UNKNOWN;
+        }
+    }
+
+    public Sensor toSensor() {
+        return new Sensor(getDeviceId(), SENSOR_SMOKE, VENDOR_NBIOT, new Timestamp(System.currentTimeMillis()),
+                          SENSOR_NORMAL, GATEWAY_UNSET, PROJECT_UNSET);
     }
 
     public void setDeviceId(String deviceId) {
