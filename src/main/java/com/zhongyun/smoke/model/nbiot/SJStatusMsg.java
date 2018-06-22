@@ -23,6 +23,8 @@ public class SJStatusMsg implements NbiotMsg {
     private int oid;
     private String rawData;
 
+    private RawData raw;
+
     public SJStatusMsg() {
     }
 
@@ -38,10 +40,13 @@ public class SJStatusMsg implements NbiotMsg {
 
     @Override
     public String state() {
-        if (rawData.length() < 4 || !"02".equals(rawData.substring(0, 2))) {
+        if (raw == null) {
+            raw = json2Object(rawData, RawData.class);
+        }
+        if (raw == null || raw.getMsg().length() < 4 || !"02".equals(raw.getMsg().substring(0, 2))) {
             return null;
         }
-        switch (rawData.substring(2, 4)) {
+        switch (raw.getMsg().substring(2, 4)) {
             case "00":
             case "04":
             case "05":
@@ -153,5 +158,20 @@ public class SJStatusMsg implements NbiotMsg {
 
     public String getRawData() {
         return rawData;
+    }
+
+    private static class RawData {
+        private String msg;
+
+        public RawData() {
+        }
+
+        public void setMsg(String msg) {
+            this.msg = msg;
+        }
+
+        public String getMsg() {
+            return msg;
+        }
     }
 }
