@@ -33,7 +33,7 @@ public class Other extends SiterW {
     }
 
     @Override
-    protected String state() {
+    public String state() {
         switch (cmd()) {
             case CMD_DISC:
                 return Util.SENSOR_DISCONN;

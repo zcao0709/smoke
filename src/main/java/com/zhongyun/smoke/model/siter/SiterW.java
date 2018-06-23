@@ -1,8 +1,9 @@
 package com.zhongyun.smoke.model.siter;
 
 import com.zhongyun.smoke.ApplicationConfig;
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.model.Sensor;
+import com.zhongyun.smoke.model.SensorMsg;
 import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import java.sql.Timestamp;
 /**
  * Created by caozhennan on 2018/3/24.
  */
-public abstract class SiterW extends SiterFrame {
+public abstract class SiterW extends SiterFrame implements SensorMsg {
     //    private static final int HEAD_LEN = 13;
     protected static final int MIN_LEN = 14; // including checksum
 
@@ -45,8 +46,11 @@ public abstract class SiterW extends SiterFrame {
 
     private byte[] raw;
 
+    private long ts;
+
     public SiterW(byte[] raw) {
         this.raw = raw;
+        this.ts = System.currentTimeMillis();
     }
 
     public static SiterW parse(byte[] buf, int start, int limit) {
@@ -93,7 +97,7 @@ public abstract class SiterW extends SiterFrame {
     }
 
     protected boolean validateHeader() {
-        logger.info("raw frame: " + Util.byteArray(raw));
+        logger.info("raw frame: " + byteArray(raw));
 
         if (ency() != ENCY) {
             logger.error("unsupported encryption: " + ency());
@@ -104,7 +108,7 @@ public abstract class SiterW extends SiterFrame {
             return false;
         }
         if (!checksum()) {
-            logger.error("checksum failed: " + Util.byteArray(raw));
+            logger.error("checksum failed: " + byteArray(raw));
             return false;
         }
         return true;
@@ -160,35 +164,27 @@ public abstract class SiterW extends SiterFrame {
 
     @Override
     public String toString() {
-        return String.format("head-%c/seq-%02X/id-%d/term-%02X/cmd-%02X/len-%d/%s", head(), seq(), id(), term(), cmd(), len(), Util.byteArray(raw));
+        return String.format("head-%c/seq-%02X/id-%d/term-%02X/cmd-%02X/len-%d/%s",
+                             head(), seq(), id(), term(), cmd(), len(), byteArray(raw));
     }
 
     @Override
     public final void persist(SensorService sensorService, ApplicationConfig config) {
-        long id = id();
         Sensor sg = sensorService.findBaseByEui(id());
-        long ts = System.currentTimeMillis();
+        Sensor s = null;
+        long child = child();
+        if (child >= 0) {
+            s = sensorService.findBaseByEui(child);
+        }
+
         if (sg == null) {
-            sg = new Sensor(id, Util.SENSOR_GWRX, Util.VENDOR_SITER, new Timestamp(ts), Util.SENSOR_NORMAL,
-                            Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
-            sg.setPhone(config.getAdminPhone());
-            sensorService.add(sg);
+            sg = newGateway(sensorService, s);
         } else {
-            long child = child();
             if (child < 0) {
                 // 无子设备，则是网关的状态
-                sg.setStatus(state());
-                sensorService.update(sg);
+                pingGateway(sensorService, sg);
             } else {
-                Sensor s = sensorService.findBaseByEui(child);
-                if (s == null) {
-                    // 新的烟感器，项目固定为0，由管理员后续更新
-                    s = new Sensor(child, Util.SENSOR_SMOKE, Util.VENDOR_SITER, new Timestamp(ts), Util.SENSOR_NORMAL, sg.getId(), Util.PROJECT_UNSET);
-                    sensorService.add(s);
-                } else {
-                    s.setGatewayId(sg.getId());
-                    sensorService.updateStatusAndGateway(state(), s, ts);
-                }
+                upsertSensor(sensorService, sg, s, ts);
             }
         }
     }
@@ -211,11 +207,24 @@ public abstract class SiterW extends SiterFrame {
         return ret;
     }
 
+    @Override
+    public Sensor toGateway() {
+        return new Sensor(id(), SENSOR_GWRX, VENDOR_SITER, new Timestamp(ts), SENSOR_NORMAL,
+                          GATEWAY_UNSET, PROJECT_UNSET);
+    }
+
+    @Override
+    public Sensor toSensor() {
+        return new Sensor(child(), SENSOR_SMOKE, VENDOR_SITER, new Timestamp(ts), SENSOR_NORMAL,
+                          GATEWAY_UNSET, PROJECT_UNSET);
+    }
+
     protected abstract boolean validateCmd();
 
     protected abstract byte[] responseCmd();
 
     protected abstract boolean hasChild();
 
-    protected abstract String state();
+    @Override
+    public abstract String state();
 }

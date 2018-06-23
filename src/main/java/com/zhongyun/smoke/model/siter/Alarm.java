@@ -24,7 +24,7 @@ public class Alarm extends SiterW {
     }
 
     @Override
-    protected String state() {
+    public String state() {
         return Util.SENSOR_FIRE;
     }
 

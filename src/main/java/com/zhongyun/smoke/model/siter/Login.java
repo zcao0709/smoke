@@ -26,7 +26,7 @@ public class Login extends SiterW {
     }
 
     @Override
-    protected String state() {
+    public String state() {
         return Util.SENSOR_NORMAL;
     }
 

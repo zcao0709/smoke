@@ -7,5 +7,4 @@ import com.zhongyun.smoke.model.SensorMsg;
  */
 public interface NbiotMsg extends SensorMsg {
     String getId();
-    String state();
 }

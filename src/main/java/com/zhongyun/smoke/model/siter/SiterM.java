@@ -3,6 +3,7 @@ package com.zhongyun.smoke.model.siter;
 import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Sensor;
+import com.zhongyun.smoke.model.SensorMsg;
 import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by caozhennan on 2018/3/24.
  */
-public class SiterM extends SiterFrame {
+public class SiterM extends SiterFrame implements SensorMsg {
     private static final int REQ_LEN  = 4;
     private static final int RESP_LEN = 2;
 
@@ -62,9 +63,25 @@ public class SiterM extends SiterFrame {
         if (sg == null) {
             logger.error("recv a frame from unknown sensor: " + id);
         } else {
-            sg.setStatus(Util.SENSOR_NORMAL);
-            sensorService.update(sg);
+//            sg.setStatus(Util.SENSOR_NORMAL);
+//            sensorService.update(sg);
+            pingGateway(sensorService, sg);
         }
+    }
+
+    @Override
+    public Sensor toGateway() {
+        return null;
+    }
+
+    @Override
+    public Sensor toSensor() {
+        return null;
+    }
+
+    @Override
+    public String state() {
+        return Util.SENSOR_NORMAL;
     }
 
     @Override

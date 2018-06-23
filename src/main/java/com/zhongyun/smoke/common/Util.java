@@ -81,10 +81,10 @@ public class Util {
     public static final String SENSOR_GWRX = "网关";
 
     // vendor of sensors
-    public static final int VENDOR_FIRST = 1;
+    public static final int VENDOR_MENSI = 1;
     public static final int VENDOR_SITER = 2;
     public static final int VENDOR_ORENA = 3;
-    public static final int VENDOR_SANJI = 3;
+    public static final int VENDOR_SANJI = 4;
 
     public static final int GATEWAY_UNSET = 0;
     public static final int PROJECT_UNSET = 0;
@@ -155,7 +155,7 @@ public class Util {
     }
 
     public static boolean validatePhone(String num) {
-        return num.length() > 0;
+        return num != null && num.length() > 0;
     }
 
     public static void main(String[] args) {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Sensor;
+import com.zhongyun.smoke.model.SensorMsg;
 import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentMap;
  * Created by caozhennan on 2017/12/6.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Gwrx {
+public class Gwrx implements SensorMsg {
     @JsonProperty("gateway")
     private Gw gw;
 
@@ -33,20 +34,49 @@ public class Gwrx {
         if (sg == null) {
             gatewayTs.remove(gw.getEUI());
         } else {
-            sg.setStatus(Util.SENSOR_NORMAL);
+            pingGateway(service, sg);
+            gatewayTs.put(gw.getEUI(), ts);
+//            sg.setStatus(Util.SENSOR_NORMAL);
+//
+//            try {
+//                String lati = gw.getStatus().getLati().length() > 0 ? gw.getStatus().getLati() : sg.getLati();
+//                String longi = gw.getStatus().getLongi().length() > 0 ? gw.getStatus().getLongi() : sg.getLongi();
+//                if (!sg.getLati().equals(lati) || !sg.getLongi().equals(longi)) {
+//                    service.updateLocationAndStatus(lati, longi, sg.getStatus(), sg.getId());
+//                } else {
+//                    service.update(sg);
+//                }
+//                gatewayTs.put(gw.getEUI(), ts);
+//            } catch (Exception e) {
+//                logger.error("update sensor failed for " + sg, e);
+//            }
+        }
+    }
 
-            try {
-                String lati = gw.getStatus().getLati().length() > 0 ? gw.getStatus().getLati() : sg.getLati();
-                String longi = gw.getStatus().getLongi().length() > 0 ? gw.getStatus().getLongi() : sg.getLongi();
-                if (!sg.getLati().equals(lati) || !sg.getLongi().equals(longi)) {
-                    service.updateLocationAndStatus(lati, longi, sg.getStatus(), sg.getId());
-                } else {
-                    service.update(sg);
-                }
-                gatewayTs.put(gw.getEUI(), ts);
-            } catch (Exception e) {
-                logger.error("update sensor failed for " + sg, e);
-            }
+    @Override
+    public Sensor toGateway() {
+        return null;
+    }
+
+    @Override
+    public Sensor toSensor() {
+        return null;
+    }
+
+    @Override
+    public String state() {
+        return Util.SENSOR_NORMAL;
+    }
+
+    @Override
+    public void pingGateway(SensorService sensorService, Sensor dbGateway) {
+        dbGateway.setStatus(state());
+        String lati = gw.getStatus().getLati().length() > 0 ? gw.getStatus().getLati() : dbGateway.getLati();
+        String longi = gw.getStatus().getLongi().length() > 0 ? gw.getStatus().getLongi() : dbGateway.getLongi();
+        if (!dbGateway.getLati().equals(lati) || !dbGateway.getLongi().equals(longi)) {
+            sensorService.updateLocationAndStatus(lati, longi, dbGateway.getStatus(), dbGateway.getId());
+        } else {
+            sensorService.update(dbGateway);
         }
     }
 

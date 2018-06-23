@@ -77,7 +77,7 @@ public class Sensor {
         try {
             this.eui = Long.parseLong(this.eui16);
         } catch (Exception e) {
-            this.eui = System.currentTimeMillis();
+            this.eui = System.nanoTime();
         }
         this.type = type;
         this.vendor = vendor;

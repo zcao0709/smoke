@@ -72,13 +72,14 @@ public class NbiotController {
             return;
         }
         Sensor s = sensorService.findBaseByEui16(msg.getId());
-        if (s == null) {
-            s = msg.toSensor();
-            s.setPhone(config.getAdminPhone());
-            sensorService.add(s);
+        msg.upsertSensor(sensorService, null, s, System.currentTimeMillis());
+//        if (s == null) {
+//            s = msg.toSensor();
+//            s.setPhone(config.getAdminPhone());
+//            sensorService.add(s);
 
-        } else {
-            sensorService.updateStatusAndGateway(msg.state(), s, System.currentTimeMillis());
-        }
+//        } else {
+//            sensorService.updateStatusAndGateway(msg.state(), s, System.currentTimeMillis());
+//        }
     }
 }

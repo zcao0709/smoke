@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zhongyun.smoke.ApplicationConfig;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.model.Sensor;
+import com.zhongyun.smoke.model.SensorMsg;
 import com.zhongyun.smoke.service.SensorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import java.util.concurrent.ConcurrentMap;
  * Created by caozhennan on 2017/11/25.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class App {
+public class App implements SensorMsg {
     private long moteeui;
     private String dir;
     private UserData userdata;
@@ -39,30 +40,49 @@ public class App {
         Gwrx g = gwrx.get(0);
         Sensor sg = sensorService.findBaseByEui(g.eui);
         Sensor s = sensorService.findBaseByEui(moteeui);
-        long ts = System.currentTimeMillis();
 
         if (sg == null) {
-            sg = new Sensor(g.eui, Util.SENSOR_GWRX, Util.VENDOR_FIRST, new Timestamp(ts), Util.SENSOR_NORMAL, Util.GATEWAY_UNSET,
-                            s == null ? Util.PROJECT_UNSET : s.getProjectId());
-            sg.setPhone(config.getAdminPhone());
-            try {
-                sg = sensorService.add(sg);
-                gatewayTs.put(g.eui, ts);
-            } catch (Exception e) {
-                logger.error("add sensor failed for " + sg, e);
-            }
+            sg = newGateway(sensorService, s);
+            gatewayTs.put(g.eui, get_ctime());
+//            sg = new Sensor(g.eui, Util.SENSOR_GWRX, Util.VENDOR_MENSI, new Timestamp(ts), Util.SENSOR_NORMAL, Util.GATEWAY_UNSET,
+//                            s == null ? Util.PROJECT_UNSET : s.getProjectId());
+//            sg.setPhone(config.getAdminPhone());
+//            try {
+//                sg = sensorService.add(sg);
+//                gatewayTs.put(g.eui, ts);
+//            } catch (Exception e) {
+//                logger.error("add sensor failed for " + sg, e);
+//            }
         }
         logger.info("gateways: " + gatewayTs);
 
-        if (s == null) {
-            // 新的烟感器，项目固定为0，由管理员后续更新
-            s = new Sensor(moteeui, Util.SENSOR_SMOKE, Util.VENDOR_FIRST, new Timestamp(ts),
-                           payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), 0);
-            sensorService.add(s);
-        } else {
-            s.setGatewayId(sg.getId());
-            sensorService.updateStatusAndGateway(payload, s, ts);
-        }
+        upsertSensor(sensorService, sg, s, get_ctime());
+//        if (s == null) {
+//            s = new Sensor(moteeui, Util.SENSOR_SMOKE, Util.VENDOR_MENSI, new Timestamp(ts),
+//                           payload.equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload, sg.getId(), 0);
+//            sensorService.add(s);
+//        } else {
+//            s.setGatewayId(sg.getId());
+//            sensorService.updateStatusAndGateway(payload, s, ts);
+//        }
+    }
+
+    @Override
+    public Sensor toGateway() {
+        return new Sensor(gwrx.get(0).eui, Util.SENSOR_GWRX, Util.VENDOR_MENSI, new Timestamp(get_ctime()),
+                          Util.SENSOR_NORMAL, Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
+    }
+
+    @Override
+    public Sensor toSensor() {
+        // 新的烟感器，项目固定为0，由管理员后续更新
+        return new Sensor(moteeui, Util.SENSOR_SMOKE, Util.VENDOR_MENSI, new Timestamp(get_ctime()),
+                          state(), Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
+    }
+
+    @Override
+    public String state() {
+        return payload().equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload();
     }
 
     public String payload() {
