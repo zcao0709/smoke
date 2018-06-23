@@ -18,7 +18,9 @@ public class StatusMsg implements NbiotMsg {
     private int smoke;
     private int battery;
     private String msgTime;
+
     private static String[] def = {""};
+    private static final String model = "ARN001";
 
     public StatusMsg() {
     }
@@ -70,8 +72,8 @@ public class StatusMsg implements NbiotMsg {
     }
 
     public Sensor toSensor() {
-        return new Sensor(getDeviceId(), SENSOR_SMOKE, VENDOR_NBIOT, new Timestamp(System.currentTimeMillis()),
-                          SENSOR_NORMAL, GATEWAY_UNSET, PROJECT_UNSET);
+        return new Sensor(getDeviceId(), SENSOR_SMOKE, VENDOR_SANJI, new Timestamp(System.currentTimeMillis()),
+                          SENSOR_NORMAL, model, GATEWAY_UNSET, PROJECT_UNSET);
     }
 
     public void setDeviceId(String deviceId) {

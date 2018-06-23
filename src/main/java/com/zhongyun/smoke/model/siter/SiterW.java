@@ -172,7 +172,7 @@ public abstract class SiterW extends SiterFrame {
             sg = new Sensor(id, Util.SENSOR_GWRX, Util.VENDOR_SITER, new Timestamp(ts), Util.SENSOR_NORMAL,
                             Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
             sg.setPhone(config.getAdminPhone());
-            sg = sensorService.add(sg);
+            sensorService.add(sg);
         } else {
             long child = child();
             if (child < 0) {

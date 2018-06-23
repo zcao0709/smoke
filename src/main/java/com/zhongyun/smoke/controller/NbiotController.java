@@ -42,7 +42,7 @@ public class NbiotController {
             return;
         }
         long ts = System.currentTimeMillis();
-        Sensor s = new Sensor(msg.getDeviceId(), Util.SENSOR_SMOKE, Util.VENDOR_NBIOT, new Timestamp(ts), Util.SENSOR_NORMAL,
+        Sensor s = new Sensor(msg.getDeviceId(), Util.SENSOR_SMOKE, Util.VENDOR_ORENA, new Timestamp(ts), Util.SENSOR_NORMAL,
                               Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
         s.setPhone(config.getAdminPhone());
         sensorService.add(s);
@@ -55,7 +55,8 @@ public class NbiotController {
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
         Map<String, String[]> args = request.getParameterMap();
         NbiotMsg msg = new StatusMsg(args);
-        handleMsg(msg);
+        logger.debug(msg.toString());
+//        handleMsg(msg);
     }
 
     @RequestMapping(value = "sj", method = RequestMethod.POST)

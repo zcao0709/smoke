@@ -112,8 +112,8 @@ public class NbiotFrame {
         Sensor s = sensorService.findBaseByEui(id());
         long ts = System.currentTimeMillis();
         if (s == null) {
-            s = new Sensor(id, Util.SENSOR_SMOKE, Util.VENDOR_NBIOT, new Timestamp(ts), Util.SENSOR_NORMAL,
-                            Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
+            s = new Sensor(id, Util.SENSOR_SMOKE, Util.VENDOR_ORENA, new Timestamp(ts), Util.SENSOR_NORMAL,
+                           Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
             s.setPhone(config.getAdminPhone());
             s = sensorService.add(s);
         } else {

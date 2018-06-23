@@ -26,6 +26,8 @@ public class SJStatusMsg implements NbiotMsg {
 
     private RawData raw;
 
+    private static final String model = "FHDJ001";
+
     public SJStatusMsg() {
     }
 
@@ -74,8 +76,8 @@ public class SJStatusMsg implements NbiotMsg {
 
     @Override
     public Sensor toSensor() {
-        return new Sensor(getDeviceId(), SENSOR_SMOKE, VENDOR_NBIOT, new Timestamp(System.currentTimeMillis()),
-                          SENSOR_NORMAL, GATEWAY_UNSET, PROJECT_UNSET);
+        return new Sensor(getDeviceId(), SENSOR_SMOKE, VENDOR_SANJI, new Timestamp(System.currentTimeMillis()),
+                          SENSOR_NORMAL, model, GATEWAY_UNSET, PROJECT_UNSET);
     }
 
     public void setDeviceType(String deviceType) {

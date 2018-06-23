@@ -71,7 +71,8 @@ public class Sensor {
         this.projectId = projectId;
     }
 
-    public Sensor(String eui16, String type, int vendor, Timestamp installTime, String status, long gatewayId, long projectId) {
+    public Sensor(String eui16, String type, int vendor, Timestamp installTime, String status, String model,
+                  long gatewayId, long projectId) {
         this.eui16 = eui16;
         try {
             this.eui = Long.parseLong(this.eui16);
@@ -82,12 +83,8 @@ public class Sensor {
         this.vendor = vendor;
         this.installTime = installTime;
         this.status = status;
+        this.model = model;
         this.gatewayId = gatewayId;
-        if (type.equals(Util.SENSOR_SMOKE)) {
-            this.model = MODEL_SMOKE;
-        } else {
-            this.model = MODEL_GWRX;
-        }
         this.projectId = projectId;
     }
 

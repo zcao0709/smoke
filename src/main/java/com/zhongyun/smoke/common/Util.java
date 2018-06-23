@@ -83,7 +83,8 @@ public class Util {
     // vendor of sensors
     public static final int VENDOR_FIRST = 1;
     public static final int VENDOR_SITER = 2;
-    public static final int VENDOR_NBIOT = 3;
+    public static final int VENDOR_ORENA = 3;
+    public static final int VENDOR_SANJI = 3;
 
     public static final int GATEWAY_UNSET = 0;
     public static final int PROJECT_UNSET = 0;
