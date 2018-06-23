@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Created by caozhennan on 2018/6/2.
@@ -49,8 +50,11 @@ public class NbiotController {
     */
 
     @RequestMapping(value = "status", method = RequestMethod.POST)
-    public void status(@RequestBody StatusMsg msg) {
-        logger.info(request.getRequestURL().append("?").append(msg.toString()).toString());
+    public void status() {
+
+        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
+        Map<String, String[]> args = request.getParameterMap();
+        NbiotMsg msg = new StatusMsg(args);
         handleMsg(msg);
     }
 
