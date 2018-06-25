@@ -78,7 +78,7 @@ public class StatusMsg implements NbiotMsg {
 
     @Override
     public Sensor toSensor() {
-        return new Sensor(getDeviceId(), SENSOR_SMOKE, VENDOR_SANJI, new Timestamp(System.currentTimeMillis()),
+        return new Sensor(getDeviceId(), SENSOR_SMOKE, VENDOR_ORENA, new Timestamp(System.currentTimeMillis()),
                           SENSOR_NORMAL, model, GATEWAY_UNSET, PROJECT_UNSET);
     }
 
