@@ -56,7 +56,7 @@ public class NbiotController {
         Map<String, String[]> args = request.getParameterMap();
         NbiotMsg msg = new StatusMsg(args);
         logger.debug(msg.toString());
-//        handleMsg(msg);
+        handleMsg(msg);
     }
 
     @RequestMapping(value = "sj", method = RequestMethod.POST)
