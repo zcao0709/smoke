@@ -90,7 +90,7 @@ public class StatusMsg implements NbiotMsg {
                     return SENSOR_BATTERY;
                 }
             default:
-                return null;
+                return SENSOR_UNKNOWN;
         }
     }
 

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -77,7 +78,7 @@ public class NbiotController {
 
     private static String map2String(Map<String, String[]> map) {
         StringBuilder sb = new StringBuilder();
-        map.forEach((k, v) -> sb.append(v).append("=").append(v).append(" "));
+        map.forEach((k, v) -> sb.append(v).append("=").append(Arrays.toString(v)).append(" "));
         return sb.toString();
     }
 }
