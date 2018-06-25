@@ -47,12 +47,9 @@ public class SensorService {
     public Sensor add(Sensor sensor) {
         if (sensor == null)
             return null;
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        if (sensor.getEui16().length() == 0) {
-            sensor.setEui16(String.format("%X", sensor.getEui()));
-        }
-        sensor.setMtime(ts);
-        sensor.setCtime(ts);
+//        Timestamp ts = new Timestamp(System.currentTimeMillis());
+//        sensor.setMtime(ts);
+//        sensor.setCtime(ts);
         return sensorRepository.save(sensor);
     }
 
@@ -76,10 +73,8 @@ public class SensorService {
     }
 
     @Transactional
-    public void updateStatusAndGateway(String status, Sensor sensor, long ts) {
-        if (status == null || status.length() == 0) {
-            return;
-        }
+    public void updateStatusAndGateway(Sensor sensor, long ts) {
+        String status = sensor.getStatus();
         try {
             if (!testEnv() && SENSOR_TEST.equals(status)) {
                 status = SENSOR_NORMAL;
@@ -124,9 +119,9 @@ public class SensorService {
     }
 
     @Transactional
-    public void updateLocationAndStatus(String lati, String longi, String status, long id) {
-        sensorRepository.updateLatiAndLongiAndStatusById(lati, longi, status, id);
-        sensorRepository.updateLatiAndLongiByGatewayId(id);
+    public void updateLocationAndStatus(Sensor sensor) {
+        sensorRepository.updateLatiAndLongiAndStatusById(sensor.getLati(), sensor.getLongi(), sensor.getStatus(), sensor.getId());
+        sensorRepository.updateLatiAndLongiByGatewayId(sensor.getId());
     }
 
     public Sensor find(long id) {

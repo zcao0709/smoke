@@ -48,7 +48,7 @@ public abstract class SiterFrame {
             return null;
         }
         buffer.clear();
-        if (f.validate()) {
+        if (f.valid()) {
             f.persist(sensorService, config);
             return f;
         } else {
@@ -87,7 +87,7 @@ public abstract class SiterFrame {
 
     public abstract long id();
 
-    public abstract boolean validate();
+    public abstract boolean valid();
 
     public abstract byte[] response();
 

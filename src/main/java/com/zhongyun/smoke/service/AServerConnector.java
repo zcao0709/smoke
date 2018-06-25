@@ -1,7 +1,7 @@
 package com.zhongyun.smoke.service;
 
 import com.zhongyun.smoke.ApplicationConfig;
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.model.payload.Frame;
 import com.zhongyun.smoke.model.Sensor;
 import com.zhongyun.smoke.model.payload.Auth;
@@ -155,12 +155,14 @@ public class AServerConnector extends Thread {
                     logger.warn("gateway " + String.format("%X", eui) + " removed from DB since no sensor");
                 } else {
                     gatewayTs.put(eui, 0L);
-                    sensorService.updateStatusAndGateway(Util.SENSOR_DISCONN, g, ts);
+                    g.disconnect();
+                    sensorService.updateStatusAndGateway(g, ts);
                 }
             });
-            List<Sensor> ss = sensorService.findNormalByVendorAndMtimeBefore(Util.VENDOR_MENSI, new Date(ts - config.getSensorTimeout()));
+            List<Sensor> ss = sensorService.findNormalByVendorAndMtimeBefore(VENDOR_MENSI, new Date(ts - config.getSensorTimeout()));
             ss.forEach(s -> {
-                sensorService.updateStatusAndGateway(Util.SENSOR_DISCONN, s, ts);
+                s.disconnect();
+                sensorService.updateStatusAndGateway(s, ts);
                 logger.warn("sensor " + s + " lost connection");
             });
         }
@@ -168,7 +170,7 @@ public class AServerConnector extends Thread {
 
     private void initSensors() {
         long ts = System.currentTimeMillis();
-        List<Sensor> sensors = sensorService.findBaseByTypeAndVendor(Util.SENSOR_GWRX, Util.VENDOR_MENSI);
+        List<Sensor> sensors = sensorService.findBaseByTypeAndVendor(SENSOR_GWRX, VENDOR_MENSI);
         sensors.forEach(v -> gatewayTs.put(v.getEui(), ts));
     }
 }

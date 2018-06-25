@@ -44,7 +44,7 @@ public class SiterM extends SiterFrame implements SensorMsg {
     }
 
     @Override
-    public boolean validate() {
+    public boolean valid() {
         return true;
     }
 
@@ -63,9 +63,7 @@ public class SiterM extends SiterFrame implements SensorMsg {
         if (sg == null) {
             logger.error("recv a frame from unknown sensor: " + id);
         } else {
-//            sg.setStatus(Util.SENSOR_NORMAL);
-//            sensorService.update(sg);
-            pingGateway(sensorService, sg);
+            updateGateway(sensorService, sg);
         }
     }
 

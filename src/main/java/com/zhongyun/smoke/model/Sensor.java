@@ -1,7 +1,7 @@
 package com.zhongyun.smoke.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.zhongyun.smoke.common.Util;
+import static com.zhongyun.smoke.common.Util.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -37,7 +37,7 @@ public class Sensor {
     private Timestamp installTime;
 
     private String guarantee = "在保";
-    private String status = Util.SENSOR_NORMAL;
+    private String status = SENSOR_NORMAL;
 
     @Column(name = "project_id")
     private long projectId = 0;
@@ -63,12 +63,15 @@ public class Sensor {
         this.installTime = installTime;
         this.status = status;
         this.gatewayId = gatewayId;
-        if (type.equals(Util.SENSOR_SMOKE)) {
+        if (type.equals(SENSOR_SMOKE)) {
             this.model = MODEL_SMOKE;
         } else {
             this.model = MODEL_GWRX;
         }
         this.projectId = projectId;
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        this.mtime = ts;
+        this.ctime = ts;
     }
 
     public Sensor(String eui16, String type, int vendor, Timestamp installTime, String status, String model,
@@ -86,6 +89,9 @@ public class Sensor {
         this.model = model;
         this.gatewayId = gatewayId;
         this.projectId = projectId;
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        this.mtime = ts;
+        this.ctime = ts;
     }
 
     public Sensor(long id, long eui, String eui16, String model, String type, String location, String lati, String longi, Timestamp installTime,
@@ -107,6 +113,10 @@ public class Sensor {
         this.mtime = mtime;
         this.ctime = ctime;
         this.opCount = opCount;
+    }
+
+    public void disconnect() {
+        setStatus(SENSOR_DISCONN);
     }
 
     public void setVendor(int vendor) {

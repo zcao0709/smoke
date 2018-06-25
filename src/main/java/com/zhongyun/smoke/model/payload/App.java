@@ -80,6 +80,22 @@ public class App implements SensorMsg {
                           state(), Util.GATEWAY_UNSET, Util.PROJECT_UNSET);
     }
 
+
+//    @Override
+//    public Sensor dbGateway(SensorService sensorService) {
+//        return sensorService.findBaseByEui(gwrx.get(0).eui);
+//    }
+
+//    @Override
+//    public Sensor dbSensor(SensorService sensorService) {
+//        return sensorService.findBaseByEui(moteeui);
+//    }
+
+    @Override
+    public boolean valid() {
+        return gwrx.size() > 0;
+    }
+
     @Override
     public String state() {
         return payload().equals(Util.SENSOR_TEST) ? Util.SENSOR_NORMAL : payload();

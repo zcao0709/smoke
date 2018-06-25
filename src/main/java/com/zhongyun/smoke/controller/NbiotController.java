@@ -52,8 +52,8 @@ public class NbiotController {
     @RequestMapping(value = "status", method = RequestMethod.POST)
     public void status() {
 
-        logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
         Map<String, String[]> args = request.getParameterMap();
+        logger.info(request.getRequestURL().append("?").append(map2String(args)).toString());
         NbiotMsg msg = new StatusMsg(args);
         logger.debug(msg.toString());
         handleMsg(msg);
@@ -73,13 +73,11 @@ public class NbiotController {
         }
         Sensor s = sensorService.findBaseByEui16(msg.getId());
         msg.upsertSensor(sensorService, null, s, System.currentTimeMillis());
-//        if (s == null) {
-//            s = msg.toSensor();
-//            s.setPhone(config.getAdminPhone());
-//            sensorService.add(s);
+    }
 
-//        } else {
-//            sensorService.updateStatusAndGateway(msg.state(), s, System.currentTimeMillis());
-//        }
+    private static String map2String(Map<String, String[]> map) {
+        StringBuilder sb = new StringBuilder();
+        map.forEach((k, v) -> sb.append(v).append("=").append(v).append(" "));
+        return sb.toString();
     }
 }

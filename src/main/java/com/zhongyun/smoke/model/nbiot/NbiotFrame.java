@@ -117,7 +117,8 @@ public class NbiotFrame {
             s.setPhone(config.getAdminPhone());
             s = sensorService.add(s);
         } else {
-            sensorService.updateStatusAndGateway(state(), s, ts);
+            s.setStatus(state());
+            sensorService.updateStatusAndGateway(s, ts);
         }
     }
 

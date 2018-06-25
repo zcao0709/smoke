@@ -85,7 +85,7 @@ public abstract class SiterW extends SiterFrame implements SensorMsg {
     }
 
     @Override
-    public boolean validate() {
+    public boolean valid() {
         if (validateHeader()) {
             if (validateCmd()) {
                 return true;
@@ -182,7 +182,7 @@ public abstract class SiterW extends SiterFrame implements SensorMsg {
         } else {
             if (child < 0) {
                 // 无子设备，则是网关的状态
-                pingGateway(sensorService, sg);
+                updateGateway(sensorService, sg);
             } else {
                 upsertSensor(sensorService, sg, s, ts);
             }
@@ -215,8 +215,12 @@ public abstract class SiterW extends SiterFrame implements SensorMsg {
 
     @Override
     public Sensor toSensor() {
-        return new Sensor(child(), SENSOR_SMOKE, VENDOR_SITER, new Timestamp(ts), SENSOR_NORMAL,
-                          GATEWAY_UNSET, PROJECT_UNSET);
+        if (child() >= 0) {
+            return new Sensor(child(), SENSOR_SMOKE, VENDOR_SITER, new Timestamp(ts), SENSOR_NORMAL,
+                              GATEWAY_UNSET, PROJECT_UNSET);
+        } else {
+            return null;
+        }
     }
 
     protected abstract boolean validateCmd();

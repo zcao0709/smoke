@@ -25,7 +25,7 @@ public class Gwrx implements SensorMsg {
     }
 
     public void update(SensorService service, ConcurrentMap<Long, Long> gatewayTs) {
-        if (!gatewayTs.containsKey(gw.getEUI())) {
+        if (!gatewayTs.containsKey(gw.getEUI()) || !valid()) {
             return;
         }
         long ts = System.currentTimeMillis();
@@ -34,22 +34,8 @@ public class Gwrx implements SensorMsg {
         if (sg == null) {
             gatewayTs.remove(gw.getEUI());
         } else {
-            pingGateway(service, sg);
+            updateGateway(service, sg);
             gatewayTs.put(gw.getEUI(), ts);
-//            sg.setStatus(Util.SENSOR_NORMAL);
-//
-//            try {
-//                String lati = gw.getStatus().getLati().length() > 0 ? gw.getStatus().getLati() : sg.getLati();
-//                String longi = gw.getStatus().getLongi().length() > 0 ? gw.getStatus().getLongi() : sg.getLongi();
-//                if (!sg.getLati().equals(lati) || !sg.getLongi().equals(longi)) {
-//                    service.updateLocationAndStatus(lati, longi, sg.getStatus(), sg.getId());
-//                } else {
-//                    service.update(sg);
-//                }
-//                gatewayTs.put(gw.getEUI(), ts);
-//            } catch (Exception e) {
-//                logger.error("update sensor failed for " + sg, e);
-//            }
         }
     }
 
@@ -63,21 +49,39 @@ public class Gwrx implements SensorMsg {
         return null;
     }
 
+//    @Override
+//    public Sensor dbGateway(SensorService sensorService) {
+//        return sensorService.findBaseByEui(gw.getEUI());
+//    }
+
+//    @Override
+//    public Sensor dbSensor(SensorService sensorService) {
+//        return null;
+//    }
+
+    @Override
+    public boolean valid() {
+        return gw != null;
+    }
+
     @Override
     public String state() {
         return Util.SENSOR_NORMAL;
     }
 
     @Override
-    public void pingGateway(SensorService sensorService, Sensor dbGateway) {
+    public Sensor updateGateway(SensorService sensorService, Sensor dbGateway) {
         dbGateway.setStatus(state());
         String lati = gw.getStatus().getLati().length() > 0 ? gw.getStatus().getLati() : dbGateway.getLati();
         String longi = gw.getStatus().getLongi().length() > 0 ? gw.getStatus().getLongi() : dbGateway.getLongi();
         if (!dbGateway.getLati().equals(lati) || !dbGateway.getLongi().equals(longi)) {
-            sensorService.updateLocationAndStatus(lati, longi, dbGateway.getStatus(), dbGateway.getId());
+            dbGateway.setLati(lati);
+            dbGateway.setLongi(longi);
+            sensorService.updateLocationAndStatus(dbGateway);
         } else {
             sensorService.update(dbGateway);
         }
+        return dbGateway;
     }
 
     public void setGw(Gw gateway) {

@@ -85,6 +85,12 @@ public class SJStatusMsg implements NbiotMsg {
                           SENSOR_NORMAL, model, GATEWAY_UNSET, PROJECT_UNSET);
     }
 
+    @Override
+    public boolean valid() {
+        String s = state();
+        return s != null && s.length() > 0;
+    }
+
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
     }

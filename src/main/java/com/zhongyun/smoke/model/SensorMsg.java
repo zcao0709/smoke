@@ -8,7 +8,12 @@ import com.zhongyun.smoke.service.SensorService;
 public interface SensorMsg {
     Sensor toGateway();
     Sensor toSensor();
+//    Sensor dbGateway(SensorService sensorService);
+//    Sensor dbSensor(SensorService sensorService);
+    boolean valid();
     String state();
+
+    Sensor[] defReturn = {null, null};
 
     default Sensor newGateway(SensorService sensorService, Sensor dbSensor) {
         Sensor gateway = toGateway();
@@ -21,12 +26,13 @@ public interface SensorMsg {
         return gateway;
     }
 
-    default void pingGateway(SensorService sensorService, Sensor dbGateway) {
+    default Sensor updateGateway(SensorService sensorService, Sensor dbGateway) {
         dbGateway.setStatus(state());
         sensorService.update(dbGateway);
+        return dbGateway;
     }
 
-    default void upsertSensor(SensorService sensorService, Sensor dbGateway, Sensor dbSensor, long ts) {
+    default Sensor upsertSensor(SensorService sensorService, Sensor dbGateway, Sensor dbSensor, long ts) {
         if (dbSensor == null) {
             dbSensor = toSensor();
             if (dbSensor != null) {
@@ -35,8 +41,30 @@ public interface SensorMsg {
                 }
                 sensorService.add(dbSensor);
             }
+            return dbSensor;
         } else {
-            sensorService.updateStatusAndGateway(state(), dbSensor, ts);
+            dbSensor.setStatus(state());
+            sensorService.updateStatusAndGateway(dbSensor, ts);
+            return dbSensor;
         }
     }
+
+    /*
+    default Sensor[] handleMsg(SensorService sensorService) {
+        if (!valid()) {
+            return defReturn;
+        }
+        Sensor dbGateway = dbGateway(sensorService);
+        Sensor dbSensor = dbSensor(sensorService);
+
+        if (dbGateway == null) {
+            dbGateway = newGateway(sensorService, dbSensor);
+        } else {
+            dbGateway = updateGateway(sensorService, dbGateway);
+        }
+        dbSensor = upsertSensor(sensorService, dbGateway, dbSensor, System.currentTimeMillis());
+
+        return new Sensor[]{dbGateway, dbSensor};
+    }
+    */
 }
