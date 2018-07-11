@@ -22,6 +22,7 @@ import java.util.Set;
 /**
  * Created by caozhennan on 2018/5/20.
  */
+/*
 public class NbiotConnector extends Thread {
     @Autowired
     private ApplicationConfig config;
@@ -141,3 +142,4 @@ public class NbiotConnector extends Thread {
         }
     }
 }
+*/

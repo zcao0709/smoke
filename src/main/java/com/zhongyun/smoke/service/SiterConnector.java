@@ -64,7 +64,6 @@ public class SiterConnector extends Thread {
 
     private void serve(int port) throws IOException {
         server = ServerSocketChannel.open();
-        server.configureBlocking(false);
         server.socket().bind(new InetSocketAddress(port));
         server.configureBlocking(false);
 

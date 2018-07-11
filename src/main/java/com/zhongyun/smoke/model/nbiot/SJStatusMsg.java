@@ -60,9 +60,10 @@ public class SJStatusMsg implements NbiotMsg {
             case "05":
             case "06":
             case "07":
-            case "0D":
             case "0E":
                 return SENSOR_NORMAL;
+            case "0D":
+                return SENSOR_TEST;
             case "01":
                 return SENSOR_FIRE;
             case "02":
