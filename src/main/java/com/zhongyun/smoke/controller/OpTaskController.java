@@ -1,5 +1,6 @@
 package com.zhongyun.smoke.controller;
 
+import com.zhongyun.smoke.common.MethodMonitor;
 import com.zhongyun.smoke.common.Page;
 import static com.zhongyun.smoke.common.Util.*;
 import com.zhongyun.smoke.model.OpTask;
@@ -30,6 +31,7 @@ public class OpTaskController {
     private static final Logger logger = LoggerFactory.getLogger("OpTaskController");
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @MethodMonitor
     public ResponseEntity<String> delete(@PathVariable long id) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
@@ -39,6 +41,7 @@ public class OpTaskController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
+    @MethodMonitor
     public ResponseEntity<OpTask> update(@RequestBody OpTask opTask) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
@@ -47,6 +50,7 @@ public class OpTaskController {
     }
 
     @RequestMapping(value = "unsolved", method = RequestMethod.PUT)
+    @MethodMonitor
     public ResponseEntity<OpTask> updateUnsolved(@RequestBody OpTask opTask) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
@@ -55,6 +59,7 @@ public class OpTaskController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @MethodMonitor
     public ResponseEntity<OpTask> find(@PathVariable long id) {
 
         logger.info(request.getRequestURL().append("?").append(request.getQueryString()).toString());
@@ -68,6 +73,7 @@ public class OpTaskController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
+    @MethodMonitor
     public ResponseEntity<List<OpTask>> findLike(
             @RequestParam(value = "project", defaultValue = "-1") long projectId,
             @RequestParam(value = "eui", required = false) String eui16,
@@ -146,6 +152,7 @@ public class OpTaskController {
 //    }
 
     @RequestMapping(value = "unsolved", method = RequestMethod.GET)
+    @MethodMonitor
     public ResponseEntity<List<OpTask>> find(
             @RequestParam(value = "_page", defaultValue = "1") int page,
             @RequestParam(value = "_limit", defaultValue = "10") int limit) {

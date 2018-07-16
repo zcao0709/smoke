@@ -3,6 +3,7 @@ package com.zhongyun.smoke.service;
 import static com.zhongyun.smoke.common.Util.*;
 
 import com.zhongyun.smoke.ApplicationConfig;
+import com.zhongyun.smoke.common.MethodMonitor;
 import com.zhongyun.smoke.common.Page;
 import com.zhongyun.smoke.common.Util;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
@@ -73,6 +74,7 @@ public class SensorService {
     }
 
     @Transactional
+    @MethodMonitor
     public void updateStatusAndGateway(Sensor sensor, long ts) {
         String status = sensor.getStatus();
         if (sensor.getStatus().equals(SENSOR_TEST)) {
