@@ -75,11 +75,14 @@ public class SensorService {
     @Transactional
     public void updateStatusAndGateway(Sensor sensor, long ts) {
         String status = sensor.getStatus();
+        if (sensor.getStatus().equals(SENSOR_TEST)) {
+            sensor.setStatus(SENSOR_NORMAL);
+        }
         try {
             if (!testEnv() && SENSOR_TEST.equals(status)) {
                 status = SENSOR_NORMAL;
             }
-            sensorRepository.updateStatusAndGatewayById(status.equals(SENSOR_TEST) ? SENSOR_NORMAL : status, sensor.getGatewayId(), sensor.getId());
+            sensorRepository.updateStatusAndGatewayById(sensor.getStatus(), sensor.getGatewayId(), sensor.getId());
 
             if (OpTaskAlarmCause.contains(status)) {
                 OpTask ot = new OpTask(sensor.getEui(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());
