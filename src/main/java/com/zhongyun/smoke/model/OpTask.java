@@ -60,9 +60,9 @@ public class OpTask {
     public OpTask() {
     }
 
-    public OpTask(long eui, long postUser, Timestamp postTime, String cause, String status, long projectId) {
+    public OpTask(long eui, String eui16, long postUser, Timestamp postTime, String cause, String status, long projectId) {
         this.eui = eui;
-        this.eui16 = String.format("%X", eui);
+        this.eui16 = eui16;
         this.postUser = postUser;
         this.postTime = postTime;
         this.cause = cause;

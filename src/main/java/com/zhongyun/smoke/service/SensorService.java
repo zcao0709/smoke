@@ -87,7 +87,7 @@ public class SensorService {
             sensorRepository.updateStatusAndGatewayById(sensor.getStatus(), sensor.getGatewayId(), sensor.getId());
 
             if (OpTaskAlarmCause.contains(status)) {
-                OpTask ot = new OpTask(sensor.getEui(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());
+                OpTask ot = new OpTask(sensor.getEui(), sensor.getEui16(), 1, new Timestamp(ts), status, OPTASK_UNSOLVED, sensor.getProjectId());
                 opTaskRepository.save(ot);
 
                 if (OpTaskSmsCause.contains(status)) {
@@ -113,7 +113,7 @@ public class SensorService {
                     }
                     String ret = smsService.send(recvs, addr, FORMAT.format(new Date(ts)), tel);
                     if (ret != null) {
-                        OpTask o = new OpTask(sensor.getEui(), 1, new Timestamp(ts), ret, OPTASK_UNSOLVED, sensor.getProjectId());
+                        OpTask o = new OpTask(sensor.getEui(), sensor.getEui16(), 1, new Timestamp(ts), ret, OPTASK_UNSOLVED, sensor.getProjectId());
                         opTaskRepository.save(o);
                     }
                 }

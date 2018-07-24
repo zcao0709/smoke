@@ -22,6 +22,6 @@ public class MethodAdvise {
 
     @Before("pointcut()")
     public void logMethodInvokeParam(JoinPoint joinPoint) {
-        logger.info("---Before method {} invoke, param: {}---", joinPoint.getSignature().toShortString(), joinPoint.getArgs());
+        logger.info("calling method {} with args: {}", joinPoint.getSignature().toShortString(), joinPoint.getArgs());
     }
 }
