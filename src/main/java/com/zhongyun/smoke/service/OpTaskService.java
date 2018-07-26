@@ -2,6 +2,7 @@ package com.zhongyun.smoke.service;
 
 import static com.zhongyun.smoke.common.Util.*;
 
+import com.zhongyun.smoke.common.MethodMonitor;
 import com.zhongyun.smoke.common.Page;
 import com.zhongyun.smoke.dao.mysql.OpTaskRepository;
 import com.zhongyun.smoke.dao.mysql.ProjectRepository;
@@ -32,6 +33,7 @@ public class OpTaskService {
     @Autowired
     public ProjectRepository projectRepository;
 
+    @MethodMonitor
     public OpTask add(OpTask opTask) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         opTask.setMtime(ts);
@@ -44,6 +46,7 @@ public class OpTaskService {
     }
 
     @Transactional
+    @MethodMonitor
     public OpTask update(OpTask opTask) {
         if (opTask.getId() == 0) {
             throw new IllegalArgumentException(ERR_INVALID_ID);
