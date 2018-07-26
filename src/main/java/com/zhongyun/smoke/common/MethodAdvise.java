@@ -1,6 +1,7 @@
 package com.zhongyun.smoke.common;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -24,4 +25,9 @@ public class MethodAdvise {
     public void logMethodInvokeParam(JoinPoint joinPoint) {
         logger.info("calling method {} with args: {}", joinPoint.getSignature().toShortString(), joinPoint.getArgs());
     }
+
+//    @AfterThrowing("pointcut()")
+//    public void logMethodThrowing(JoinPoint joinPoint) {
+//        logger.info("method {} with args: {}", joinPoint.getSignature().toShortString(), joinPoint..);
+//    }
 }

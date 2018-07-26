@@ -43,6 +43,9 @@ public class SensorService {
     @Autowired
     private SmsService smsService;
 
+    @Autowired
+    private MonitorService monitorService;
+
     private static final Logger logger = LoggerFactory.getLogger("SensorService");
 
     public Sensor add(Sensor sensor) {
@@ -103,6 +106,8 @@ public class SensorService {
                     if (sensor.getProjectId() > 0) {
                         p = projectRepository.findOne(sensor.getProjectId());
                     }
+                    String time = FORMAT.format(new Date(ts));
+                    monitorService.upload(sensor, p, status, time);
                     if (p != null && validatePhone(p.getPhone()) && (recvs.size() < 1 || !recvs.get(0).equals(p.getPhone()))) {
                         recvs.add(p.getPhone());
                         addr = p.fullAddress() + " " + addr;
@@ -111,7 +116,7 @@ public class SensorService {
                     if (recvs.size() == 0) {
                         recvs.add(config.getAdminPhone());
                     }
-                    String ret = smsService.send(recvs, addr, FORMAT.format(new Date(ts)), tel);
+                    String ret = smsService.send(recvs, addr, time, tel);
                     if (ret != null) {
                         OpTask o = new OpTask(sensor.getEui(), sensor.getEui16(), 1, new Timestamp(ts), ret, OPTASK_UNSOLVED, sensor.getProjectId());
                         opTaskRepository.save(o);

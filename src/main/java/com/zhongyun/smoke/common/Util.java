@@ -2,6 +2,7 @@ package com.zhongyun.smoke.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.jdbc.StringUtils;
 import com.zhongyun.smoke.model.payload.ImmeApp;
 import com.zhongyun.smoke.model.payload.Payload;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -11,11 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -203,5 +211,96 @@ public class Util {
 
     public static boolean testEnv() {
         return System.getProperty("spring.profiles.active").equals("dev");
+    }
+
+    public static String httpRequest(String url, Map<String, String> params,
+                                     Map<String, String> headers,
+                                     String postJsonBody,
+                                     String postFormBody,
+                                     boolean isPost, int connectTimeout, int readTimeout) {
+        String response = null;
+        try {
+            URL testUrl = new URL(buildUrl(url, params));
+            HttpURLConnection connection = (HttpURLConnection)testUrl.openConnection();
+            connection.setDoInput(true);
+            setupHeader(connection, headers);
+            if (isPost) {
+                connection.setRequestMethod("POST");
+                sendPostData(connection, postJsonBody, postFormBody);
+            }
+
+            connection.setConnectTimeout(connectTimeout);
+            connection.setReadTimeout(readTimeout);
+            int retCode = connection.getResponseCode();
+            if (retCode == 200) {
+                InputStream is = connection.getInputStream();
+                response = getStringFromInputStream(is);
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return null;
+        } finally {
+
+        }
+        return response;
+    }
+
+    private static String buildUrl(String url, Map<String, String> params) {
+        if (StringUtils.isNullOrEmpty(url) || params == null) {
+            return url;
+        }
+        StringBuilder sb = new StringBuilder(url).append("?");
+        params.entrySet().stream().forEach(entry -> sb.append(entry.getKey()).append("=").append(entry.getValue()).append('&'));
+        return sb.deleteCharAt(sb.length()-1).toString();
+    }
+
+    private static void setupHeader(URLConnection connection, Map<String, String> headers) {
+        if (connection == null  || headers == null) {
+            return;
+        }
+
+        headers.entrySet().stream().forEach(entry -> connection.setRequestProperty(entry.getKey(), entry.getValue()));
+    }
+
+    private static int sendPostData(URLConnection connection, String body) {
+        if (connection == null || StringUtils.isNullOrEmpty(body)) {
+            return 0;
+        }
+        int count = 0;
+        connection.setDoOutput(true);
+        try {
+            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+            writer.write(body);
+            writer.flush();
+            writer.close();
+            count = body.length();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    private static int sendPostData(URLConnection connection, String jsonBody, String formBody) {
+        if (jsonBody != null) {
+            connection.setRequestProperty("Content-Type", "application/json");
+            return sendPostData(connection, jsonBody);
+        } else {
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            return sendPostData(connection, formBody);
+        }
+    }
+
+    private static String getStringFromInputStream(InputStream is)
+            throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        byte[] buffer = new byte[2048];
+        int len;
+        while ((len = is.read(buffer)) != -1) {
+            os.write(buffer, 0, len);
+        }
+        is.close();
+        String state = os.toString();
+        os.close();
+        return state;
     }
 }
