@@ -37,7 +37,7 @@ public class Project {
 
     @Override
     public String toString() {
-        return name + "/" + Arrays.toString(users.toArray(new User[0]));
+        return name + "/" + fullAddress();
     }
 
     public Project beforeReturn() {

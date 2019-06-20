@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class MethodAdvise {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Pointcut("@annotation(com.zhongyun.smoke.common.MethodMonitor)")
     public void pointcut() {
@@ -26,8 +26,8 @@ public class MethodAdvise {
         logger.info("calling method {} with args: {}", joinPoint.getSignature().toShortString(), joinPoint.getArgs());
     }
 
-//    @AfterThrowing("pointcut()")
-//    public void logMethodThrowing(JoinPoint joinPoint) {
-//        logger.info("method {} with args: {}", joinPoint.getSignature().toShortString(), joinPoint..);
-//    }
+    @AfterThrowing(value = "pointcut()", throwing = "ex")
+    public void logMethodThrowing(JoinPoint joinPoint, Exception ex) {
+        logger.info("method {} throwing: {}", joinPoint.getSignature().toShortString(), ex);
+    }
 }

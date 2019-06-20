@@ -47,7 +47,7 @@ public class MonitorService {
         Upload data = new Upload(owner, isTest, time, alarm, sensor.getLocation(), device,
                                  address, sensor.getEui16(), time);
         String req = object2Json(data);
-        logger.debug("upload request: " + req);
+//        logger.debug("upload request: " + req);
         String resp = httpRequest(url, null, headers, null, req, true, timeout, timeout);
         Resp r = json2Object(resp, Resp.class);
         if (r == null || r.getCode() != 200) {

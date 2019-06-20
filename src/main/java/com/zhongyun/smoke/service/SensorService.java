@@ -57,16 +57,19 @@ public class SensorService {
         return sensorRepository.save(sensor);
     }
 
+    @MethodMonitor
     public void delete(long id) {
         sensorRepository.delete(id);
     }
 
     @Transactional
+    @MethodMonitor
     public void updateMtime() {
         sensorRepository.updateMtime();
     }
 
     @Transactional
+    @MethodMonitor
     public Sensor update(Sensor sensor) {
         if (sensor.getId() == 0) {
             throw new IllegalArgumentException(ERR_INVALID_ID);
@@ -129,6 +132,7 @@ public class SensorService {
     }
 
     @Transactional
+    @MethodMonitor
     public void updateLocationAndStatus(Sensor sensor) {
         sensorRepository.updateLatiAndLongiAndStatusById(sensor.getLati(), sensor.getLongi(), sensor.getStatus(), sensor.getId());
         sensorRepository.updateLatiAndLongiByGatewayId(sensor.getId());

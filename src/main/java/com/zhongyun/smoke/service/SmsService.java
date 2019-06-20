@@ -10,6 +10,7 @@ import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.zhongyun.smoke.ApplicationConfig;
+import com.zhongyun.smoke.common.MethodMonitor;
 import com.zhongyun.smoke.common.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class SmsService {
 
     private static final Logger logger = LoggerFactory.getLogger("SmsService");
 
+    @MethodMonitor
     public String send(List<String> recvs, String address, String time, String tel) {
         Map<String, String> args = new HashMap<>();
         args.put("address", address);
